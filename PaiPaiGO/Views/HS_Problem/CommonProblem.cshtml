@@ -1,0 +1,358 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+</head>
+<style>
+    .accordion accordion-flush {
+        font-size: 25px;
+    }
+
+    .accordion-button collapsed {
+        font-size: 25px;
+    }
+</style>
+<body>
+    <div class="row g-3">
+        <div class="col-md-1"></div>
+        <div class="col-md-10" style="background-color: #BCE5F6">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <h1 style="text-align: center;font-size: 25px;">常見問題</h1>
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <!-- 问题 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                    1.PaiPaigo是什麼？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo是一家在線平台，旨在為用戶提供一個方便的環境，以發布、查找、接受、支付和履行各種任務和服務。用戶可以在PaiPaigo上尋找任務，接受任務並按照任務要求履行，從而實現任務發布者和任務接受者之間的合作。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                    2.PaiPaigo的主要目的是什麼？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo的主要目標是促進用戶之間的任務合作和服務提供。我們的平台旨在連接需要特定任務完成的人與願意提供這些服務的人，從而創造一個雙贏的局面。用戶可以在平台上發佈各種任務，包括但不限於排隊、購買、配送等。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                    3.使用PaiPaigo平台需要註冊嗎？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    是的，要使用PaiPaigo平台的某些功能，您需要創建一個帳戶並登錄。註冊帳戶是免費的，但它使您能夠更輕鬆地瀏覽任務、發布任務和與其他用戶互動。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+                                    4.註冊帳戶的要求是什麼？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    在註冊PaiPaigo帳戶時，您需要提供準確、完整和最新的個人信息。這些信息可能包括您的姓名、電子郵件地址、聯繫方式等。此外，您需要創建一個安全的密碼，以確保帳戶的安全性。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 5 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingFive">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+                                    5.如何發布一個任務？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseFive" class="accordion-collapse collapse" aria-labelledby="flush-headingFive"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    要發布一個任務，您需要首先登錄到您的PaiPaigo帳戶。然後，您可以選擇發布任務的類別，並提供有關任務的詳細信息，如任務的標題、描述、報酬等。一旦您完成了這些信息，您可以將任務發布到平台上，等待其他用戶接受並完成它。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 6 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingSix">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseSix" aria-expanded="false" aria-controls="flush-collapseSix">
+                                    6.PaiPaigo如何確保任務的完成？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseSix" class="accordion-collapse collapse" aria-labelledby="flush-headingSix"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo通過評分和評論系統來確保任務的完成。用戶可以互相評價和留下反饋，這有助於建立用戶的信譽。完成任務的用戶可以獲得高評分，而未能完成任務的用戶可能會受到低評分，這有助於提高用戶的信譽。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 7 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingSeven">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseSeven" aria-expanded="false" aria-controls="flush-collapseSeven">
+                                    7.如何支付任務報酬？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseSeven" class="accordion-collapse collapse" aria-labelledby="flush-headingSeven"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    在PaiPaigo上支付任務報酬通常是通過網上支付方式，如信用卡、支付寶、微信支付等來完成的。當您接受一個任務後，報酬金額會被保留在平台上，直到您成功完成任務。完成後，您可以選擇將報酬提取到您的帳戶。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 8 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingEight">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseEight" aria-expanded="false" aria-controls="flush-collapseEight">
+                                    8.如何查找適合我的任務？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseEight" class="accordion-collapse collapse" aria-labelledby="flush-headingEight"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    要查找適合您的任務，您可以使用平台上的搜索功能。您可以在搜索欄中輸入關鍵詞或特定類別，然後瀏覽相關的任務列表。您也可以瀏覽最新的任務或根據地理位置查找附近的任務。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 9 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingNine">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseNine" aria-expanded="false" aria-controls="flush-collapseNine">
+                                    9.我如何接受一個任務？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseNine" class="accordion-collapse collapse" aria-labelledby="flush-headingNine"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    要接受一個任務，您可以瀏覽任務列表，找到您感興趣的任務，然後點擊任務詳情頁面。在詳情頁面上，您將看到有關任務的更多信息，包括報酬、任務要求等。如果您決定接受任務，您可以點擊相應的按鈕進行接受。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 10 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseTen" aria-expanded="false" aria-controls="flush-collapseTen">
+                                    10.我可以在任何地方使用PaiPaigo嗎？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTen" class="accordion-collapse collapse" aria-labelledby="flush-headingTen"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    是的，您可以在任何地方使用PaiPaigo，只要您有訪問互聯網的設備。我們的平台是在線的，您可以使用計算機、智能手機或平板電腦訪問它，以便隨時查找任務或發布任務。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 11 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingEleven">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseEleven" aria-expanded="false" aria-controls="flush-collapseEleven">
+                                    11.如何聯繫任務發布者？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseEleven" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingEleven" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    您可以通過平台上的聊天功能與任務發布者聯繫。當您接受一個任務後，您將能夠在任務詳情頁面上找到一個聊天選項，您可以使用它來與任務發布者進行溝通，討論任務的細節。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 12 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwelve">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseTwelve" aria-expanded="false" aria-controls="flush-collapseTwelve">
+                                    12.我如何取消已接受的任務？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwelve" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingTwelve" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    要取消已接受的任務，您可以進入任務詳情頁面，然後找到取消任務的選項。請注意，取消已接受的任務可能會影響您的信譽評分，因此請謹慎考慮。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 13 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingThirteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseThirteen" aria-expanded="false"
+                                        aria-controls="flush-collapseThirteen">
+                                    13.如何確保支付的安全性？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThirteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingThirteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo致力於確保支付的安全性。我們使用安全的支付處理服務來加密交易信息，並採取措施來防止欺詐活動。此外，我們建議用戶只在平台上完成支付，而不要在其他地方進行交易，以保護自己的利益。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 14 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingFourteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseFourteen" aria-expanded="false"
+                                        aria-controls="flush-collapseFourteen">
+                                    14.如何獲得幫助和支持？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseFourteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingFourteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    如果您需要幫助或支持，您可以訪問我們的幫助中心，那裡有大量有關平台使用的常見問題的解答。此外，您還可以通過平台上的聯繫方式與我們的客戶支持團隊聯繫，他們將竭誠為您提供幫助。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 15 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingFifteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseFifteen" aria-expanded="false"
+                                        aria-controls="flush-collapseFifteen">
+                                    15.我如何更改我的帳戶信息？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseFifteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingFifteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    要更改帳戶信息，您可以進入個人資料頁面，然後選擇您想要更改的信息，如聯繫方式、密碼等。請確保您提供的信息是準確的，以便及時接收有關任務的通知。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 16 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingSixteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseSixteen" aria-expanded="false"
+                                        aria-controls="flush-collapseSixteen">
+                                    16.如何刪除我的帳戶？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseSixteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingSixteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    如果您想刪除您的帳戶，您可以通過聯繫客戶支持團隊來請求刪除。他們將協助您完成刪除帳戶的程序。請注意，刪除帳戶後，您的帳戶信息和歷史記錄將被永久刪除，無法恢復。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 17 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingSeventeen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseSeventeen" aria-expanded="false"
+                                        aria-controls="flush-collapseSeventeen">
+                                    17.我可以在PaiPaigo上找到全職工作嗎？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseSeventeen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingSeventeen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo主要提供的是靈活的任務和兼職工作機會，而不是全職工作。您可以在平台上找到各種任務和工作，但通常它們是臨時性的，不是全職的職位。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 18 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingEighteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseEighteen" aria-expanded="false"
+                                        aria-controls="flush-collapseEighteen">
+                                    18.我可以在PaiPaigo上找到全職工作嗎？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseEighteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingEighteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    PaiPaigo主要提供的是靈活的任務和兼職工作機會，而不是全職工作。您可以在平台上找到各種任務和工作，但通常它們是臨時性的，不是全職的職位。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 问题 19 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingNineteen">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseNineteen" aria-expanded="false"
+                                        aria-controls="flush-collapseNineteen">
+                                    19.PaiPaigo是否提供保險？
+                                </button>
+                            </h2>
+                            <div id="flush-collapseNineteen" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-headingNineteen" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    是的，PaiPaigo為用戶提供了保險保障。我們的平台上的任務和工作通常包括保險，以確保在執行任務或工作過程中出現的意外情況得到妥善處理。詳細的保險信息通常會在任務詳情中提供。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height:50px">  </div>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</body>
+
+</html>

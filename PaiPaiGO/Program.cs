@@ -38,7 +38,8 @@ app.MapControllerRoute(
     name: "default",
     //pattern: "{controller=CC_Members}/{action=Resgister}/{id?}");
     //pattern: "{controller=HS_Pending}/{action=PendingOrder_Pai}/{id?}");
-    //pattern: "{controller=YU_Home}/{action=Index}/{id?}");
-    pattern: "{controller=WS_AdmMissions}/{action=WS_AdmMission}/{id?}");
+    pattern: "{controller=HS_Get_Text}/{action=GetOrder_Pai}/{id?}");
+//pattern: "{controller=YU_Home}/{action=Index}/{id?}");
+//pattern: "{controller=WS_AdmMissions}/{action=WS_AdmMission}/{id?}");
 app.Run();
 

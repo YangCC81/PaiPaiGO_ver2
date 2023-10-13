@@ -174,7 +174,7 @@
                                         <label for="imageInput" class="btn btn-secondary mt-2">上傳圖片</label>
                                         <input type="file" class="image-upload" id="imageInput" accept="image/*"
                                                multiple onchange="previewImages(this, 'uploaded-images')">
-                                        <input  id="base64Image" name="Image" />
+                                        <input type="hidden"  id="base64Image" name="Image" />
                                     </li>
                                     <!-- 上傳的圖片列表 -->
                                     <li class="list-group-item uploaded-images" id="uploaded-images" name="queue_images">
