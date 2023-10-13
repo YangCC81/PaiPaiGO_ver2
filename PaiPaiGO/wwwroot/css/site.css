@@ -1,5 +1,4 @@
-/*原本的*/
-/*html {
+html {
   font-size: 14px;
 }
 
@@ -16,27 +15,7 @@ html {
 
 body {
   margin-bottom: 60px;
-}*/
-
-
-html {
-    font-size: 14px;
 }
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-/*body {
-  margin-bottom: 60px;
-}*/
 
 /* 導覽列背景色 */
 .navbar {
@@ -107,14 +86,3 @@ li a:hover {
         background-color: red;
         color: white;
     }
-
-
-@media (max-width:768px) {
-    .navbar-brand img {
-        margin-left: 10%;
-    }
-
-    .footer {
-        flex: 0 0 100%;
-    }
-}

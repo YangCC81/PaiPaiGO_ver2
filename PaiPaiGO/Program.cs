@@ -29,13 +29,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 //設置Session，要在UseRouting()前
 app.UseSession();
+
 app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=CC_Members}/{action=Resgister}/{id?}");
-//pattern: "{controller=HS_Pending}/{action=PendingOrder_Pai}/{id?}");
+    //pattern: "{controller=CC_Members}/{action=Resgister}/{id?}");
+    //pattern: "{controller=HS_Pending}/{action=PendingOrder_Pai}/{id?}");
+    //pattern: "{controller=YU_Home}/{action=Index}/{id?}");
+    pattern: "{controller=WS_AdmMissions}/{action=WS_AdmMission}/{id?}");
 app.Run();
 

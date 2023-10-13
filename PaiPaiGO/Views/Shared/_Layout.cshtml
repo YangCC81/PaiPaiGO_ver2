@@ -3,45 +3,393 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PaiPaiGO</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Lab1005_Time</title>
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PaiPaiGO.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chatservice.css" asp-append-version="true" />
+    @*連結js*@
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="~/js/time.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    @*<link rel="stylesheet" href="~/Lab1005_Time.styles.css" asp-append-version="true" />*@
+    <!-- 引入 SignalR 的 JavaScript 客户端 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PaiPaiGO</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+
+    <!-- 導覽列 -->
+    <!-- navbar-expand-md 為隱藏成小按鈕 -->
+    <nav class="navbar navbar-expand-sm  navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 sticky-top">
+        <div class="container-fluid">
+            <!-- 未讀訊息設定 -->
+            <div id="unread-messages" class="unread-messages-badge"></div>
+            <!-- 導覽列小圖 -->
+            <a class="navbar-brand " href="#"><img src="~/img/Logo.png" style="width:13em" alt=""></a>
+            <!-- 響應式導覽列整列變成小圖列 -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a id="action" class="nav-link active" aria-current="page" href="#">任務瀏覽</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">任務刊登</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">關於我們</a>
+                    </li>
+
+                    <div class="dropdown">
+                        @*利用下拉式方式呈現訊息*@
+                        <img class="dropbtn" src="~/img/bell.gif" style="width: 70px; height: 70px;"
+                             alt="通知圖標" onclick="myFunction()">
+                        @*<i class="fa-solid fa-bell dropbtn" style="color: #f5ee19; font-size:45px;" onclick="myFunction()"></i>*@
+                        <div id="myDropdown" class="dropdown-content">
+                            <!-- 修改下拉內容 -->
+                            <a href="#">貼心提醒:<br />任務名稱:代買生活用品。<br />狀態:已接單未完成。</a>
+                        </div>
+                    </div>
+                    @*暫時留著*@
+                    @*<div class="notification">*@
+                    @*<span class="badge" style="display:block; margin-bottom: 15px;">3</span>*@
+                    @*</div>*@
+                    <div class="notification-popup" id="notificationPopup">
+                        <span class="close" onclick="closeNotificationPopup()">&times;</span>
+                        <p id="notificationContent"></p>
+                    </div>
+                    <div class="dropdown">
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            會員專區
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">訂單追蹤</a></li>
+                            <li><a class="dropdown-item" href="#">會員資料</a></li>
+                            <li><a class="dropdown-item" href="#">登出</a></li>
+                        </ul>
+                    </li>
             </div>
-        </nav>
-    </header>
+            </ul>
+        </div>
+
+
+    </nav>
+
+
+    @*未讀訊息之JS，有缺陷*@
+    @*    <script>
+    function showNotification() {
+    var notificationPopup = document.getElementById("notificationPopup");
+    var notificationContent = document.getElementById("notificationContent");
+
+    // 設定通知內容
+    notificationContent.textContent = "任務ID:2023100601，任務名稱:代買生活用品，已接單未完成";
+
+    // 顯示通知小視窗
+    notificationPopup.style.display = "block";
+    }
+
+    function closeNotificationPopup() {
+    var notificationPopup = document.getElementById("notificationPopup");
+
+    // 隱藏通知小視窗
+    notificationPopup.style.display = "none";
+    }
+
+    </script>*@
+
+    @*未讀訊息之JS*@
+    <script>
+        // 當用戶點擊按鈕時，在隱藏和顯示下拉內容之間切換
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // 如果使用者在下拉列表外部單擊，則關閉下拉列表
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+
+
+
+
+    <div class="icon-bar">
+        @*不使用，測試用*@
+        @* <div class="timee" id="countdown-icon" data-id="2023100601" onclick="GetRemainingTime()">
+        <img src="~/img/time3.png" style="width: 50px; height: 50px;" alt="倒數計時">
+        </div>
+        <div id="timePopup"></div>*@
+        @*@await Html.PartialAsync("_Test")*@
+
+        <!-- 點一下按鈕產生時間 -->
+        <div class="timee" id="countdown-icon" onclick="getYourData()">
+            <img src="~/img/time3.png" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
+        </div>
+
+        <div class="chat-popups" id="myForms">
+            <form action="/action_page.php" class="form-container">
+                <h5>任務剩餘時間:</h5>
+                <div id="remainingTimeContainer" style="font-size:20px;"></div>
+                <button type="button" class="btn1 cancels" onclick="closeForms()">Close</button>
+            </form>
+        </div>
+
+        @* 時間的彈跳視窗，點擊會出現，點Close會關閉*@
+        <script>
+            function openForms() {
+                document.getElementById("myForms").style.display = "block";
+            }
+
+            function closeForms() {
+                document.getElementById("myForms").style.display = "none";
+            }
+
+            @*後端帶入任務倒數*@
+
+                function updateRemainingTime(data) {
+                    // 更新剩餘時間
+                    $('#remainingTimeContainer').html(data);
+                }
+
+            // 按鈕點擊後執行 AJAX 請求
+            function getYourData() {
+                $.ajax({
+                    url: '@Url.Action("RemainingTimePartial", "Home")',
+                    type: 'GET',
+                    success: function (data) {
+                        if (data != null) {
+                            // 更新剩餘時間
+                            updateRemainingTime(data);
+
+                            // 每秒更新一次剩餘時間
+                            setInterval(function () {
+                                $.ajax({
+                                    url: '@Url.Action("RemainingTimePartial", "Home")',
+                                    type: 'GET',
+                                    success: function (updatedData) {
+                                        if (updatedData != null) {
+                                            // 更新剩餘時間
+                                            updateRemainingTime(updatedData);
+                                        } else {
+                                            alert('No updated data received.');
+                                        }
+                                    },
+                                    error: function () {
+                                        alert('An error occurred while fetching updated data.');
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            alert('No data received.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while fetching data.');
+                    }
+                });
+            }
+        </script>
+
+
+
+        @*         Bootstrap 時間，但有衝突
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-container">
+        <div class="modal-content">
+        <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">任務倒數時間</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-dialog modal-dialog-centered" id="remainingTimeContainer">
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+        </div>
+        </div>*@
+
+
+
+
+        <!-- 客服 -->
+        <div class="open-button">
+            <img src="~/img/chat2.png" style="width: 50px; height: 50px;" onclick="openForm()" alt="">
+        </div>
+        <div class="chat-popup" id="myForm">
+            <!-- 進入聊天畫面的標題 -->
+            <form action="/action_page.php" class="form-container">
+                <h1>客服服務</h1>
+                <!-- 對話框標題 -->
+                <label for="msg"><b>Message</b></label>
+                @*下拉選單，讓客戶選擇*@
+                <select id="optionsDropdown" onchange="updateTextarea()">
+                    <option value="無">無</option>
+                    <option value="任務接單者態度不佳">任務接單者態度不佳</option>
+                    <option value="任務掛單者內容不完整">任務內容不完整</option>
+                    <option value="排隊排錯時間">排隊排錯時間</option>
+                    <option value="時間截止後未看到接單者">時間截止後未看到接單者</option>
+
+                </select>
+                <!-- 可以直接輸入訊息，互動程式寫入 -->
+                <textarea id="msgInput" placeholder="請問有什麼可以為您服務? 請選擇您想反應的事件。" name="msg" required></textarea>
+
+                <!-- 處理選擇的按鈕 -->
+                <button type="button" class="btn1" onclick="sendSelectedOption()">Send</button>
+
+                <button type="button" class="btn1 cancel" onclick="closeForm()">Close</button>
+
+                <!-- 訊息送出 -->
+                @*<button type="submit" class="btn1">Send</button>*@
+                <!-- 關閉對話框 -->
+                @*<button type="button" class="btn1 cancel" onclick="closeForm()">Close</button>*@
+            </form>
+        </div>
+    </div>
+
+    @* //客服的JS*@
+    <script>
+
+        //前端與後端之間實現即時通訊，尚未使用
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        // 這段在寫連線的部分，待研究
+        connection.on("ReceiveResponse", function (response) {
+            const li = document.createElement("li");
+            li.textContent = response;
+            document.getElementById("messages").appendChild(li);
+
+            // 更新回應的區域
+            document.getElementById("responseArea").innerHTML = response;
+            // 將訊息顯示在 textarea 中
+            document.getElementById("msgInput").value = response;
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function updateTextarea() {
+            const dropdown = document.getElementById("optionsDropdown");
+            const selectedOption = dropdown.options[dropdown.selectedIndex].text;
+
+            // 更新 textarea
+            document.getElementById("msgInput").value = `我想反應：${selectedOption}`;
+        }
+        function sendSelectedOption() {
+            // 直接在前端顯示已收到的消息
+            const responseMessage = "已收到訊息，謝謝您的選擇，將盡速為您解決。";
+            document.getElementById("msgInput").value = "已收到訊息，謝謝您的選擇，將盡速為您解決。";
+
+
+            const message = `我想反應：${selectedOption}`;
+            connection.invoke("SendOption", message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            function displayResponse(message) {
+                const responseArea = document.getElementById("responseArea");
+                responseArea.innerHTML = message;
+            }
+        }
+    </script>
+
+
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - PaiPaiGO - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="border-top footer footer-expand-lg">
+        <div class="container-md text-center">
+            <div class="row">
+                <div class="col">
+
+                    <div class="card-body">
+                        <img src="~/img/Logo.png" style="width:13em" alt="">
+                        @*<h3 class="card-title">PaiPaiGo</h3>*@
+                        <br /><br />
+                        <p style="font-size: 20px;"> 客服時間: 8:00 ~ 18:00 </p>
+                        <p style="font-size: 20px;">(假日除外)</p>
+                        <a href="#"><img width="25" height="25" src="~/img/FB.png" alt="#"></a>
+                        &ensp;&ensp;
+                        <a href="#"><img width="25" height="25" src="~/img/IG.png" alt="#"></a>
+                    </div>
+                </div>
+
+                <div class="col">
+
+                    <div class="card-body">
+                        <h4 class="card-title">任務專區</h4>
+                        <br>
+                        <a href="#" class="card-text">發單任務</a>
+                        <br>
+                        <a href="#" class="card-text">接單任務</a>
+                        <br>
+                        <a href="#" class="card-text">任務紀錄</a>
+                        <br>
+                        <a href="#" class="card-text">代購任務</a>
+                        <br>
+                        <a href="#" class="card-text">代排隊任務</a>
+                    </div>
+                </div>
+                <div class="col">
+
+                    <div class="card-body">
+                        <h4 class="card-title">公司</h4>
+                        <br>
+                        <a href="#" class="card-text">關於我們</a>
+                        <br />
+                        <a href="#" class="card-text">服務條款</a>
+                        <br>
+                        <a href="#" class="card-text">媒體報導</a>
+                        <br>
+                        <a href="#" class="card-text">聯絡我們</a>
+                        <br>
+                        <a href="#" class="card-text">加入我們</a>
+
+                    </div>
+                </div>
+                <div class="col">
+
+                    <div class="card-body">
+                        <h4 class="card-title">會員服務</h4>
+                        <br>
+                        <a href="#" class="card-text">登入/登出</a>
+                        <br>
+                        <a href="#" class="card-text">我的帳戶</a>
+                        <br>
+                        <a href="#" class="card-text">幫助中心</a>
+                        <br>
+                        <a href="#" class="card-text">任務訊息</a>
+                        <br>
+                        <a href="#" class="card-text">有話要說</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

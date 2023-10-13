@@ -1,0 +1,45 @@
+﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>  // 確保模型類型與你的任務類型匹配
+          <!-- 與上方選單距離   /   hover   /      邊框 -->
+<table class="table mt-4 table table-hover table table-bordered fs-3" id="tableContainer">
+    <thead>
+        <tr>
+            <th>會員id</th>
+            <th>任務訂單編號</th>
+            <th>種類</th>
+            <th>類別</th>
+            <th>任務名稱</th>
+            <th>價格</th>
+            <th>刊登日期</th>
+            <th>任務時間</th>
+            <th>狀態</th>
+            <th>接單人員id</th>
+            <th>評價</th>
+            <th>上下架</th>
+        </tr>
+    </thead>
+        @foreach (var item in Model)
+        {
+    <tbody>
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.OrderMemberId)</td>
+                <td>@Html.DisplayFor(modelItem => item.MissionId)</td>
+                <td>@Html.DisplayFor(modelItem => item.CategoryNavigation.CategoryName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Tags)</td>
+                <td>@Html.DisplayFor(modelItem => item.MissionName)</td>
+                <td>@Html.DisplayFor(modelItem => item.MissionAmount)</td>
+                <td>@Html.DisplayFor(modelItem => item.OrderTime)</td>
+                <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MissionStatus)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.AcceptMemberId)</td>
+                <td>4星</td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input mission-checkbox" type="checkbox" @(item.MissionStatus == "發布中" ? "checked" : "") data-mission-id="@item.MissionId" data-initial-status="@item.MissionStatus" />
+                    </div>
+                </td>
+            </tr>
+    </tbody>
+        }
+</table>

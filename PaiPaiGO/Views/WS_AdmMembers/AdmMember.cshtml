@@ -1,0 +1,229 @@
+﻿@model IEnumerable<PaiPaiGO.Models.Member>
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員 會員</title>
+
+    <!-- JQ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Boostrap 5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <style>
+        /* 瑋珊新增的樣式 */
+        /* 上方選單 */
+        .menu {
+            width: 8em;
+            margin-right: 2em;
+            /* 選單間距 */
+        }
+
+        /* 關鍵字寬度 */
+        .search-input {
+            width: 10em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid mt-2">
+        <div class="row">
+            <!-- 左側nav -->
+            <div class=" col-1 d-flex flex-column  bg-light">
+                <ul class="nav nav-pills nav-flush flex-column mb-auto text-left">
+                    <li>
+                        <a asp-controller="WS_AdmMissions" asp-action="WS_AdmMission" class="nav-link py-3 border-bottom">
+                            <i class="fa-solid fa-list-check" style="font-size: 30px;" title="任務明細"
+                               data-bs-toggle="tooltip" data-bs-placement="right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="WS_AdmMembers" asp-action="AdmMember" class="nav-link py-3 border-bottom">
+                            <i class="fa-solid fa-circle-user" style="font-size: 30px;" title="會員管理"
+                               data-bs-toggle="tooltip" data-bs-placement="right"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="WS_Opinions" asp-action="AdmOpinion" class="nav-link  py-3 border-bottom">
+                            <i class="fa-solid fa-star" style="font-size: 30px;" title="評分 | 檢舉 管理"
+                               data-bs-toggle="tooltip" data-bs-placement="right"></i>
+                        </a>
+                    </li>
+                    @*<li>
+                        <a href="#" class="nav-link py-3 border-bottom">
+                            <i class="fa-solid fa-gear" style="font-size: 30px;" title="設定" data-bs-toggle="tooltip"
+                               data-bs-placement="right"></i>
+                        </a>
+                    </li>*@
+                </ul>
+            </div>
+
+            <!-- 中間區塊 -->
+            <div class="container col-10">
+                <!-- 上方選單-->
+                <div class="mt-3 d-flex">
+                    <select class="form-select menu">
+                        <option>帳號狀態</option>
+                        <option>啟用中</option>
+                        <option>停權中</option>
+                    </select>
+                    <input type="text" class="form-control search-input" placeholder="關鍵字...">
+
+                </div>
+                <table class="table table-condensed table-striped">
+                    <!-- 標題 -->
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>會員編號</th>
+                            <th>會員姓名</th>
+                            <th>會員帳號</th>
+                            <th>連動帳號</th>
+                            <th>帳號狀態<br>修改日期</th>
+                            <th>警告</th>
+                            <th>停權</th>
+                        </tr>
+                    </thead>
+                    <!-- 內容 -->
+                  
+                    @foreach (var item in Model)
+                    {
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="btn btn-default btn-xs" data-bs-toggle="collapse"
+                                            data-bs-target=".test@(item.MemberId)">
+                                        <i class="fa-solid fa-eye"></i>
+                                     </button>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.MemberId)</td>
+                                <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.MemberEmail)</td>
+                                <td>無</td>
+                                <td>@Html.DisplayFor(modelItem => item.MemberStatus)<br>2030.01.01</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#myModal">
+                                        查閱
+                                    </button>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked>
+                                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- 內容再展開 -->
+                            <tr>
+                                <td colspan="12" class="hiddenRow">
+                                    <div class="collapse test@(item.MemberId)">
+                                        <!-- 內容展開-排版調整 -->
+                                        <table class="table table-striped">
+                                            <!-- 內容展開-標題 -->
+                                            <thead>
+                                                <tr class="info">
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th> <!-- 空列 -->
+                                                    <th>通訊地</th>
+                                                    <th>手機號碼</th>
+                                                </tr>
+                                            </thead>
+                                            <!-- 內容展開-內文 -->
+                                            <tbody>
+                                                <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+                                                    <td></td>
+                                                    <td></td> <!-- 空列 -->
+                                                    <th></th> <!-- 空列 -->
+                                                    <td>@Html.DisplayFor(modelItem => item.MemberCity)
+                                                        @Html.DisplayFor(modelItem => item.MemberTownship)
+                                                        @Html.DisplayFor(modelItem => item.MemberAddress)
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.MemberPhoneNumber)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+
+                <!-- 彈跳視窗 -->
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">警告紀錄</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <table>
+                                    <tr>
+                                        <th>任務名稱</th>
+                                        <th>警告日期</th>
+                                        <th>警告內容</th>
+                                    </tr>
+                                @foreach (var item in Model){
+                                    <tr>
+                                        <td>OOXX名稱</td>
+                                        <td>20220101</td>
+                                        <td>選單內容</td>
+                                    </tr>
+                                }
+                                </table>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 換頁按鈕 -->
+                <div class="mt-3 d-flex justify-content-center">
+                    <button class="btn btn-primary">上一頁</button>
+                    <span>目前頁</span>
+                    <button class="btn btn-primary">下一頁</button>
+                </div>
+            </div>
+
+            <!-- 最右邊 -->
+            <div class="col-1">
+                <!-- 这里保留空位，不放任何内容 -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* global bootstrap: false */
+        (function () {
+            'use strict'
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        })()
+
+
+
+
+    </script>
+</body>

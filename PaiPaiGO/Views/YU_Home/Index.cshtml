@@ -1,0 +1,388 @@
+﻿@model Index
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fontpage.css" asp-append-version="true" />
+
+    <style>
+        body {
+            background-color: #ABD4D3;
+            min-width: 320px; /* 設定最小寬度為320像素 */
+            margin: 0;
+            font-size: 28px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            // Add smooth scrolling to all links when clicked 點擊時為所有連結添加平滑滾動
+            $("a").on('click', function (event) {
+                // Make sure this.hash has a value before overriding default behavior 在覆寫預設行為之前確保 this.hash 有一個值
+                if (this.hash !== "") {
+                    // Prevent default anchor click behavior 防止預設錨點點擊行為
+                    event.preventDefault();
+                    // Store hash
+                    var hash = this.hash;
+                    // Calculate the target scroll position 計算目標滾動位置
+                    var targetOffset = $(hash).offset().top;
+                    // Using jQuery's animate() method to add smooth page scroll 使用 jQuery 的 animate() 方法新增平滑的頁面滾動
+                    $('html, body').animate({
+                        scrollTop: targetOffset
+                    }, 800, function () {
+                        // Add hash (#) to URL when done scrolling (default click behavior) 完成滾動後將井號 (#) 新增至 URL（預設點擊行為）
+                        window.location.hash = hash;
+                    });
+                }
+            });
+
+            // Enable regular page scroll when using the mouse scroll wheel 使用滑鼠滾輪時啟用常規頁面滾動
+            var scrollTarget;
+            var isScrolling = false;
+
+            $(window).on('mousewheel', function (event) {
+                // Check if the user is scrolling up or down 檢查使用者是否向上或向下捲動
+                var delta = event.originalEvent.deltaY;
+
+                if (delta < 0) {
+                    // Scrolling up 向上捲動
+                    scrollTarget = findPreviousSection();
+                } else {
+                    // Scrolling down 向下捲動
+                    scrollTarget = findNextSection();
+                }
+
+                if (!isScrolling) {
+                    isScrolling = true;
+                    $('html, body').stop().animate({
+                        scrollTop: scrollTarget
+                    }, 800, function () {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            function findNextSection() {
+                var currentOffset = $(window).scrollTop();
+                var windowHeight = $(window).height();
+
+                // Calculate the offsets of sections 2, 3, and 4 計算第 2、3 和 4 部分的偏移量
+                var section2Offset = $('#section2').offset().top;
+                var section3Offset = $('#section3').offset().top;
+                var section4Offset = $('#section4').offset().top;
+
+                // Determine which section to jump to based on current scroll position 根據目前捲動位置決定跳到哪個部分
+                if (currentOffset < section2Offset) {
+                    return section2Offset;
+                } else if (currentOffset < section3Offset) {
+                    return section3Offset;
+                } else if (currentOffset < section4Offset) {
+                    return section4Offset;
+                } else {
+                    // User is at the end; stay on the last section 用戶已到最後； 留在最後一部分
+                    return section4Offset;
+                }
+            }
+
+            function findPreviousSection() {
+                var currentOffset = $(window).scrollTop();
+
+                // Calculate the offsets of sections 2, 3, and 4
+                var section2Offset = $('#section2').offset().top;
+                var section3Offset = $('#section3').offset().top;
+                var section4Offset = $('#section4').offset().top;
+
+                // Determine which section to jump to based on current scroll position 根據目前捲動位置決定跳到哪個部分
+                if (currentOffset <= section2Offset) {
+                    // User is at the beginning; stay on the first section 使用者處於開始狀態； 留在第一部分
+                    return 0;
+                } else if (currentOffset <= section3Offset) {
+                    return section2Offset;
+                } else if (currentOffset <= section4Offset) {
+                    return section3Offset;
+                } else {
+                    return section4Offset;
+                }
+            }
+        });
+
+        //定義到哪個頁面按鈕的顏色
+        $(document).ready(function () {
+            // Add smooth scrolling to all links when clicked
+            $("a").on('click', function (event) {
+                // Make sure this.hash has a value before overriding default behavior
+                if (this.hash !== "") {
+                    // Prevent default anchor click behavior
+                    event.preventDefault();
+                    // Store hash
+                    var hash = this.hash;
+                    // Calculate the target scroll position
+                    var targetOffset = $(hash).offset().top;
+                    // Using jQuery's animate() method to add smooth page scroll
+                    $('html, body').animate({
+                        scrollTop: targetOffset
+                    }, 800, function () {
+                        // Add hash (#) to URL when done scrolling (default click behavior)
+                        window.location.hash = hash;
+                    });
+                }
+            });
+
+            // Enable regular page scroll when using the mouse scroll wheel
+            var scrollTarget;
+            var isScrolling = false;
+
+            $(window).on('mousewheel', function (event) {
+                // Check if the user is scrolling up or down
+                var delta = event.originalEvent.deltaY;
+
+                if (delta < 0) {
+                    // Scrolling up
+                    scrollTarget = findPreviousSection();
+                } else {
+                    // Scrolling down
+                    scrollTarget = findNextSection();
+                }
+
+                if (!isScrolling) {
+                    isScrolling = true;
+                    $('html, body').stop().animate({
+                        scrollTop: scrollTarget
+                    }, 800, function () {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // Change button colors based on current section
+            $(window).on('scroll', function () {
+                var currentOffset = $(window).scrollTop();
+
+                // Calculate the offsets of sections
+                var section1Offset = $('#section1').offset().top;
+                var section2Offset = $('#section2').offset().top;
+                var section3Offset = $('#section3').offset().top;
+                var section4Offset = $('#section4').offset().top;
+
+                // Change button colors based on current section
+                if (currentOffset < section2Offset) {
+                    $('#button1').addClass('active-button').removeClass('inactive-button');
+                    $('#button2').removeClass('active-button').addClass('inactive-button');
+                    $('#button3').removeClass('active-button').addClass('inactive-button');
+                    $('#button4').removeClass('active-button').addClass('inactive-button');
+                } else if (currentOffset < section3Offset) {
+                    $('#button1').removeClass('active-button').addClass('inactive-button');
+                    $('#button2').addClass('active-button').removeClass('inactive-button');
+                    $('#button3').removeClass('active-button').addClass('inactive-button');
+                    $('#button4').removeClass('active-button').addClass('inactive-button');
+                } else if (currentOffset < section4Offset) {
+                    $('#button1').removeClass('active-button').addClass('inactive-button');
+                    $('#button2').removeClass('active-button').addClass('inactive-button');
+                    $('#button3').addClass('active-button').removeClass('inactive-button');
+                    $('#button4').removeClass('active-button').addClass('inactive-button');
+                } else {
+                    $('#button1').removeClass('active-button').addClass('inactive-button');
+                    $('#button2').removeClass('active-button').addClass('inactive-button');
+                    $('#button3').removeClass('active-button').addClass('inactive-button');
+                    $('#button4').addClass('active-button').removeClass('inactive-button');
+                }
+            });
+
+            // Helper functions to find next and previous sections
+            function findNextSection() {
+                var currentOffset = $(window).scrollTop();
+                var windowHeight = $(window).height();
+
+                // Calculate the offsets of sections
+                var section1Offset = $('#section1').offset().top;
+                var section2Offset = $('#section2').offset().top;
+                var section3Offset = $('#section3').offset().top;
+                var section4Offset = $('#section4').offset().top;
+
+                // Determine which section to jump to based on current scroll position
+                if (currentOffset < section2Offset) {
+                    return section2Offset;
+                } else if (currentOffset < section3Offset) {
+                    return section3Offset;
+                } else if (currentOffset < section4Offset) {
+                    return section4Offset;
+                } else {
+                    // User is at the end; stay on the last section
+                    return section4Offset;
+                }
+            }
+
+            function findPreviousSection() {
+                var currentOffset = $(window).scrollTop();
+
+                // Calculate the offsets of sections
+                var section1Offset = $('#section1').offset().top;
+                var section2Offset = $('#section2').offset().top;
+                var section3Offset = $('#section3').offset().top;
+                var section4Offset = $('#section4').offset().top;
+
+                // Determine which section to jump to based on current scroll position
+                if (currentOffset <= section1Offset) {
+                    // User is at the beginning; stay on the first section
+                    return 0;
+                } else if (currentOffset <= section2Offset) {
+                    return section1Offset;
+                } else if (currentOffset <= section3Offset) {
+                    return section2Offset;
+                } else if (currentOffset <= section4Offset) {
+                    return section3Offset;
+                } else {
+                    return section4Offset;
+                }
+            }
+        });
+
+
+    </script>
+
+
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="btnn">
+            <a href="#section1">
+                <button id="button1" class="active-button"
+                        style="border-radius: 5px; border: none; padding: 15px 8px;"></button>
+            </a>
+            <a href="#section2">
+                <button id="button2" class="inactive-button"
+                        style="border-radius: 5px; border: none; padding: 15px 8px;"></button>
+            </a>
+            <a href="#section3">
+                <button id="button3" class="inactive-button"
+                        style="border-radius: 5px; border: none; padding: 15px 8px;"></button>
+            </a>
+            <a href="#section4">
+                <button id="button4" class="inactive-button"
+                        style="border-radius: 5px; border: none; padding: 15px 8px;"></button>
+            </a>
+        </div>
+    </div>
+
+    <!-- 第一頁 -->
+
+    <div class="content">
+
+        <div class="main" id="section1">
+            <img src="./img/Logo.png" alt="left" style="width: 500px; height: 200px; position: absolute; left:4%;">
+            <div class="bdtext">
+                <img src="./img/Home1-1.gif" style="width: 100px; height: 150px; display: block; margin-bottom: -150px;" alt="">
+                <h1>你 我<br>都能幫忙!</h1>
+                <p style="color: #0A5812; font-size: 35px;">原來大家都在這裡， <br> 關於代購、代排隊的互助基地。</p>
+                <a href="#">
+                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                        探索任務
+                    </button>
+                </a>
+            </div>
+            <div class="bdimg">
+                <img src="./img/Home1.png" style="width:1200px; height:655px;" alt="尚未放入圖片">
+            </div>
+
+        </div>
+    </div>
+    <!-- 第二頁 -->
+    <div class="content">
+        <div class="main" id="section2" style="text-align: center;">
+            <!-- text-align: center 文字置中 -->
+            <!-- <img src="./img/Logo.png" alt="left" style="width: 250px; height: 50px;"> -->
+            <br>
+            <h1 style="color: #23527A;">專為忙碌的你!</h1>
+            <br><br>
+            <p style="font-size: 35px;">一系列的代購、代排隊相關類別，提供給忙碌的你 <br> 讓你在忙碌之餘依舊可以取得需要的商品</p>
+            <br><br>
+            <div class="container">
+                <div class="item">
+                    <img src="~/img/notes1.png" alt="尚未放入圖片">
+                    <p><a href="#">發布/接受任務</a></p>
+                </div>
+                &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                <div class="item">
+                    <img src="./img/map1.png" alt="尚未放入圖片">
+                    <p><a href="#">選擇地點</a></p>
+                </div>
+                &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                <div class="item">
+                    <img src="~/img/shake hands1.png" alt="尚未放入圖片">
+                    <p><a href="#">交易完成</a></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 第三頁 -->
+    <div class="content">
+        <div class="main" id="section3">
+            <!-- <img src="./img/Logo.png" alt="left" style="float: left; width: 250px; height: 50px;" > -->
+            <div class="bdtext1">
+                <h1 style="color: #23527A;"> 代購 & 代排隊的新選擇</h1>
+                <p style="font-size: 35px;"> 透過地圖的搜索任務與案件 <br> 在網站上，你可以尋求協助，也可以幫助別人!</p>
+                <p style="font-size: 35px;">還在等什麼? <br> 你想要尋求協助還是幫助他人呢?</p>
+                <br>
+                <a href="#">
+                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                        探索任務
+                    </button>
+                </a>
+                &ensp;&ensp;
+                <a href="#">
+                    <button style="background-color: blue; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                        刊登任務
+                    </button>
+                </a>
+            </div>
+            <div class="bdimg1">
+                <img src="~/img/2.png" style="float: right" alt="尚未放入圖片">
+            </div>
+        </div>
+    </div>
+
+    <!-- 第四頁 -->
+    <div class="content">
+        <div class="main" id="section4">
+            <div class="bdtext2">
+                <!-- <img src="./img/Logo.png" alt="left" style="width: 250px; height: 50px;"> -->
+
+                <h1 style="color: #23527A; text-align:center;"> 關於我們!!!</h1>
+                <p style="font-size: 32px;">
+                    我們是一個代買與代排隊網站，提供會員們可以進行代買與代排隊，並以代買與代排隊來尋找可以協助的人。<br>
+
+                    在台灣已經有很多徵才的網站，但少有個平台，可以整合本地當下有時間的人，使得每次無法親自去採購或是排隊時，只能選擇放棄。
+                    <br>
+                    不過，現在有了更好的辦法了，因為我們的出現，讓你的選擇不再只是放棄。
+                </p>
+
+                <h3 style="color: #130FD1;">都讀到這了，是該探索適合的案件了!!!</h3>
+                <a href="#">
+                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                        探索任務
+                    </button>
+                </a>
+            </div>
+            <div class="bdimg2">
+                <img src="~/img/Home4.gif" style="width: 700px; height: 700px;" alt="尚未放入圖片">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

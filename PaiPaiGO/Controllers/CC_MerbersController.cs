@@ -117,8 +117,6 @@ namespace paipaigo1005.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Resgister([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,Gearing")] Member member) {
-            //要在VIEW內有值才能把資料送進去，但在VIEW有值下面這邊也改的話，送進去的值會以下面這個為主
-            //member.MemberPostcode = "408";
 
             var maxId = _context.Members
                     .AsEnumerable() // 轉為内存查詢以使用LINQ to Objects

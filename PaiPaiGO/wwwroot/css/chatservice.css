@@ -22,6 +22,7 @@ width: 80px;
 /* border-radius: 20px; */
 }
 
+
 #countdown-icon:hover {
 background-color: aqua;
 }
@@ -101,6 +102,22 @@ padding: 16px 20px;
 .form-container .btn1:hover, .open-button:hover {
 opacity: 1;
 }
+/*時間的對話*/
+.chat-popups {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+border: 3px solid #f1f1f1;
+z-index: 9;
+}
+.btn1.cancels {
+background-color: brown;
+padding: 6px 10px;
+width: 40%;
+}
+
 
 #timePopup {
 display: none;
@@ -116,3 +133,77 @@ border: 1px solid #ccc;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 z-index: 1000;
 }
+
+
+.notification-popup {
+display: none;
+position: fixed;
+bottom: 22em;
+right: 28em;
+background-color: #f1f1f1;
+border: 1px solid #ddd;
+padding: 20px;
+z-index: 1;
+}
+
+.notification-popup #notificationContent {
+font-size: 20px; /* 調整字體大小 */
+margin: 0; /* 清除預設的 margin */
+}
+.notification-popup .close {
+color: #000;
+float: right;
+font-size: 20px;
+font-weight: bold;
+cursor: pointer;
+}
+
+.notification-popup .close:hover {
+color: #f00;
+}
+
+/*通知*/
+.dropbtn {
+color: white;
+padding: 20%;
+font-size: 16px;
+border: none;
+cursor: pointer;
+}
+
+/*.dropbtn:hover, .dropbtn:focus {
+background-color: #2980B9;
+}*/
+
+/*.dropdown {
+position: relative;
+display: inline-block;
+}*/
+
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #f1f1f1;
+min-width: 160px;
+overflow: auto;
+box-shadow: 0em 10em 18em 0em rgba(0,0,0,0.2);
+z-index: 1;
+}
+
+.dropdown-content a {
+color: black;
+padding: 18px 22px;
+font-size:18px;
+text-decoration: none;
+display: block;
+}
+
+/*.dropdown a:hover {
+background-color: #ddd;
+}*/
+
+.show {
+display: block;
+}
+
+
