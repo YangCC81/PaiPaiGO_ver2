@@ -274,7 +274,7 @@ namespace paipaigo1005.Controllers {
             // 重新導向首頁
             return RedirectToAction("Login");
             //HTML內程式碼
-            //< a href = "@Url.Action("Logout", "ControllerName")" > 登出 </ a >
+            //< a href = "@Url.Action("Logout", "CC_Members")" > 登出 </ a >
         }
         #endregion
 
