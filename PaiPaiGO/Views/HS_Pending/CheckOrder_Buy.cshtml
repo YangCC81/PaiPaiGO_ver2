@@ -1,0 +1,273 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model PaiPaiGO.Models.Mission
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <style>
+        /* 新增的 CSS 樣式 */
+        #costDetails {
+            font-size: 20px; /* 內容字體大小為20px */
+            margin-top: 10px;
+            text-align: right;
+        }
+
+            #costDetails p {
+                margin: 0px 0;
+            }
+
+        /* 標題字體大小為25px */
+        h1,
+        strong {
+            font-size: 25px;
+        }
+
+        /* 內容字體大小為20px */
+        span {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <form asp-action="PaiToDatabase">
+    <div class="row g-3">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10" style="background-color: #B5DFF1;">
+            <h1 style="text-align: center;">任務確認</h1>
+            <div class="row">
+                <div class="col-md-1"></div>
+
+                <!-- 左側內容 -->
+                <div class="col-md-4">
+                        <p><strong>任務種類：</strong><span id="taskType">@ViewBag.Orderclass</span></p>
+                        <p><strong>標籤：</strong><span id="taskLabel">@ViewBag.BuyLabel</span></p>
+                        <p><strong>名稱：</strong><span id="taskName">@ViewBag.BuyName</span></p>
+                        <p><strong>執行地點：</strong><span id="taskLocation">@ViewBag.BuyLocation</span></p>
+                        <p><strong>商品交貨時間：</strong><span id="deliveryTime">@TempData["BuyDelivery"]</span></p>
+                        <p><strong>截止時間：</strong><span id="deliveryTime">@TempData["BuyDeadline"]</span></p>
+                        <p><strong>商品交貨地址：</strong><span id="deliveryAddress">@ViewBag.BuyCity @ViewBag.BuyDistrict @ViewBag.BuyAddress</span></p>
+                        <p><strong>收貨方式：</strong><span id="deliveryMethod">@ViewBag.BuyDeliveryMethod</span></p>
+                    <!-- 新增的圖片附件部分 -->
+                    <p><strong>圖片附件：</strong><span id="imageAttachment">
+                                @if (!string.IsNullOrEmpty(ViewBag.BuyImageData))
+                                {
+                                    <img src="data:image/jpeg;base64,@ViewBag.BuyImageData" alt="Uploaded Image" style="width:150px" />
+                                }
+                    </span></p>
+                </div>
+                <div class="col-md-1"></div>
+
+                <!-- 右側內容 -->
+                <div class="col-md-5">
+                    <!-- 任務內容（唯讀） -->
+                    <div class="col">
+                        <label for="buy-task-content" class="form-label me-2" style="font-size: 25px;">任務內容:</label>
+                        <textarea class="form-control" rows="5" placeholder="任務內容..." id="buy-task-content" style="font-size: 20px;"
+                                      readonly>@ViewBag.BuyTaskContent</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7"></div>
+                        <div class="col-md-5">
+                            <!-- 費用明細 -->
+                            <div id="costDetails" style="background-color: gainsboro;width: 200px;text-align: left;">
+                                <p><strong>任務金額：</strong><span id="taskAmount">$@ViewBag.BuyAmount</span></p>
+                                <p><strong>接單收費：</strong><span id="orderFee">$35</span></p>
+                                <p><strong>平台抽成：</strong><span id="platformFee">$15</span></p>
+                                <p><strong>總金額：</strong><span id="totalAmount">$@ViewBag.BuyTotalAmount</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+
+                    <!-- 修改和付款按鈕 -->
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
+                        <button class="btn btn-success" style="background-color: #4B3DE7;">付款</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+    <div >
+    
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MissionId" class="control-label"></label>
+                <input asp-for="MissionId" class="form-control" value="@ViewBag.MissionId" />
+                <span asp-validation-for="MissionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <input asp-for="Category" class="form-control" value="@ViewBag.Category" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label"></label>
+                <input asp-for="Tags" class="form-control" value="@ViewBag.BuyLabel" />
+                <span asp-validation-for="Tags" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OrderMemberId" class="control-label"></label>
+                <input asp-for="OrderMemberId" class="form-control" value="002" />
+                <span asp-validation-for="OrderMemberId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcceptMemberId" class="control-label"></label>
+                <input asp-for="AcceptMemberId" class="form-control" />
+                <span asp-validation-for="AcceptMemberId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MissionName" class="control-label"></label>
+                <input asp-for="MissionName" class="form-control" value="@ViewBag.BuyName" />
+                <span asp-validation-for="MissionName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MissionAmount" class="control-label"></label>
+                <input asp-for="MissionAmount" class="form-control" value="@ViewBag.BuyAmount" />
+                <span asp-validation-for="MissionAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Postcode" class="control-label"></label>
+                <input asp-for="Postcode" class="form-control" value="@TempData["BuyPostcode"]" />
+                <span asp-validation-for="Postcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FormattedMissionAmount" class="control-label"></label>
+                <input asp-for="FormattedMissionAmount" class="form-control" value="@ViewBag.BuyTotalAmount" />
+                <span asp-validation-for="FormattedMissionAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocationCity" class="control-label"></label>
+                <input asp-for="LocationCity" class="form-control" value="@ViewBag.BuyCity" />
+                <span asp-validation-for="LocationCity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocationDistrict" class="control-label"></label>
+                <input asp-for="LocationDistrict" class="form-control" value="@ViewBag.BuyDistrict" />
+                <span asp-validation-for="LocationDistrict" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" value="@ViewBag.BuyAddress" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeliveryDate" class="control-label"></label>
+                <input asp-for="DeliveryDate" class="form-control" value="" />
+                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeliveryTime" class="control-label"></label>
+                <input asp-for="DeliveryTime" class="form-control" value="@TempData["BuyDeliveryTime"]" />
+                <span asp-validation-for="DeliveryTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeadlineDate" class="control-label"></label>
+                <input asp-for="DeadlineDate" class="form-control" value=""/>
+                <span asp-validation-for="DeadlineDate" class="text-danger"></span>
+            </div>
+            @{
+                DateTime DeliveryDate;
+                if (DateTime.TryParse(@TempData["BuyDelivery"]?.ToString(), out DeliveryDate))
+                {
+                    var apple = DeliveryDate.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ', 'T');
+                    ViewBag.apple = apple;
+                }
+                DateTime parsedDate;
+                if (DateTime.TryParse(@TempData["BuyDeadline"]?.ToString(), out parsedDate))
+                {
+                    var Bee = parsedDate.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ', 'T');
+                    ViewBag.Bee = Bee;
+                }
+                DateTime nowdatetime;
+                if (DateTime.TryParse(DateTime.Now.ToString(), out nowdatetime))
+                {
+                    var car = nowdatetime.ToString("yyyy-MM-dd HH:mm").Replace(' ', 'T');
+                    ViewBag.car = car;
+                }
+
+            }
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // 為 DeliveryDate 設定值
+                    var inputDelivery = document.querySelector("input[name='DeliveryDate']");
+                    var inputOrderTime = document.querySelector("input[name='OrderTime']");
+                    var inputDeadline = document.querySelector("input[name='DeadlineDate']");
+                    if (inputDelivery) {
+                        inputDelivery.value = "@ViewBag.apple"; // ISO string format
+                    }
+                    if (inputDeadline) {
+                        inputDeadline.value = "@ViewBag.Bee"; // ISO string format
+                    }
+                    if (inputOrderTime) {
+                        inputOrderTime.value = "@ViewBag.car"; // ISO string format
+                    }
+
+                });
+            </script>
+            <div class="form-group">
+                <label asp-for="DeadlineTime" class="control-label"></label>
+                <input asp-for="DeadlineTime" class="form-control" value="@TempData["BuyDeadlineTime"]" />
+                <span asp-validation-for="DeadlineTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MissionDescription" class="control-label"></label>
+                <input asp-for="MissionDescription" class="form-control" value="@ViewBag.BuyTaskContent" />
+                <span asp-validation-for="MissionDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeliveryMethod" class="control-label"></label>
+                <input asp-for="DeliveryMethod" class="form-control" value="@ViewBag.BuyDeliveryMethod" />
+                <span asp-validation-for="DeliveryMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExecutionLocation" class="control-label"></label>
+                <input asp-for="ExecutionLocation" class="form-control" value="@ViewBag.BuyLocation" />
+                <span asp-validation-for="ExecutionLocation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MissionStatus" class="control-label"></label>
+                <input asp-for="MissionStatus" class="form-control" value="發布中"/>
+                <span asp-validation-for="MissionStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OrderTime" class="control-label"></label>
+                <input asp-for="OrderTime" class="form-control" value=""/>
+                <span asp-validation-for="OrderTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcceptTime" class="control-label"></label>
+                <input asp-for="AcceptTime" class="form-control" />
+                <span asp-validation-for="AcceptTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label"></label>
+                <input asp-for="ImagePath" class="form-control" value="@ViewBag.BuyImageData" />
+                <span asp-validation-for="ImagePath" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <input id="create-button" type="submit" value="Create" class="btn btn-primary" />
+            </div> *@
+        </div>
+    </form>
+</body>
+
+</html>

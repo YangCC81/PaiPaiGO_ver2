@@ -1,0 +1,118 @@
+﻿.icon-bar {
+position: fixed;
+top: 100%;
+right: 20px;
+/* -webkit-transform: translateY(-50%);
+-ms-transform: translateY(-50%);
+transform: translateY(-50%); */
+}
+
+/* 時間的基本設定 */
+.timee {
+background-color: rgb(33, 177, 177);
+color: white;
+padding: 10px 18px;
+border: none;
+cursor: pointer;
+opacity: 0.8;
+position: fixed;
+bottom: 300px;
+right: 10px;
+width: 80px;
+/* border-radius: 20px; */
+}
+
+#countdown-icon:hover {
+background-color: aqua;
+}
+
+
+/*為打開聊天室窗的按鈕，設定位置*/
+.open-button {
+background-color: #04AA6D;
+color: white;
+padding: 10px 18px;
+border: none;
+cursor: pointer;
+opacity: 0.8;
+position: fixed;
+bottom: 230px;
+right: 10px;
+width: 80px;
+/* border-radius: 10px; */
+}
+
+
+/* 彈出聊天室窗，一開始設定隱藏 */
+.chat-popup {
+display: none;
+position: fixed;
+max-width: 350px;
+bottom: 5em;
+right: 15px;
+border: 3px solid #f1f1f1;
+z-index: 9;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 將樣式加入容器中 */
+.form-container {
+max-width: 300px;
+padding: 10px;
+background-color: white;
+}
+
+/* 輸入的區塊 */
+.form-container textarea {
+width: 100%;
+padding: 15px;
+margin: 5px 0 22px 0;
+border: none;
+background: #f1f1f1;
+resize: none;
+min-height: 200px;
+}
+
+/* 當文本區域獲得焦點時，執行某些操作 */
+.form-container textarea:focus {
+background-color: #ddd;
+outline: none;
+}
+
+/* 設置提交/發送按鈕的樣式 */
+.form-container .btn1 {
+background-color: #04AA6D;
+color: white;
+padding: 16px 20px;
+border: none;
+cursor: pointer;
+width: 100%;
+margin-bottom: 10px;
+opacity: 0.8;
+}
+
+/* 為取消按鈕添加紅色背景色 */
+.form-container .cancel {
+background-color: red;
+padding: 16px 20px;
+}
+
+/* 為按鈕添加一些懸停效果*/
+.form-container .btn1:hover, .open-button:hover {
+opacity: 1;
+}
+
+#timePopup {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+padding: 20px;
+background-color: red;
+color: whitesmoke;
+border-radius: 18px;
+border: 1px solid #ccc;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+z-index: 1000;
+}

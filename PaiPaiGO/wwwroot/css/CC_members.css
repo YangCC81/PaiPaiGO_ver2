@@ -1,0 +1,26 @@
+﻿body {
+}
+
+
+.c_singinDiv {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 5px 5px 5px #ccc;
+    border: 1px #ccc solid;
+}
+/* 用於電腦瀏覽器的樣式 */
+.d-flex .c_loginImg {
+    display: block; /* 在電腦上顯示圖片 */
+}
+
+/* 用於手機瀏覽器的樣式 */
+@media screen and (max-width: 768px) {
+    .d-flex .c_loginImg {
+        display: none; /* 在手機上隱藏圖片 */
+    }
+
+    .c_singinDiv {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}

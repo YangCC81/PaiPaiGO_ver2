@@ -1,0 +1,112 @@
+﻿.header {
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ABD4D3;
+}
+
+
+
+.container {
+    /* max-width: 1000px; 根據設計選擇合適的最大寬度 */
+    margin: 0 auto; /* 居中對其內容 */
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.item {
+    display: inline-block;
+    vertical-align: top; /* 讓圖片和文字在垂直方向上對齊 */
+    margin: 10px; /* 可以調整圖片和文字之間的間距 */
+}
+
+.item img {
+    max-width: 100%; /* 確保圖片不會超出容器的寬度 */
+}
+
+
+
+.btnn {
+    display: flex;
+    position: fixed;
+    z-index: 2;
+    left: 30px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.bdimg {
+    position: absolute;
+    right: 1%;
+    top: 8%;
+    width: -50%;
+    /*flex: 1;*/
+}
+
+
+.bdtext {
+    float: left;
+    width: 60em;
+    position: relative;
+    top: 250px;
+    left:-15%;
+    max-width: 1200px;
+    flex: 1;
+}
+
+
+
+.bdimg1 {
+    float: right;
+    position: relative;
+    top: 8em;
+}
+
+
+
+.bdtext1 {
+    float: left;
+    /* 文字在左邊 */
+    width: 35em;
+    position: relative;
+    top: 5em;
+}
+
+.bdtext2 {
+    float: left;
+    /* 文字在左邊 */
+    width: 25em;
+    position: relative;
+    right: 0em;
+    top: 5em;
+}
+
+.bdimg2 {
+    float: right;
+    position: relative;
+    top: 5em;
+    right: -4em;
+}
+
+
+/* 定義按鈕顏色 */
+.active-button {
+    background-color: #52c3c3;
+    color: white;
+}
+
+.inactive-button {
+    background-color: #b5b9b9;
+    color: black;
+}

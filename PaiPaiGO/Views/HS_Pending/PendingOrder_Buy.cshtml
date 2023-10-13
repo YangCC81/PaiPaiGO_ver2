@@ -1,0 +1,563 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任務刊登1:10:1</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+    <script src="./js/jquery.twzipcode.js"></script>
+    <script src="./js/twzipcode.js"></script>
+  
+</head>
+<style>
+    /* 通用 CSS 樣式，與前面的代碼相同 */
+    .image-upload {
+        display: none;
+    }
+
+    .image-preview {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .content-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .list-group-item {
+        border: none;
+    }
+
+    #uploaded-images {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .uploaded-image {
+        margin-right: 10px;
+        /* 适当的右边距 */
+    }
+
+    #TWAddress1,#TWAddress2 {
+        float: left;
+        margin-left: 5px;
+        margin-right: 10px;
+        width: 150px
+    }
+
+    /* 新增的 CSS 樣式，字體大小為20px */
+    h1,
+    label,
+    select,
+    input,
+    textarea {
+        font-size: 25px;
+    }
+
+    /* 新增的 CSS 樣式，標題字體大小為25px */
+    h1 {
+        font-size: 25px;
+    }
+</style>
+
+<body>
+    <form method="post" id="orderForm" action="/HS_Pending/PendingOrder_Buy">
+        <div class="container mt-5">
+            <div class="row g-3">
+                <div class="col-md-1"></div>
+                <div class="col-md-10" style="background-color: #BCE5F6;" id="HSfont">
+                    <br>
+                    <h1 class="text-center" style="letter-spacing: 1px;">任務刊登</h1>
+                    <br>
+                    <div class="form-group">
+                        <label for="BuyOrderclass" style="letter-spacing: 1px;">選擇任務類別:</label>
+                        <select class="form-control" name="BuyOrderclass" id="BuyOrderclass"
+                                style="letter-spacing: 2px;font-size: 25px;">
+                            <!-- <option value="請選擇...">請選擇...</option> -->
+                            <option value="排隊">排隊</option>
+                            <option value="購買" selected>購買</option>
+                        </select>
+                    </div>
+                    <!-- 購買表單 -->
+                    <div id="buy-fields">
+                        <!-- 標籤 select 和 名稱 input -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col">
+                                <label for="BuyLabel" class="form-label me-2"
+                                       style="letter-spacing: 1px;">任務標籤:</label>
+                                <select class="form-select" name="BuyLabel" id="BuyLabel" style="max-width: 400px;">
+                                    <!-- 在此添加选项 -->
+                                    <option value="食物">食物</option>
+                                    <option value="日用品">日用品</option>
+                                </select>
+                            </div>
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyName" class="form-label me-2">名稱:</label>
+                                <input type="text" class="form-control" name="BuyName" id="BuyName"
+                                       style="max-width: 400px;">
+                            </div>
+                        </div>
+
+                        <!-- 金額 input -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyLocation" class="form-label me-2">任務執行地點:</label>
+                                <input type="text" class="form-control" name="BuyLocation" id="BuyLocation"
+                                       style="max-width: 400px;">
+                            </div>
+                            <div class="col" >
+                                <label for="BuyAmount" class="form-label me-2">金額:</label>
+                                <input type="text" class="form-control" name="BuyAmount" id="BuyAmount"
+                                       style="max-width: 400px;">
+                            </div>
+                        </div>
+                        
+                        <!-- 交貨時間時間格式的 input -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col">
+                                <label for="BuyDelivery" class="form-label me-2">交貨時間:</label>
+                                <input type="datetime-local" class="form-control" name="BuyDelivery"
+                                       id="BuyDelivery" style="max-width: 400px;">
+                            </div>
+                            <div class="col">
+                                <label for="BuyDeadline" class="form-label me-2">任務截止時間:</label>
+                                <input type="datetime-local" class="form-control" name="BuyDeadline"
+                                       id="BuyDeadline" style="max-width: 400px;">
+                            </div>
+                        </div>
+
+
+                        <!-- 交貨地址縣市 select 和 地區 select -->
+                        @* <div class="row g-3 align-items-center twzipcode">
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyCity" class="form-label me-2">交貨地址 縣市:</label>
+                                <select data-role="county" class="form-select" name="BuyCity" id="BuyCity" style="max-width: 400px;">
+                                    <!-- 在此添加选项 -->
+                                    <option value="測試">測試</option>
+                                </select>
+                            </div>
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyDistrict" class="form-label me-2">地區:</label>
+                                <select data-role="district" class="form-select" name="BuyDistrict" id="BuyDistrict"
+                                        style="max-width: 400px;">
+                                    <!-- 在此添加选项 -->
+                                    <option value="測試">測試</option>
+                                </select>
+                            </div>
+                        </div> *@
+                        <br />
+                        <h3 for="BuyCity" class="form-label me-2">交貨地址:</h3>
+                        <div class="d-flex mt-1 fs-5" id="TWAddress">
+                            @* <label or="City" class="form-label me-2"> 縣市:</label> *@
+
+                            <div class="col-md-2" data-role="county" id="TWAddress1">
+                            </div>
+                            @* <label for="Location" class="form-label me-2">地區:</label><br /> *@
+                            <div class="col-md-2" data-role="district" id="TWAddress2">
+                            </div>
+                            <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
+                            </div>
+                        </div>
+                        <br />
+                        <!-- 交貨地址詳細地址 input -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyAddress" class="form-label me-2">詳細地址:</label>
+                                <input type="text" class="form-control" name="BuyAddress" id="BuyAddress"
+                                       placeholder="請輸入詳細地址">
+                            </div>
+                        </div>
+
+                        <!-- 收貨方式 select 和  -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyDeliveryMethod" class="form-label me-2">收貨方式:</label>
+                                <select class="form-select" name="BuyDeliveryMethod" id="BuyDeliveryMethod"
+                                        style="max-width:400px">
+                                    <!-- 在此添加选项 -->
+                                    <option value="測試">測試</option>
+                                </select>
+                            </div>
+                            @* <div class="col" style="letter-spacing: 1px;">
+                            <label for="buy_remarks" class="form-label me-2">備註:</label>
+                            <input type="text" class="form-control" name="buy_remarks" id="buy_remarks">
+                            </div> *@
+                        </div>
+
+                        <!-- 任務內容和圖片上傳 -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col" style="letter-spacing: 1px;">
+                                <label for="BuyTaskContent" class="form-label me-2"
+                                       style="font-size: 25px;">任務內容:</label>
+                                <textarea class="form-control" rows="5" placeholder="任務內容..." name="BuyTaskContent"
+                                          id="BuyTaskContent" style="font-size: 20px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="row g-3 align-items-center">
+                                <div class="col">
+                                   @*  <!-- <label for="buy_image_upload" class="form-label me-2">上传图片:</label> -->
+                                    <label for="buy_image_upload" class="btn btn-secondary mt-2">上傳圖片</label>
+                                    <input type="file" class="image-upload" id="imageInput" accept="image/*"
+                                           multiple  onchange="previewImages(this, 'buy_uploaded_images')">
+                                    <input type="hidden" id="base64Image" name="Image" />
+                                    <!-- 这里会显示上传的图片 -->
+                                    <div class="uploaded-images" id="buy_uploaded_images"> *@
+                                    <li class="list-group-item">
+                                        <label for="imageInput" class="btn btn-secondary mt-2">上傳圖片</label>
+                                        <input type="file" class="image-upload" id="imageInput" accept="image/*"
+                                               multiple onchange="previewImages(this, 'buy_uploaded_images')">
+                                        <input type="hidden" id="base64Image" name="BuyImage" />
+                                    </li>
+                                    <!-- 上傳的圖片列表 -->
+                                    <li class="list-group-item buy_uploaded_images" id="buy_uploaded_images" name="queue_images">
+                                        <!-- 這裡會顯示上傳的圖片 -->
+                                    </li>
+                                    </div>
+                                </div>
+
+                            </div>
+                    </div><div class="d-flex justify-content-end mt-3">
+                        <input type="submit" value="下一步" id="next-button" class="btn btn-primary mt-3"
+                               style="background-color: #4B3DE7;">
+                    </div>
+                    <div style="height:50px"></div>
+                    </div>
+
+
+                    
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </form>
+    <script>
+        // 當BuyOrderclass字段值變更時
+        document.getElementById("BuyOrderclass").addEventListener("change", function () {
+            var selectedOption = this.value;
+            if (selectedOption === "排隊") {
+                window.location.href = "/HS_Pending/PendingOrder_Pai";
+            }
+        });
+        $("#TWAddress").twzipcode({
+            "css": ["city form-control", "town form-control", "zipcode form-control"],
+            "countyName": "BuyCity", // 指定城市name
+            "districtName": "BuyDistrict",
+            "zipcodeName": "BuyPostcode"
+        });
+        // 監聽訂單類型變化
+        document.getElementById("BuyOrderclass").addEventListener("change", function () {
+            var selectedOption = this.value;
+            var buyFields = document.getElementById("buy-fields");
+            var nextButton = document.getElementById("next-button");
+
+            // 清空所有輸入的值
+            var inputElements = document.querySelectorAll("input[type=text], textarea, input[type=datetime-local]");
+            inputElements.forEach(function (input) {
+                input.value = "";
+                input.setCustomValidity(""); // 重設自訂驗證訊息
+                input.classList.remove("is-invalid"); // 移除紅框
+            });
+
+        });
+
+        // 監聽名稱輸入欄位的變化
+        document.getElementById("BuyName").addEventListener("input", function () {
+            var BuyNameInput = this.value;
+            // 使用正則表達式檢查是否包含中文字
+            var chineseCharacters = BuyNameInput.match(/[\u4e00-\u9fa5]/g);
+            // 如果中文字的數量超過10個，截斷輸入
+            if (chineseCharacters && chineseCharacters.length > 10) {
+                this.value = BuyNameInput.slice(0, 10);
+                showPopover("BuyName", "最多只能輸入10個字");
+            }
+        });
+
+        // 監聽金額輸入欄位的變化
+        document.getElementById("BuyAmount").addEventListener("input", function () {
+            var AmountInput = this.value;
+            // 使用正則表達式檢查是否只包含數字
+            var isValid = /^[0-9]+$/.test(AmountInput);
+            if (!isValid) {
+                // 顯示錯誤信息或執行相關處理
+                showPopover("BuyAmount", "金額只能輸入數字");
+                // 清除非數字字符
+                this.value = AmountInput.replace(/[^0-9]/g, "");
+            }
+        });
+
+
+
+        // //監聽圖片上傳的變化
+        // function previewImages(input, previewId) {
+        //     var preview = document.getElementById(previewId);
+        //     preview.innerHTML = "";
+        //     var files = input.files;
+
+        //     for (var i = 0; i < files.length; i++) {
+        //         var file = files[i];
+        //         var reader = new FileReader();
+        //         var imagePreview = document.createElement("div");
+        //         imagePreview.classList.add("uploaded-image");
+
+        //         reader.onload = function (e) {
+        //             // 創建一個 img 元素來顯示圖片
+        //             var img = document.createElement("img");
+        //             img.src = e.target.result;
+        //             img.alt = "上傳的圖片";
+        //             img.width = 100;
+        //             imagePreview.appendChild(img);
+        //         };
+
+        //         reader.readAsDataURL(file);
+
+        //         // 將上傳的圖片顯示在列表中
+        //         preview.appendChild(imagePreview);
+        //     }
+        // }
+
+        // document.getElementById("image-upload").addEventListener("change", function () {
+        //     previewImages(this, "uploaded-images");
+        // });
+
+        // document.getElementById("buy_image_upload").addEventListener("change", function () {
+        //     previewImages(this, "buy_uploaded_images");
+        // });
+
+        function previewImages(input, previewId) {
+            var preview = document.getElementById(previewId);
+            preview.innerHTML = "";
+
+            var files = input.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+                var imagePreview = document.createElement("div");
+                imagePreview.classList.add("uploaded-image");
+
+                reader.onload = function (e) {
+                    // 創建一個 img 元素來顯示圖片
+                    var img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.alt = "上傳的圖片";
+                    img.width = 150;
+                    img.name = "BuyImage";
+                    img.style = "margin-top: 20px;"
+                    imagePreview.appendChild(img);
+
+                    // 更新隱藏的 base64Image 輸入字段的值
+                    document.getElementById('base64Image').value = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+
+                // 將上傳的圖片顯示在列表中
+                preview.appendChild(imagePreview);
+            }
+        }
+
+        // 檢查日期時間欄位不能是空值和不能在現在時間之前
+        function validateDateTimeField(id) {
+            var input = document.getElementById(id);
+            var value = input.value;
+            var now = new Date();
+
+            // 將時間格式轉換為日期對象
+            var selectedDate = new Date(value.replace(/-/g, "/"));
+
+            // if (value === "" || isNaN(selectedDate)) {
+            //     input.setCustomValidity("請輸入日期和時間");
+            //     return;
+            // }BUG
+
+            if (selectedDate <= now) {
+                input.setCustomValidity("請選擇未來的日期和時間");
+                return;
+            }
+
+            input.setCustomValidity("");
+        }
+
+        // 監聽日期時間欄位的變化
+        document.getElementById("BuyDeadline").addEventListener("input", function () {
+            validateDateTimeField("BuyDeadline");
+        });
+        document.getElementById("BuyDelivery").addEventListener("input", function () {
+            validateDateTimeField("BuyDelivery");
+        });
+
+        // 顯示 Popovers 提示
+        function showPopover(elementId, message) {
+            var element = document.getElementById(elementId);
+            var popover = new bootstrap.Popover(element, {
+                content: message,
+                trigger: 'manual',
+                placement: 'right',
+            });
+            popover.show();
+            setTimeout(function () {
+                popover.dispose();
+            }, 2000);
+        }
+
+        // 限制日期時間輸入不得早於現在時間
+        var currentDate = new Date();
+        var buyDeliveryTimeInput = document.getElementById("BuyDelivery");
+        var BuyDeadlineInput = document.getElementById("BuyDeadline");
+
+        buyDeliveryTimeInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
+        BuyDeadlineInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
+
+        // 監聽下一步按鈕的點擊事件
+        document.getElementById("next-button").addEventListener("click", function () {
+            var selectedOption = document.getElementById("BuyOrderclass").value;
+            var valid = true;
+
+
+            if (selectedOption === "購買") {
+                // 購買表單的必填欄位
+                var buyLabel = document.getElementById("BuyLabel").value;
+                var buyName = document.getElementById("BuyName").value;
+                var buyAmount = document.getElementById("BuyAmount").value;
+                var buyLocation = document.getElementById("BuyLocation").value;
+                var buyDeliveryTime = new Date(document.getElementById("BuyDelivery").value);
+                var buyCity = document.getElementById("BuyCity").value;
+                var buyDistrict = document.getElementById("BuyDistrict").value;
+                var buyAddress = document.getElementById("BuyAddress").value;
+                var buyDeliveryMethod = document.getElementById("BuyDeliveryMethod").value;
+                var buyTaskContent = document.getElementById("BuyTaskContent").value;
+                var BuyEor = 0;
+                // 檢查必填欄位是否為空
+                if (buyLabel === "") {
+                    showPopover("BuyLabel", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyLabel").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyLabel").classList.remove("is-invalid"); }
+                if (buyName === "") {
+                    showPopover("BuyName", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyName").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyName").classList.remove("is-invalid"); }
+                if (buyAmount === "") {
+                    showPopover("BuyAmount", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyAmount").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyAmount").classList.remove("is-invalid"); }
+                if (buyLocation === "") {
+                    showPopover("BuyLocation", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyLocation").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyLocation").classList.remove("is-invalid"); }
+                if (buyDeliveryTime <= new Date()) {
+                    showPopover("BuyDelivery", "交貨時間必須在現在時間之後");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDelivery").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyDelivery").classList.remove("is-invalid"); }
+                if (buyDeliveryTime === "" || isNaN(buyDeliveryTime)) {
+                    showPopover("BuyDelivery", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDelivery").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyDelivery").classList.remove("is-invalid"); }
+                if (BuyDeadline <= new Date()) {
+                    showPopover("BuyDeadline", "任務截止時間必須在現在時間之後");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDeadline").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("BuyDeadline").classList.remove("is-invalid"); }
+                if (BuyDeadline === "" || isNaN(BuyDeadline)) {
+                    showPopover("BuyDeadline", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDeadline").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("BuyDeadline").classList.remove("is-invalid"); }
+
+                if (buyCity === "") {
+                    showPopover("BuyCity", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyCity").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyCity").classList.remove("is-invalid"); }
+                if (buyDistrict === "") {
+                    showPopover("BuyDistrict", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDistrict").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyDistrict").classList.remove("is-invalid"); }
+                if (buyAddress === "") {
+                    showPopover("BuyAddress", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyAddress").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyAddress").classList.remove("is-invalid"); }
+                if (buyDeliveryMethod === "") {
+                    showPopover("BuyDeliveryMethod", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyDeliveryMethod").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyDeliveryMethod").classList.remove("is-invalid"); }
+                if (buyTaskContent === "") {
+                    showPopover("BuyTaskContent", "此欄位為必填");
+                    // // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("BuyTaskContent").classList.add("is-invalid");
+                    BuyEor += 1;
+                } else { document.getElementById("BuyTaskContent").classList.remove("is-invalid"); }
+                if (BuyEor == 0) {
+
+                    window.Location.href = "@Url.Action("CheckOrder_Buy", "HS_Pending")";
+                }
+            }
+        });
+
+
+        // var temp = 0
+        // if (temp < 1) {
+        //     //訂單類型初始化
+        //     document.getElementById("BuyOrderclass").dispatchEvent(new Event("change"));
+        //     temp += 1;
+        // }
+
+
+
+    </script>
+
+
+</body>
+
+</html>

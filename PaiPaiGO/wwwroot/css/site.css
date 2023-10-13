@@ -1,0 +1,120 @@
+/*原本的*/
+/*html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}*/
+
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+/*body {
+  margin-bottom: 60px;
+}*/
+
+/* 導覽列背景色 */
+.navbar {
+    background-color: antiquewhite !important;
+}
+
+.nav-link {
+    font-size: 22px;
+}
+/* 導覽列字體色與大小 */
+li a {
+    justify-content: right;
+    color: black !important;
+    font-size: 22px;
+}
+/* 下拉選單滑鼠經過就會出現 */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+/* 下拉選單的顏色 */
+.dropdown a {
+    color: darkcyan !important;
+}
+/* 導覽列滑鼠經過顏色 */
+li a:hover {
+    /* background: yellow; */
+    color: orange !important;
+}
+/* 字體適當位置 */
+.nav-link {
+    padding: 20px !important;
+}
+
+#notification-icon {
+    /* 添加通知圖標的樣式，例如位置和大小 */
+    position: relative;
+    margin-right: 20px; /* 距離導覽列右側的距離 */
+}
+
+    #notification-icon img {
+        /* 可以設置通知圖標的大小等樣式 */
+        width: 24px;
+        height: 24px;
+    }
+
+/* 導覽列旁的小圖示(3) */
+.notification {
+    /* background-color: #555; */
+    color: white;
+    text-decoration: none;
+    padding: 5px 6px;
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+    /* .notification:hover {
+    background: red;
+  } */
+
+    /* 導覽列旁的小圖示(3) */
+    .notification .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 8px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+    }
+
+
+@media (max-width:768px) {
+    .navbar-brand img {
+        margin-left: 10%;
+    }
+
+    .footer {
+        flex: 0 0 100%;
+    }
+}

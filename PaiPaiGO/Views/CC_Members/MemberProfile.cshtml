@@ -1,0 +1,225 @@
+﻿@model PaiPaiGO.Models.Member
+<link rel="stylesheet" href="~/css/CC_members.css" />
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
+<script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
+
+<meta charset="UTF-8">
+<div class="d-flex align-items-center justify-content-center">
+    <!-- 資訊框框div -->
+    <div class="c_singinDiv rounded mw-50 mb-5" style="background-color:rgb(253, 249, 249,0.6);">
+        <!-- 標頭 -->
+        <div class="fs-4 text-center">
+            會員資料<br>
+        </div>
+        <form asp-action="MemberProfile">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="col-md-12 mt-1">
+                        <label asp-for="MemberName" class="form-label fs-5">姓名</label>
+                        <input asp-for="MemberName" type="text" class="form-control" id="inputname" value="@ViewBag.name">
+                        <span asp-validation-for="MemberName" class="text-danger fs-6"></span>
+                    </div>
+                    <fieldset disabled>
+                        <div class="col-md-12 mt-1">
+                            <label class="form-label fs-5">Email地址</label>
+                            <input type="email" class="form-control mt-0" id="inputEmail" value="@ViewBag.email">
+                        </div>
+                    </fieldset>
+                    <fieldset disabled>
+                        <div class="col-md-12 mt-1">
+                            <label class="form-label fs-5">行動電話</label>
+                            <input type="text" class="form-control" id="disabledTextInput" value="@ViewBag.phone">
+                        </div>
+                    </fieldset>
+
+                </div>
+                &emsp;&emsp;&emsp;&emsp;
+                <div>
+                    <div class="col-md-12 mt-1">
+                        <label for="inputPassword" class="form-label fs-5" onclick="PasswordChange()">舊密碼</label>
+                        <input type="password" class="form-control" id="inputPassword">
+                        <span id="CC_passwordcheck"></span>
+                    </div>
+                    <div class="col-md-12 mt-1">
+                        <label for="inputPassword2" class="form-label fs-5">新密碼</label>
+                        <input type="password" class="form-control" id="inputPassword2">
+                        <span id="CC_passwordregex"></span>
+                    </div>
+                    <div class="col-md-12 mt-1">
+                        <label class="form-label fs-5">再次確認新密碼</label>
+                        <input type="password" class="form-control" id="inputPassword3">
+                        <span asp-validation-for="MemberPassword" class="text-danger fs-6"></span>
+                        <span id="CC_passworconsistent"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <label class="control-label fs-5">通訊地址</label>
+            <div class="d-flex mt-1 fs-5" id="TWAddress">
+
+                <div class="col-md-3" data-role="county" id="TWAddress1">
+                </div>&ensp;
+                <div class="col-md-3" data-role="district" id="TWAddress2">
+                </div>&ensp;
+                <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
+                </div>
+            </div>
+            <div class="col-md-12 mt-2">
+                <input asp-for="MemberAddress" type="text" class="form-control" id="inputAddress" value="@ViewBag.Address">
+                <span asp-validation-for="MemberAddress" class="text-danger"></span>
+            </div>
+            @*隱藏的欄位提交*@
+            <div class="invalid-feedback">
+                <input asp-for="MemberStatus" value="@ViewBag.Status" />
+                <input asp-for="MemberCity" id="inputMemberCity" value="@ViewBag.MemberCity" />
+                <input asp-for="MemberTownship" id="inputMemberTownship" value="@ViewBag.Township" />
+                <input asp-for="MemberPostcode" id="inputMemberPostcode" value="@ViewBag.Postcode" />
+				<input asp-for="MemberPhoneNumber" value="@ViewBag.phone">
+                <input asp-for="MemberEmail" value="@ViewBag.email">
+                <input asp-for="MemberId" value="@ViewBag.ID" />
+				<input asp-for="MemberPassword" id="MemberPassword" value="@ViewBag.password" />
+            </div>
+
+			<!-- SEND -->
+            <button class="rounded mt-3 border-0 w-100 fs-5" style="background-color:deepskyblue;" type="submit">確認修改會員資料</button>
+        </form>
+    </div>
+    @*錯誤訊息: @Html.ValidationSummary()*@
+
+</div>
+<sapn id="cc_sapn" class="invalid-feedback">@ViewBag.MemberCity</sapn>
+<sapn id="cc_sapn2" class="invalid-feedback">@ViewBag.Township</sapn>
+
+@*修改成功通知*@
+<div class="modal fade" id="ChangeModal" tabindex="-1" role="dialog" aria-labelledby="loginFailureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="d-flex justify-content-center"><img src="~/img/CC_check.png" style="height:100px;" /></div>
+                <p class="text-center fs-5">會員資料修改成功</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //縣市區域下拉選單
+    $("#TWAddress").twzipcode({
+        "css": ["city form-control", "town form-control", "zipcode form-control"],
+        "countyName": "city", // 指定城市name
+        "districtName": "town"
+    });
+    var City = $("#cc_sapn").text();
+    var Township = $("#cc_sapn2").text();
+    $("select[name='city'] option:first").text(City);
+    $("select[name='town'] option:first").text(Township);
+    $("input[name='zipcode']").val("@ViewBag.Postcode");
+
+
+    $("select[name='city']").on("change", function () {
+        var selectedCity = $(this).val();
+        var zipcode = $("input[name='zipcode']").val();
+        $("#inputMemberCity").val(selectedCity);
+        $("#inputMemberPostcode").val(zipcode);
+        //console.log("選中的城市: " + selectedCity);
+    });
+    $("select[name='town']").on("change", function () {
+        var selectedTown = $(this).val();
+        var zipcode = $("input[name='zipcode']").val();
+        $("#inputMemberTownship").val(selectedTown);
+        $("#inputMemberPostcode").val(zipcode);
+        //console.log("選中的城市: " + selectedTown);
+        //console.log("輸入的郵遞區號: " + zipcode);
+    });
+    var dbPassword = "@ViewBag.password";
+    //測試按鈕
+    function PasswordChange() {
+        document.getElementById('inputPassword').value = "pin123456";
+        document.getElementById('inputPassword2').value = "pin654321";
+        document.getElementById('inputPassword3').value = "pin654321";
+    }
+    //密碼驗證
+    $("#inputPassword").blur(function () {
+        var oldPassword = $(this).val();
+        var errorMessage = "舊密碼輸入錯誤。";
+        if (oldPassword !== dbPassword) {
+            $(this).addClass("is-invalid");
+            $("#CC_passwordcheck").text(errorMessage).addClass("text-danger", "fs-6");
+        } else {
+            $(this).removeClass("is-invalid");
+            $("#CC_passwordcheck").text("").removeClass("text-danger");
+        }
+    });
+    $("#inputPassword2").blur(function () {
+        var newPassword = $(this).val();
+        var regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,20}$/;
+        var errorMessage = "密碼長度必須為 8-20 個字符，包含字母和數字。";
+        if (!regex.test(newPassword)) {
+            $(this).addClass("is-invalid");
+            $("#CC_passwordregex").text(errorMessage).addClass("text-danger", "fs-6");
+        } else {
+            $(this).removeClass("is-invalid");
+            $("#CC_passwordregex").text("").removeClass("text-danger");
+        }
+    });
+
+    $("#inputPassword3").blur(function () {
+        var newPassword = $("#inputPassword2").val();
+        var confirmPassword = $(this).val();
+        var errorMessage = "新密碼輸入不一致。"
+        if (newPassword !== confirmPassword) {
+            $(this).addClass("is-invalid");
+            $("#CC_passworconsistent").text(errorMessage).addClass("text-danger", "fs-6");
+        } else {
+            $(this).removeClass("is-invalid");
+            $("#CC_passworconsistent").text("").removeClass("text-danger");
+            $("#MemberPassword").val(confirmPassword);
+        }
+    });
+
+    $("form").submit(function (e) {
+        var oldPassword = $("#inputPassword").val();
+        var newPassword = $("#inputPassword2").val();
+        var confirmPassword = $("#inputPassword3").val();
+        if (oldPassword != ""){
+           // 檢查舊密碼是否正確
+            if (oldPassword !== dbPassword) {
+                var errorMessage = "舊密碼輸入錯誤。123"
+                e.preventDefault(); // 防止表單提交
+                $("#inputPassword").addClass("is-invalid");
+                $("#inputPassword3").addClass("is-invalid");
+                $("#CC_passwordcheck").text(errorMessage).addClass("text-danger", "fs-6");
+            }
+
+            // 檢查新密碼是否符合正則表達式
+            var regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,20}$/;
+                if (!regex.test(newPassword)) {
+                    var errorMessage = "密碼長度必須為 8-20 個字符，包含字母和數字。123";
+                    e.preventDefault();
+                    $("#inputPassword2").addClass("is-invalid");
+                    $("#CC_passwordregex").text(errorMessage).addClass("text-danger", "fs-6");
+                }
+                // 檢查再次確認新密碼是否與新密碼相符
+                if (newPassword !== confirmPassword) {
+                    var errorMessage = "新密碼輸入不一致。123"
+                    e.preventDefault();
+                    $("#inputPassword3").addClass("is-invalid");
+                    $("#CC_passworconsistent").text(errorMessage).addClass("text-danger", "fs-6");
+                }
+        }
+ 
+    });
+
+</script>
+
+
+@if (ViewBag.Change == "修改成功") {
+	<script>
+		$(document).ready(function () {
+			$('#ChangeModal').modal('show');
+		@*顯示 Modal*@
+					});
+	</script>
+}

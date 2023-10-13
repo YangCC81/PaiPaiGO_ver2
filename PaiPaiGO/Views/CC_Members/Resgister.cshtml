@@ -1,0 +1,188 @@
+﻿@model PaiPaiGO.Models.Member
+<link rel="stylesheet" href="~/css/CC_members.css" />
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
+<script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
+
+<div class="row">
+    <div class="col-lg-2 col-1"></div>
+    <div class="d-flex col-lg-8 col-10">
+        <!-- 圖片 -->
+        <div class="mw-25 mt-5 h-auto c_loginImg col-lg-7"><img src="~/img/memberSign.png" style="width: 600px;"></div>
+        <!-- 資訊框框div -->
+        <div class="c_singinDiv rounded mw-50 mt-5 col-lg-5 col-12">
+            <!-- 標頭 -->
+            <div class="text-center fs-4" onclick="recordText()">註冊帳號<br></div><br>
+
+            <form asp-action="Resgister">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-md-12 fs-5">
+                    <label asp-for="MemberEmail" class="control-label">Email地址</label>
+                    <input asp-for="MemberEmail" class="form-control mt-0" id="inputEmail" />
+                    <span asp-validation-for="MemberEmail" class="text-danger fs-6" id="emailError"></span>
+                </div>
+                <div class="col-md-12 mt-1 fs-5">
+                    <label asp-for="MemberPassword" class="control-label">密碼</label>
+                    <input asp-for="MemberPassword" type="password" class="form-control" id="inputPassword" />
+                    <span asp-validation-for="MemberPassword" class="text-danger fs-6"></span>
+                </div>
+                <div class="col-md-12 mt-1 fs-5">
+                    <label asp-for="MemberName" class="control-label">姓名</label>
+                    <input asp-for="MemberName" type="text" class="form-control" id="inputname" />
+                    <span asp-validation-for="MemberName" class="text-danger fs-6"></span>
+                </div>
+                <div class="col-md-12 mt-1 fs-5">
+                    <label asp-for="MemberPhoneNumber" class="control-label">行動電話</label>
+                    <input asp-for="MemberPhoneNumber" type="text" class="form-control" id="inputphone" />
+                    <span asp-validation-for="MemberPhoneNumber" class="text-danger fs-6" id="phoneError"></span>
+                </div>
+
+                <label asp-for="MemberCity" class="control-label fs-5">通訊地址</label>
+                <div class="d-flex mt-1 fs-5" id="TWAddress">
+
+                    <div class="col-md-3" data-role="county" id="TWAddress1">
+                    </div>&ensp;
+                    <div class="col-md-3" data-role="district" id="TWAddress2">
+                    </div>&ensp;
+                    <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
+                    </div>
+                </div>
+
+                <div class="col-md-12 mt-2">
+                    <input asp-for="MemberAddress" type="text" class="form-control" placeholder="請輸入詳細地址" id="inputAddress" />
+                    <span asp-validation-for="MemberAddress" class="text-danger"></span>
+                </div>
+                @*隱藏的欄位提交*@
+                <div class="invalid-feedback">
+                    <input asp-for="MemberStatus" value="未驗證" />
+                    <input asp-for="MemberCity" id="inputMemberCity" />
+                    <input asp-for="MemberTownship" id="inputMemberTownship" />
+                    <input asp-for="MemberPostcode" id="inputMemberPostcode" />
+                    <input asp-for="MemberId" value="45697" />
+                </div>
+                <div><button id="c_sendbtn" class="rounded mt-3 border-0 w-100  bg-info" type="submit">送出</button></div>
+            </form>
+
+            錯誤訊息: @Html.ValidationSummary()
+        </div>
+    </div>
+</div>
+
+@*更改成功通知*@
+<div class="modal fade" id="RegistrationModal" tabindex="-1" role="dialog" aria-labelledby="loginFailureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">註冊會員成功</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center rounded ">
+                    <span class="fs-5">驗證郵件已發送至您的Email地址，請登入Email確認後即可完成註冊</span>
+                    <br /><br />
+                    <a class="fs-5" id="countdown" href="/CC_Members/Login">網頁將自動跳轉至登入頁面，若沒有跳轉請點擊此連結</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    //縣市區域下拉選單
+    $("#TWAddress").twzipcode({
+        "css": ["city form-control", "town form-control", "zipcode form-control"],
+        "countyName": "city", // 指定城市name
+        "districtName": "town"
+    });
+    //城市跟地區下拉選單有變動即把值(包含zipcode)一起送到隱藏的對應input中
+    $("select[name='city']").on("change", function () {
+        var selectedCity = $(this).val();
+        var zipcode = $("input[name='zipcode']").val();
+        $("#inputMemberCity").val(selectedCity);
+        $("#inputMemberPostcode").val(zipcode);
+    });
+
+    $("select[name='town']").on("change", function () {
+        var selectedTown = $(this).val();
+        var zipcode = $("input[name='zipcode']").val();
+        $("#inputMemberTownship").val(selectedTown);
+        $("#inputMemberPostcode").val(zipcode);
+    });
+    //檢查表單並套用效果
+    console.log($("#emailError").text)
+
+
+    //檢查帳號是否重複
+    $(document).ready(function () {
+        $("#inputEmail").blur(function () {
+            var email = $(this).val();
+            // 發送ajax請求檢查郵箱是否被註冊過
+            $.ajax({
+                type: "GET",
+                url: "/CC_Members/CheckEmailAvailability?email=" + email,
+                success: function (response) {
+                    if (response.isAvailable) {
+                        console.log("OK")
+                        $("#emailError").text("");
+                    } else {
+                        $("#emailError").text("Email地址已經被註冊");
+                    }
+                },
+                error: function () {
+                    console.log("錯誤");
+                }
+            });
+        });
+        $("#inputphone").blur(function () {
+            var phone = $(this).val();
+            $.ajax({
+                type: "GET",
+                url: "/CC_Members/CheckphoneAvailability?phone=" + phone,
+                success: function (response) {
+                    if (response.isAvailable) {
+                        console.log("OK")
+                        $("#phoneError").text("");
+                    } else {
+                        $("#phoneError").text("行動電話已經被註冊"); // 顯示錯誤
+                    }
+                },
+                error: function () {
+                    console.log("錯誤");
+                }
+            });
+        });
+    });
+
+
+    //測試紐
+    function recordText() {
+        document.getElementById('inputEmail').value = "catyang47@gmail.com";
+        document.getElementById('inputPassword').value = "pin123456";
+        document.getElementById('inputname').value = "陳小小";
+        document.getElementById('inputphone').value = "0912345678";
+        document.getElementById('inputAddress').value = "公益路51號";
+    }
+
+
+</script>
+
+@if (ViewBag.RegistrationSuccess == "Success") {
+    <script>
+        $(document).ready(function () {
+            $('#RegistrationModal').modal('show');
+        @*顯示 Modal*@
+                                                });
+        @*// 倒計時*@
+                                                var secondsRemaining = 5;
+        var countdownInterval = setInterval(function () {
+            secondsRemaining--;
+            if (secondsRemaining <= 0) {
+                clearInterval(countdownInterval); // 停止
+                window.location.href = "/CC_Members/Login";
+            }
+        }, 1000);
+    </script>
+}

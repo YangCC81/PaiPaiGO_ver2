@@ -1,0 +1,470 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任務刊登1:10:1</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+    <script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
+    <script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
+  
+</head>
+<style>
+    /* 通用 CSS 樣式，與前面的代碼相同 */
+    .image-upload {
+        display: none;
+    }
+
+    .image-preview {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .content-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .list-group-item {
+        border: none;
+    }
+
+    #uploaded-images {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .uploaded-image {
+        margin-right: 10px;
+        /* 适当的右边距 */
+    }
+
+    /* 新增的 CSS 樣式，字體大小為20px */
+    h1,
+    label,
+    select,
+    input,
+    textarea {
+        font-size: 25px;
+    }
+
+    /* 新增的 CSS 樣式，標題字體大小為25px */
+    h1 {
+        font-size: 25px;
+    }
+</style>
+
+<body>
+    <form method="post" id="orderForm" action="/HS_Pending/PendingOrder_Pai">
+        <div class="container mt-5">
+            <div class="row g-3">
+                <div class="col-md-1"></div>
+                <div class="col-md-10" style="background-color: #BCE5F6;" id="HSfont">
+                    <br>
+                    <h1 class="text-center" style="letter-spacing: 1px;">任務刊登</h1>
+                    <br>
+                    <div class="form-group">
+                        <label for="Orderclass" style="letter-spacing: 1px;">選擇任務類別:</label>
+                        <select class="form-control" name="Orderclass" id="Orderclass"
+                                style="letter-spacing: 2px;font-size: 25px;">
+                            <!-- <option value="請選擇...">請選擇...</option> -->
+                            <option value="排隊">排隊</option>
+                            <option value="購買">購買</option>
+                        </select>
+                    </div>
+                    <!-- 排隊表單 -->
+                    <div id="queue-fields">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <!-- 左侧表单内容 -->
+                                <div class="form-group">
+                                    <label for="QueueLabel" style="letter-spacing: 1px;">任務標籤:</label>
+                                    <select class="form-select" name="QueueLabel" id="QueueLabel"
+                                            style="letter-spacing: 1px;">
+                                        <!-- 在此添加选项 -->
+                                        <option value="活動">活動</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="letter-spacing: 1px;">
+                                    <label for="PaiName">名稱:</label>
+                                    <input type="text" class="form-control" name="PaiName" id="PaiName">
+                                </div>
+                                <div class="form-group" style="letter-spacing: 1px;">
+                                    <label for="Amount">金額:</label>
+                                    <input type="text" class="form-control" name="Amount" id="Amount">
+                                </div>
+                                <!-- 執行地址縣市 select 和 地區 select -->
+@*                                 <div class="row g-3 align-items-center twzipcode">
+                                    <div class="col" style="letter-spacing: 1px;">
+                                        <label for="City" class="form-label me-2">執行地址 縣市:</label>
+                                        <select data-role="county" class="form-select" name="City" id="City" style="max-width: 400px;">
+                                            <!-- 在此添加选项 -->
+                                            <option value="測試">測試</option>
+                                        </select>
+                                    </div>
+                                    <div class="col" style="letter-spacing: 1px;">
+                                        <label for="Location" class="form-label me-2">地區:</label>
+                                        <select data-role="district" class="form-select" name="Location" id="Location"
+                                                style="max-width: 400px;">
+                                            <!-- 在此添加选项 -->
+                                            <option value="測試">測試</option>
+                                        </select>
+                                    </div>
+                                </div> *@
+                                <br />
+                                
+                                <div class="d-flex mt-1 fs-5" id="TWAddress">
+                                    <h3 for="City" class="form-label me-2">執行地址:</h3>
+                                    @* <label or="City" class="form-label me-2"> 縣市:</label> *@
+
+                                    <div class="col-md-3" data-role="county" id="TWAddress1">
+                                    </div>     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    @* <label for="Location" class="form-label me-2">地區:</label><br /> *@
+                                    <div class="col-md-3" data-role="district" id="TWAddress2">
+                                    </div>
+                                    <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
+                                    </div>
+                                </div>
+                                <br />
+                                <!-- 執行地址詳細地址 input -->
+                                <div class="row g-3 align-items-center">
+                                    <div class="col" style="letter-spacing: 1px;">
+                                        <label for="Address" class="form-label me-2">詳細地址:</label>
+                                        <input type="text" class="form-control" name="Address" id="Address"
+                                               placeholder="請輸入詳細地址">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+
+                                <!-- 右侧時間、任务内容和上传图片 -->
+                                <ul class="">
+                                    <div class="form-group" style="letter-spacing: 1px;">
+                                        <label for="QueueTime">排隊時間:</label>
+                                        <input type="datetime-local" class="form-control" name="QueueTime"
+                                               id="QueueTime">
+                                    </div>
+                                    <div class="form-group" style="letter-spacing: 1px;">
+                                        <label for="Deadline">任務截止時間:</label>
+                                        <input type="datetime-local" class="form-control" name="Deadline" id="Deadline">
+                                    </div>
+                                    <li class="list-group-item" style="font-size: 25px;letter-spacing: 1px;">任務內容:</li>
+                                    <li class="list-group-item">
+                                        <textarea class="form-control" rows="5" placeholder="任務內容..." name="TaskContent"
+                                                  id="TaskContent" style="font-size: 25px;letter-spacing: 1px;"></textarea>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label for="imageInput" class="btn btn-secondary mt-2">上傳圖片</label>
+                                        <input type="file" class="image-upload" id="imageInput" accept="image/*"
+                                               multiple onchange="previewImages(this, 'uploaded-images')">
+                                        <input  id="base64Image" name="Image" />
+                                    </li>
+                                    <!-- 上傳的圖片列表 -->
+                                    <li class="list-group-item uploaded-images" id="uploaded-images" name="queue_images">
+                                        <!-- 這裡會顯示上傳的圖片 -->
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <input type="submit" value="下一步" id="next-button" class="btn btn-primary mt-3"
+                               style="background-color: #4B3DE7;">
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        //當Orderclass字段值變更時
+        document.getElementById("Orderclass").addEventListener("change", function () {
+            var selectedOption = this.value;
+
+            if (selectedOption === "購買") {
+                window.location.href = "/HS_Pending/PendingOrder_Buy";
+            }
+        });
+        //縣市區域下拉選單
+        $("#TWAddress").twzipcode({
+            "css": ["city form-control", "town form-control", "zipcode form-control"],
+            "countyName": "City", // 指定城市name
+            "districtName": "Location",
+            "zipcodeName": "Postcode"
+        });
+        // 監聽訂單類型變化
+        document.getElementById("Orderclass").addEventListener("change", function () {
+            var selectedOption = this.value;
+            var queueFields = document.getElementById("queue-fields");
+            var nextButton = document.getElementById("next-button");
+
+            // 清空所有輸入的值
+            var inputElements = document.querySelectorAll("input[type=text], textarea, input[type=datetime-local]");
+            inputElements.forEach(function (input) {
+                input.value = "";
+                input.setCustomValidity(""); // 重設自訂驗證訊息
+                input.classList.remove("is-invalid"); // 移除紅框
+            });
+
+        });
+        // 監聽名稱輸入欄位的變化
+        document.getElementById("PaiName").addEventListener("input", function () {
+            var PaiNameInput = this.value;
+            // 使用正則表達式檢查是否包含中文字
+            var chineseCharacters = PaiNameInput.match(/[\u4e00-\u9fa5]/g);
+            // 如果中文字的數量超過10個，截斷輸入
+            if (chineseCharacters && chineseCharacters.length > 10) {
+                this.value = PaiNameInput.slice(0, 10);
+                showPopover("PaiName", "最多只能輸入10個字");
+            }
+        });
+
+        // 監聽金額輸入欄位的變化
+        document.getElementById("Amount").addEventListener("input", function () {
+            var AmountInput = this.value;
+            // 使用正則表達式檢查是否只包含數字
+            var isValid = /^[0-9]+$/.test(AmountInput);
+            if (!isValid) {
+                // 顯示錯誤信息或執行相關處理
+                showPopover("Amount", "金額只能輸入數字");
+                // 清除非數字字符
+                this.value = AmountInput.replace(/[^0-9]/g, "");
+            }
+        });
+
+
+     
+        function previewImages(input, previewId) {
+            var preview = document.getElementById(previewId);
+            preview.innerHTML = "";
+
+            var files = input.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+                var imagePreview = document.createElement("div");
+                imagePreview.classList.add("uploaded-image");
+
+                reader.onload = function (e) {
+                    // 創建一個 img 元素來顯示圖片
+                    var img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.alt = "上傳的圖片";
+                    img.width = 150;
+                    img.name = "Image";
+                    imagePreview.appendChild(img);
+
+                    // 更新隱藏的 base64Image 輸入字段的值
+                    document.getElementById('base64Image').value = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+
+                // 將上傳的圖片顯示在列表中
+                preview.appendChild(imagePreview);
+            }
+        }
+
+
+        // 檢查日期時間欄位不能是空值和不能在現在時間之前
+        function validateDateTimeField(id) {
+            var input = document.getElementById(id);
+            var value = input.value;
+            var now = new Date();
+
+            // 將時間格式轉換為日期對象
+            var selectedDate = new Date(value.replace(/-/g, "/"));
+
+            // if (value === "" || isNaN(selectedDate)) {
+            //     input.setCustomValidity("請輸入日期和時間");
+            //     return;
+            // }BUG
+
+            if (selectedDate <= now) {
+                input.setCustomValidity("請選擇未來的日期和時間");
+                return;
+            }
+
+            input.setCustomValidity("");
+        }
+
+        // 監聽日期時間欄位的變化
+        document.getElementById("QueueTime").addEventListener("input", function () {
+            validateDateTimeField("QueueTime");
+        });
+
+        document.getElementById("Deadline").addEventListener("input", function () {
+            validateDateTimeField("Deadline");
+        });
+
+
+        // 顯示 Popovers 提示
+        function showPopover(elementId, message) {
+            var element = document.getElementById(elementId);
+            var popover = new bootstrap.Popover(element, {
+                content: message,
+                trigger: 'manual',
+                placement: 'right',
+            });
+            popover.show();
+            setTimeout(function () {
+                popover.dispose();
+            }, 2000);
+        }
+
+        // 限制日期時間輸入不得早於現在時間
+        var currentDate = new Date();
+        var QueueTimeInput = document.getElementById("QueueTime");
+        var DeadlineInput = document.getElementById("Deadline");
+
+        QueueTimeInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
+        DeadlineInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
+
+        // 監聽下一步按鈕的點擊事件
+        document.getElementById("next-button").addEventListener("click", function () {
+            var selectedOption = document.getElementById("Orderclass").value;
+            var valid = true;
+
+
+            if (selectedOption === "排隊") {
+                // 排隊表單的必填欄位
+                var QueueLabel = document.getElementById("QueueLabel").value;
+                var PaiName = document.getElementById("PaiName").value;
+                var Amount = document.getElementById("Amount").value;
+                var City = document.getElementById("City").value;
+                var Location = document.getElementById("Location").value;
+                var Address = document.getElementById("Address").value;
+                var QueueTime = new Date(document.getElementById("QueueTime").value);
+                var Deadline = new Date(document.getElementById("Deadline").value);
+                var taskContent = document.getElementById("TaskContent").value;
+                var PaiEor = 0;
+
+                // 檢查必填欄位是否為空
+                if (QueueLabel === "") {
+                    showPopover("QueueLabel", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("QueueLabel").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("QueueLabel").classList.remove("is-invalid"); }
+                if (PaiName === "") {
+                    showPopover("PaiName", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("PaiName").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("PaiName").classList.remove("is-invalid"); }
+                if (Amount === "") {
+                    showPopover("Amount", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("Amount").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("Amount").classList.remove("is-invalid"); }
+                if (City === "") {
+                    showPopover("City", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("City").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("City").classList.remove("is-invalid"); }
+                if (Location === "") {
+                    showPopover("Location", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("Location").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("Location").classList.remove("is-invalid"); }
+                if (Address === "") {
+                    showPopover("Address", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("Address").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("Address").classList.remove("is-invalid"); }
+                if (QueueTime <= new Date()) {
+                    showPopover("QueueTime", "排隊時間必須在現在時間之後");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("QueueTime").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("QueueTime").classList.remove("is-invalid"); }
+                if (QueueTime === "" || isNaN(QueueTime)) {
+                    showPopover("QueueTime", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("QueueTime").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("QueueTime").classList.remove("is-invalid"); }
+                if (Deadline <= new Date()) {
+                    showPopover("Deadline", "任務截止時間必須在現在時間之後");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("Deadline").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("Deadline").classList.remove("is-invalid"); }
+                if (Deadline === "" || isNaN(Deadline)) {
+                    showPopover("Deadline", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("Deadline").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("Deadline").classList.remove("is-invalid"); }
+                if (taskContent === "") {
+                    showPopover("TaskContent", "此欄位為必填");
+                    // valid = false;
+                    // 添加紅框警示
+                    document.getElementById("TaskContent").classList.add("is-invalid");
+                    PaiEor += 1;
+                } else { document.getElementById("TaskContent").classList.remove("is-invalid"); }
+                if (PaiEor == 0) {
+
+                    window.Location.href = "@Url.Action("CheckOrder_Pai", "HS_Pending")";
+
+                }
+
+
+            }
+
+            if (!valid) {
+                // 阻止表單提交
+                event.preventDefault();
+            }
+        });
+
+
+                                // var temp = 0
+                                // if (temp < 1) {
+                                //     //訂單類型初始化
+                                //     document.getElementById("Orderclass").dispatchEvent(new Event("change"));
+                                //     temp += 1;
+                                // }
+
+
+
+    </script>
+</body>
+
+
+
+</html>
