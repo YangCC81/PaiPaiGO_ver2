@@ -1,0 +1,696 @@
+﻿@model IEnumerable< PaiPaiGO.Models.Mission>
+@*@model PagedList.IPagedList<PaiPaiGo.Models.Mission>*@
+@*@using PagedList.Mvc;*@
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+
+<!-- fullcalendar行事曆 -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js"></script>
+
+<!--評分星星的素材-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
+<!-- 行事曆的css -->
+<style>
+	/*總背景 */
+	#calendar {
+		background: white;
+		color: black;
+	}
+
+	/* 日期數字顏色 */
+	.fc-daygrid-day-number,
+	.fc-col-header-cell-cushion {
+		color: rgb(170, 102, 114);
+		text-decoration: none;
+		font-size: 20px;
+	}
+
+	/* 改事件的文字顏色 */
+	.fc-event-title {
+		color: green;
+		font-size: 20px;
+	}
+
+	.fc-daygrid-day {
+		height: 10px;
+	}
+
+	.fc-day-grid-event {
+		height: 10px;
+	}
+
+	.fc-toolbar-chunk {
+		font-size: 20px;
+	}
+
+
+
+
+
+	/*      media (max-width: 768px) {*/
+
+	/* 螢幕寬度小於 768px 時 */
+	/*#calendar {*/
+	/*width: 100%;*/
+	/* 設定寬度為畫面寬度的 80% */
+
+	/*height: 500px;*/
+	/* 設定較短的高度 */
+
+	/*  transform: scale(0.9);*/
+
+	/*}*/
+
+	/*   .fc-scrollgrid-sync-table {
+
+																		height: 150px;
+																	}*/
+
+	/* .fc-daygrid-event {
+																		line-height: 1;
+
+																		font-size: 10px;
+
+																	} */
+
+
+	/*}*/
+
+	/*  media (min-width: 769px) {*/
+
+	/*螢幕寬度大於或等於 769px 時 */
+	#calendar {
+		height: 700px;
+		/*設定較高的高度 */
+	}
+	/* }*/
+</style>
+
+<!--響應式，暫時不用-->
+<style>
+	/* 電腦版樣式 */
+	.desktop-table {
+		display: table;
+	}
+
+	/* 手機版樣式 */
+	.mobile-accordion {
+		display: none;
+	}
+
+	/* 自訂手風琴樣式 */
+	.accordion-button {
+		background-color: #d1e7dd;
+		color: black;
+	}
+
+		.accordion-button:not(.collapsed) {
+			background-color: #d1e7dd;
+			color: black;
+		}
+</style>
+
+<!--標籤卡樣式-->
+<style>
+	.nav-tabs .nav-link {
+		border: 0px solid transparent;
+		color: #495057;
+	}
+
+	.table-guest {
+		--bs-table-color: #000;
+		--bs-table-bg: #AFD9E4;
+		--bs-table-border-color: white;
+		--bs-table-striped-bg: #c5e8ef;
+		--bs-table-striped-color: #000;
+		--bs-table-active-bg: #badce3;
+		--bs-table-active-color: #000;
+		--bs-table-hover-bg: #bfe2e9;
+		--bs-table-hover-color: #000;
+		color: var(--bs-table-color);
+		border-color: var(--bs-table-border-color)
+	}
+
+	.table-toolman {
+		--bs-table-color: #000;
+		--bs-table-bg: #ABD9C5;
+		--bs-table-border-color: white;
+		--bs-table-striped-bg: #c5e8ef;
+		--bs-table-striped-color: #000;
+		--bs-table-active-bg: #badce3;
+		--bs-table-active-color: #000;
+		--bs-table-hover-bg: #bfe2e9;
+		--bs-table-hover-color: #000;
+		color: var(--bs-table-color);
+		border-color: var(--bs-table-border-color)
+	}
+</style>
+
+<!--評分的樣式-->
+<style>
+	.rating {
+		font-size: 24px; /* 評分星星的大小 */
+	}
+
+		.rating i {
+			cursor: pointer; /* 讓鼠標顯示為手指 */
+		}
+
+	.rated {
+		color: #ffc107; /* 選中的星星及其右側星星的顏色（黃色） */
+	}
+</style>
+
+<!--評分第四版的按鈕的樣式-->
+<style>
+	.btn-checkbox {
+		display: inline-block;
+		background-color: #ccc;
+		color: #000;
+		border: 1px solid #ccc;
+		padding: 5px 10px;
+		margin: 5px;
+		cursor: pointer;
+		border-radius: 20px;
+	}
+
+		.btn-checkbox.selected {
+			background-color: #000;
+			color: #fff;
+			border: 1px solid #000;
+		}
+</style>
+
+<div class="row">
+	<div class="col-md-1 col-sm-12"></div>
+	<div class="col-md-10 col-sm-12">
+		<div id='calendar'></div>
+	</div>
+	<div class="col-md-1 col-sm-12"></div>
+</div>
+
+<script>
+	//行事曆初始化設定
+	// var calendarEl = document.getElementById('calendar');
+	// var calendar = new FullCalendar.Calendar(calendarEl, {
+	//     initialView: 'dayGridMonth'
+	// });
+	// calendar.render();
+
+	//事件陣列
+	//到時候這邊的資料應該要從資料庫撈吧
+	var eventList1 = [
+		{
+			id: 1,
+			title: "任務名稱 + 結束(執行)時間",
+			start: "2023-09-05 10:00:00",
+			end: "2023-09-05 12:00:00",
+			// 可以設定點進去後的連結?
+			// url:"",
+		},
+		{
+			id: 2,
+			title: "事件二",
+			start: "2023-09-06 10:00:00",
+			end: "2023-09-07 12:00:00",
+		},
+
+	];
+	var eventList2 = [];
+	$.ajax({
+		url: 'https://localhost:7277/Yu_Calendar/GetEvents', // JSON 数据文件的 URL
+		type: 'GET',
+		dataType: 'json',
+		success: function (data) {
+			// 在这里将 JSON 数据转换并添加到 FullCalendar 的事件列表
+
+
+			// 遍历 JSON 数据并将其转换为 FullCalendar 的事件格式
+			$.each(data, function (index, item) {
+				var event = {
+					id: item.id,
+					title: item.title,
+					start: item.start, // 需要根据 JSON 数据的属性来设置
+					end: item.end // 需要根据 JSON 数据的属性来设置
+					// 其他属性，如 allDay、color、backgroundColor 等，根据需要设置
+				};
+				eventList2.push(event);
+			});
+		}
+	})
+	console.log(eventList1)
+	console.log(eventList2)
+
+
+
+	// 把事件設定進行事曆
+	var calendarEl = document.getElementById('calendar');
+	var calendar = new FullCalendar.Calendar(calendarEl, {
+
+		initialView: 'dayGridMonth',
+		timeZone: 'Asia/Taipei',
+		events: eventList2,
+		aspectRatio: 2,//月曆長寬比
+		slotEventOverlap: true,//是否運許事件重疊
+		weekMode: "variable",//週數隨每月日數變化
+		fixedWeekCount: false,
+		contentHeight: 400,
+		displayEventTime: false,//隱藏事件上的時間
+
+		//改背景顏色
+		eventColor: '#ABD9C5',
+		//點擊事件後的操作(寫個函式吧，要連結到任務介面)
+		eventClick: function (info) {
+			alert(info.event.title)
+		}
+	});
+	calendar.render();
+
+
+
+
+
+
+
+</script>
+
+
+<br />
+<br />
+<hr />
+<br />
+
+<br />
+
+<!-- 歷史表單 -->
+
+
+<div class="row fs-3">
+	<div class="col-md-1 col-sm-12 "></div>
+	<div class="col-md-10 col-sm-12 bg-info-subtle ">
+
+
+		<!--標籤卡-->
+		<!-- 參考： https://getbootstrap.com/docs/5.3/components/navs-tabs/#javascript-behavior-->
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link text-secondary-emphasis active" id="guest-tab" data-bs-toggle="tab"
+						data-bs-target="#guest-tab-pane" type="button" role="tab" aria-controls="guest-tab-pane"
+						aria-selected="true" style="background-color: #8CC7D6;">
+					我的發布紀錄
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link text-secondary-emphasis" id="toolman-tab" data-bs-toggle="tab"
+						data-bs-target="#toolman-tab-pane" type="button" role="tab" aria-controls="toolman-tab-pane"
+						aria-selected="false" style="background-color: #88c6AB; margin-left: 5px;">
+					我的接案紀錄
+				</button>
+			</li>
+
+		</ul>
+
+
+
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="guest-tab-pane" role="tabpanel" aria-labelledby="guest-tab"
+				 tabindex="0" style="background-color: #8CC7D6;">
+
+
+				<!--任務狀態篩選-->
+				<div class="dropdown text-end">
+					<br>
+					<button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton"
+							data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-right: 30px;">
+						任務狀態
+					</button>
+					<div id="MissionStatus_Droplist_O" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+						@foreach (var item in ViewBag.MissionStatus_Droplist) {
+							<a class="dropdown-item">@item</a>
+						}
+						@*	<a class="dropdown-item" href="#">已接單</a>
+						<a class="dropdown-item" href="#">未接單</a>
+						<a class="dropdown-item" href="#">已完成</a>*@
+
+					</div>
+				</div>
+
+				<!-- 發布表單 -->
+				<div class=" desktop-table" style="display: block; margin: 20px; ">
+
+
+					<table class="table table-guest table-hover text-center table align-middle ">
+						<tr>
+							<td style="width: 60px;">任務編號</td>
+							<td style="width: 100px;">接案人</td>
+							<td style="width: 350px">任務名稱</td>
+							<td style="width: 170px;">任務期限</td>
+							<td style="width: 120px;">任務金額</td>
+							<td style="width: 120px;">任務狀態</td>
+							<td style="width: 320px;">操作</td>
+						</tr>
+
+						<!-- 關於操作：
+						取消任務：將任務狀態更新為"未接單"，並且降低該用戶評分
+						任務回報：跳出 檢舉/意見 頁面 -->
+						@foreach (var item in @ViewBag.myOrderMission) {
+							<tr>
+								<td style="font-size:20px">(@item.MissionId)</td>
+								<td>
+									@item.AcceptMemberId
+									<!-- <p style="font-size: 20px;">陳小廷20px=fs-5</p>
+									<p style="font-size: 24px;">陳小廷24px=fs-4</p>
+									<p style="font-size: 28px;">陳小廷28px=fs-3</p>
+									<p style="font-size: 32px;">陳小廷32px=fs-2</p> -->
+								</td>
+								<td>@item.MissionName</td>
+								<td>@item.DeliveryDate</td>
+								<td>$@item.MissionAmount</td>
+								<td>@item.MissionStatus</td>
+								<td>
+									<!-- <a>完成任務(含評分)</a><br>
+									<a>取消任務</a><br>
+									<a>任務回報</a> -->
+									<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.OrderMemberId, othersId= @item.AcceptMemberId})" class="btn-Star btn btn-outline-dark btn-lg">完成任務</a>
+									<button type="button" class="btn btn-outline-dark btn-lg">取消任務</button>
+									<button type="button" class="btn btn-outline-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">任務回報</button>
+								</td>
+							</tr>
+
+							
+
+						}
+
+
+
+					</table>
+					<br />
+
+					<br />
+				</div>
+
+			</div>
+
+			<!--接案-->
+			<div class="tab-pane fade" id="toolman-tab-pane" role="tabpanel" aria-labelledby="toolman-tab"
+				 tabindex="0" style="background-color: #88c6AB; ">
+
+
+				<!--任務狀態篩選-->
+				<div class="  text-end">
+					<br>
+					<select class="btn btn-secondary btn-lg dropdown-toggle" id="myDropdown" style="margin-right: 30px;">
+						<option disabled selected value="" style="background-color:white;display:none">任務狀態</option>
+						@foreach (var item in ViewBag.MissionStatus_Droplist) {
+							<option class="dropdown-item" style="background-color:white" value="@item">@item</option>
+						}
+						@*<a class="dropdown-item" href="#">已接單</a>
+						<a class="dropdown-item" href="#">未接單</a>
+						<a class="dropdown-item" href="#">已完成</a>*@
+
+
+					</select>
+
+				</div>
+
+
+				<!-- 接案表單 -->
+				<div class=" desktop-table" style="display: block; margin: 20px; ">
+
+					<table class="table table-toolman table-hover text-center table align-middle ">
+						<tr>
+							<td style="width: 60px;">任務編號</td>
+							<td style="width: 100px;">發布人</td>
+							<td style="width: 350px">任務名稱</td>
+							<td style="width: 170px;">任務期限</td>
+							<td style="width: 120px;">任務金額</td>
+							<td style="width: 120px;">任務狀態</td>
+							<td style="width: 320px;">操作</td>
+						</tr>
+
+						@foreach (var item in @ViewBag.myAcceptMission) {
+							<tr>
+								<td style="font-size:20px">(@item.MissionId)</td>
+								<td>@item.OrderMemberId</td>
+								<td>@item.MissionName</td>
+								<td>@item.DeliveryDate</td>
+								<td>$@item.MissionAmount</td>
+								<td>@item.MissionStatus</td>
+								<td>
+									<!--<button type="button" class="btn-Star btn btn-outline-dark btn-lg" data-item-id="@item.MissionId" @* data-bs-toggle="modal" data-bs-target="#staticBackdrop"*@>完成任務</button>
+									-->
+									@*<a asp-action="Star" asp-route-id="@item.MissionId" class="btn-Star btn btn-outline-dark btn-lg">完成任務</a>*@
+									<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.AcceptMemberId, othersId= @item.OrderMemberId})" class="btn-Star btn btn-outline-dark btn-lg">完成任務</a>
+									<button type="button" class="btn btn-outline-dark btn-lg">取消任務</button>
+									<button type="button" class="btn btn-outline-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">任務回報</button>
+
+
+									
+								</td>
+							</tr>
+						}
+					</table>
+					<br />
+				</div>
+			</div>
+
+		</div>
+
+		<!--評分的彈出視窗-->
+		<div class="modal fade" id="staticBackdrop" @* data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"*@>
+			<div class="modal-dialog modal-dialog-centered modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-2" id="staticBackdropLabel">用戶評分</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+
+						<div class="container">
+
+							<!-- 評分 -->
+							<div class="mb-3">
+								<!-- <label for="rating" class="form-label">評分</label> -->
+								<div class="rating" id="ratingStars">
+									<i class="fas fa-star" data-rating="1"></i>
+									<i class="fas fa-star" data-rating="2"></i>
+									<i class="fas fa-star" data-rating="3"></i>
+									<i class="fas fa-star" data-rating="4"></i>
+									<i class="fas fa-star" data-rating="5"></i>
+								</div>
+								<input type="hidden" id="rating" name="rating">
+							</div>
+
+							<!-- 評論 -->
+							<div class="mb-3">
+								<h3>評論</h3>
+								<!-- class="btn-group" role="group" aria-label="Basic example"-->
+								<div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项1</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项2</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项3</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项4</div>
+								</div>
+								<p>您选择的选项是：<span id="selected-options"></span></p>
+
+								<button type="button" class="btn btn-primary" id="submit-button" onclick="submitForm()">提交</button>
+
+							</div>
+						</div>
+						<div class="modal-footer">
+							<!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>-->
+							<button type="button" class="btn btn-primary">完成</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="staticBackdrop2" @* data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true"*@>
+			<div class="modal-dialog modal-dialog-centered modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-2" id="staticBackdropLabel2">意見回報</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="container">
+
+
+							<!-- 意見回報 -->
+							<div class="mb-3">
+								<div @*class="btn-group" role="group" aria-label="Basic example"*@>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项1</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项2</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项3</div>
+									<div class="btn-checkbox" onclick="toggleColor(this)">选项4</div>
+								</div>
+								<p>您选择的选项是：<span id="selected-options"></span></p>
+
+								<button type="button" class="btn btn-primary" id="submit-button" onclick="submitForm()">提交</button>
+
+							</div>
+						</div>
+						<div class="modal-footer">
+							@*   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>*@
+							<button type="button" class="btn btn-primary">完成</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+@*	<script>
+			$(document).ready(function () {
+		$(".btn-Star").on("click", function () {
+					var itemId = $(this).data("item-id");
+
+					// 通過Ajax請求獲取編輯表單的HTML內容
+					$.ajax({
+				url: "/SaveRating/" + itemId, // 替換成你的編輯表單獲取路徑
+						method: "GET",
+						success: function (data) {
+							// 在彈出式視窗中顯示編輯表單
+							openEditPopup(data);
+						},
+						error: function () {
+							alert("無法加載編輯表單。");
+						}
+					});
+				});
+			});
+
+			function openEditPopup(formHTML) {
+		// 將 formHTML 插入到彈出式視窗的內容中
+		$(".modal-body").html(formHTML);
+
+		// 顯示彈出式窗口
+		$("#staticBackdrop").modal("show");
+			}
+
+		</script>*@
+
+<script>
+	document.getElementById("myDropdown").addEventListener("change", function () {
+		var selectedValue = this.value;
+
+		// 使用AJAX发送所选值到后端
+		$.ajax({
+			type: 'POST', // 或 'GET'，取决于你的需求
+			url: '/Yu_CalendarController/Calendar',
+			data: { selectedValue: selectedValue },
+			success: function (data) {
+				// 在这里处理来自后端的响应
+			}
+		});
+	});
+
+
+</script>
+
+
+
+<!--評分的JS-->
+<script>
+
+
+	//JavaScript 代碼
+	const ratingStars = document.querySelectorAll(".rating i");
+	const ratingInput = document.getElementById("rating");
+	let selectedRating = null; // 添加一个用于存储用户选择的评分的变量
+
+	ratingStars.forEach(star => {
+		star.addEventListener("click", () => {
+			const ratingValue = parseInt(star.getAttribute("data-rating"));
+			selectedRating = ratingValue; // 将用户选择的评分值存储在selectedRating变量中
+			ratingInput.value = ratingValue;
+			resetRating();
+			star.classList.add("rated");
+			// 同時讓左側星星恢復原色
+			let prevStars = star.previousElementSibling;
+			while (prevStars) {
+				prevStars.classList.add("rated");
+				prevStars = prevStars.previousElementSibling;
+			}
+		});
+	});
+
+	function resetRating() {
+		ratingStars.forEach(star => {
+			star.classList.remove("rated");
+		});
+	}
+
+
+	//function submitForm() {
+	//	const selectedOptions = document.getElementById("selected-options").innerText; // 获取选项值（如果需要）
+	//	const selectedRating = ratingInput.value; // 获取用户选择的评分值
+
+	//	// 创建一个包含要发送的数据的对象
+	//	const data = {
+	//		rating: selectedRating,
+	//		options: selectedOptions // 如果需要，你可以将选项一并发送
+	//	};
+
+	//	// 发送AJAX请求
+	//	const xhr = new XMLHttpRequest();
+	//	xhr.open("POST", "/your-controller-url"); // 替换为你的控制器的URL
+	//	xhr.setRequestHeader("Content-Type", "application/json");
+	//	xhr.onreadystatechange = function () {
+	//		if (xhr.readyState === 4 && xhr.status === 200) {
+	//			// 请求成功，可以执行其他操作
+	//			console.log("Data sent successfully.");
+	//		}
+	//	};
+
+	//	// 将数据对象转换为JSON字符串并发送
+	//	xhr.send(JSON.stringify(data));
+	//}
+
+
+
+
+	//第四版
+	function toggleColor(button) {
+		button.classList.toggle("selected");
+
+		var selectedOptions = document.querySelectorAll(".btn-checkbox.selected");
+		var selectedOptionsDisplay = document.getElementById("selected-options");
+		var selectedOptionText = Array.from(selectedOptions).map(function (option) {
+			return option.textContent;
+		}).join(', ');
+
+		selectedOptionsDisplay.textContent = selectedOptionText;
+	}
+
+	function submitForm() {
+		var selectedOptions = document.querySelectorAll(".btn-checkbox.selected");
+		var selectedOptionsText = Array.from(selectedOptions).map(function (option) {
+			return option.textContent;
+		}).join(', ');
+
+		// 这里可以添加提交表单的逻辑
+		//alert("表单已提交，选择的选项是: " + selectedOptionsText);
+		console.log(selectedRating)
+
+
+
+
+	}
+</script>
