@@ -31,10 +31,12 @@ public partial class Member
     public string MemberStatus { get; set; } = null!;
 
     [Required(ErrorMessage = "請輸入密碼。")]
-    [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,20}$", ErrorMessage = "您的密碼長度必須為 8-20 個字符，包含字母和數字，且不得包含空格、特殊字符或表情符號。")]
+    //[RegularExpression(@"^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,20}$", ErrorMessage = "您的密碼長度必須為 8-20 個字符，包含字母和數字，且不得包含空格、特殊字符或表情符號。")]
     public string MemberPassword { get; set; } = null!;
 
     public string? Gearing { get; set; }
+
+    public string? Salt { get; set; }
 
     public virtual ICollection<Abandoned> Abandoneds { get; set; } = new List<Abandoned>();
 

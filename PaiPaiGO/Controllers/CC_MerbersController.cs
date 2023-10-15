@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using NuGet.Common;
 using PaiPaiGO.Models;
+using System.Security.Cryptography;
 
 namespace paipaigo1005.Controllers {
     public class CC_MembersController : Controller {
@@ -100,7 +101,11 @@ namespace paipaigo1005.Controllers {
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetPassword([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,BankCode,BankNum")] Member member) {
             if (ModelState.IsValid) {
-                ViewBag.Set = "更改成功";
+				(string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
+				member.MemberPassword = hashedPassword; // 將哈希後的密碼儲存到資料庫
+				member.Salt = salt; // 儲存鹽值到資料庫
+
+				ViewBag.Set = "更改成功";
                 _context.Update(member);
                 await _context.SaveChangesAsync();
                 return View("SetPassword");
@@ -132,19 +137,24 @@ namespace paipaigo1005.Controllers {
             member.MemberId = numstring;
 
             if (ModelState.IsValid) {
+                (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
+                member.MemberPassword = hashedPassword; // 將哈希後的密碼儲存到資料庫
+                member.Salt = salt; // 儲存鹽值到資料庫
+
                 _context.Add(member);
                 await _context.SaveChangesAsync();
 
                 // 發送電子郵件
-                var emailSubject = "paipaigo會員驗證郵件";
-                var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("ConfirmEmail", "CC_Members", new { memberId = member.MemberId, token = GenerateToken(member.MemberId) }, protocol: HttpContext.Request.Scheme)}'>驗證並至登入頁面</a>";
-                var emailService = new EmailService();
-                await emailService.SendEmailAsync(member.MemberEmail, emailSubject, emailMessage);
+                //var emailSubject = "paipaigo會員驗證郵件";
+                //var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("ConfirmEmail", "CC_Members", new { memberId = member.MemberId, token = GenerateToken(member.MemberId) }, protocol: HttpContext.Request.Scheme)}'>驗證並至登入頁面</a>";
+                //var emailService = new EmailService();
+                //await emailService.SendEmailAsync(member.MemberEmail, emailSubject, emailMessage);
                 ViewBag.RegistrationSuccess = "Success";
                 return View("Resgister");
             }
             return View(member);
         }
+
         //Email驗證Action
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string memberId, string token) {
@@ -183,6 +193,7 @@ namespace paipaigo1005.Controllers {
 
             return tokenIsValid;
         }
+
         //生成token
         private string GenerateToken(string userId) {
             var token = Guid.NewGuid().ToString();
@@ -190,6 +201,7 @@ namespace paipaigo1005.Controllers {
             _memoryCache.Set(token, userId, TimeSpan.FromHours(1));
             return token;
         }
+
         //發送電子郵件
         public class EmailService {
             public async Task SendEmailAsync(string email, string subject, string message) {
@@ -213,15 +225,62 @@ namespace paipaigo1005.Controllers {
                 client.Send(mms); //寄出信件
             }
         }
+
         //驗證帳號重複
         public IActionResult CheckEmailAvailability(string email) {
             bool isAvailable = !_context.Members.Any(e => e.MemberEmail == email);
             return Json(new { isAvailable });
         }
+
         //驗證電話重複
         public IActionResult CheckphoneAvailability(string phone) {
             bool isAvailable = !_context.Members.Any(e => e.MemberPhoneNumber == phone);
             return Json(new { isAvailable });
+        }
+        #endregion
+
+        # region 密碼 Salt + Hash處理
+        public class PasswordHasher {
+            public static (string hashedPassword, string salt) HashPassword(string password) {
+                // 生成一個隨機的鹽值
+                byte[] salt = new byte[16];
+                using (var rng = RandomNumberGenerator.Create()) {
+                    rng.GetBytes(salt);
+                }
+
+                // 將密碼和鹽值組合起來並進行哈希處理
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+                byte[] saltBytes = salt;
+                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
+                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
+                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
+
+                // 使用SHA-256哈希算法計算哈希值
+                using (var sha256 = SHA256.Create()) {
+                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
+                    string hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
+
+                    return (hashedPassword, Convert.ToBase64String(salt));
+                }
+            }
+
+            // 驗證輸入的密碼是否與儲存的哈希值匹配
+            public static bool VerifyPassword(string hashedPassword, string salt, string passwordToCheck) {
+                byte[] saltBytes = Convert.FromBase64String(salt);
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(passwordToCheck);
+                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
+                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
+                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
+
+                // 使用SHA-256哈希算法計算輸入密碼的哈希值
+                using (var sha256 = SHA256.Create()) {
+                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
+                    string computedHash = Convert.ToBase64String(hashedPasswordBytes);
+
+                    // 比較計算的哈希值與儲存的哈希值
+                    return hashedPassword == computedHash;
+                }
+            }
         }
         #endregion
 
@@ -233,36 +292,34 @@ namespace paipaigo1005.Controllers {
         [HttpPost]
         //public ActionResult Login(Member model)
         public ActionResult Login(string username, string password) {
-            var Status = _context.Members
-            .FirstOrDefault(x => x.MemberEmail == username && x.MemberPassword == password);
-            if (Status == null) {
-                ViewBag.Status = "空的";
-            }
+            var Member = _context.Members
+            .FirstOrDefault(x => x.MemberEmail == username );
+            if (Member == null) {
+				ViewBag.Status = "空的";
+				return View("Login");
+			}
             else {
-                if (Status.MemberStatus != "正常") {
-                    ViewBag.Status = "異常";
-                }
-            }
             // 驗證用戶名和密碼
-            if (IsValidUser(username, password)) {
+            if (Member != null && Member.MemberStatus == "正常" && PasswordHasher.VerifyPassword(Member.MemberPassword, Member.Salt, password)) {
 
-                HttpContext.Session.SetString("MemberID", Status.MemberId);
+                HttpContext.Session.SetString("MemberID", Member.MemberId);
                 //ViewBag.se = HttpContext.Session.GetString("MemberID");
                 //return View("Index");
                 return RedirectToAction("MemberProfile"); // 導向登入成功
             }
             else {
-                return View("Login");
+                if (Member != null) {
+                    ViewBag.Status = "空的";
+                }
+                else {
+                    if (Member.MemberStatus != "正常") {
+                        ViewBag.Status = "異常";
+                    }
+                }
+				return View("Login");
             }
-        }
-        // 檢查資料庫中的資料是否一致
-        private bool IsValidUser(string username, string password) {
+            }
 
-            var query = _context.Members
-                        .FirstOrDefault(x => x.MemberEmail == username && x.MemberPassword == password && x.MemberStatus == "正常");
-
-
-            return query != null;
         }
         #endregion
 
@@ -282,19 +339,18 @@ namespace paipaigo1005.Controllers {
         [HttpGet]
         public ActionResult MemberProfile() {
             var SessioID = HttpContext.Session.GetString("MemberID");
-            ViewBag.Change = TempData["Change"];
+            if (TempData["Change"] != null) {
+                ViewBag.Change = TempData["Change"];
+            }
+
             if (SessioID != null) {
                 var query = _context.Members
                         .FirstOrDefault(x => x.MemberId == SessioID);
                 if (query != null) {
-                    //var member =  _context.Members.FindAsync(query.MemberId);
-                    //return View(member);
                     ViewBag.ID = query.MemberId;
                     ViewBag.name = query.MemberName;
                     ViewBag.email = query.MemberEmail;
                     ViewBag.phone = query.MemberPhoneNumber.Substring(0, 10);
-                    //ViewBag.BankCode = query.BankCode;
-                    //ViewBag.BankNum = query.BankNum;
                     ViewBag.Postcode = query.MemberPostcode;
                     ViewBag.MemberCity = query.MemberCity;
                     ViewBag.Township = query.MemberTownship;
@@ -303,7 +359,6 @@ namespace paipaigo1005.Controllers {
                     ViewBag.password = query.MemberPassword;
                 }
                 return View();
-                //return RedirectToAction("MemberProfile");
             }
             return View();
             //return RedirectToAction("MemberProfile");
@@ -311,14 +366,56 @@ namespace paipaigo1005.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MemberProfile([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,BankCode,BankNum")] Member member) {
+        public async Task<IActionResult> MemberProfile([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword")] Member member,string? oldPassword) {
+
             if (ModelState.IsValid) {
-                TempData["Change"] = "修改成功";
-                _context.Update(member);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("MemberProfile");
+                var existingMember = _context.Members.FirstOrDefault(x => x.MemberId == member.MemberId);
+                if (oldPassword != null) {
+                    if (existingMember != null) {
+                        if (PasswordHasher.VerifyPassword(existingMember.MemberPassword, existingMember.Salt, oldPassword)) {
+                            //更新現有實體對象
+                            existingMember.MemberName = member.MemberName;
+						    existingMember.MemberCity = member.MemberCity;
+						    existingMember.MemberTownship = member.MemberTownship;
+						    existingMember.MemberPostcode = member.MemberPostcode;
+						    existingMember.MemberAddress = member.MemberAddress;
+						    existingMember.MemberPassword = member.MemberPassword;
+
+						    // Salt + Hash
+						    var (hashedPassword, salt) = PasswordHasher.HashPassword(member.MemberPassword);
+
+						    // 更新Salt + 密碼
+						    existingMember.MemberPassword = hashedPassword;
+						    existingMember.Salt = salt;
+						    try {
+                                await _context.SaveChangesAsync();
+                                TempData["Change"] = "修改成功";
+                                return RedirectToAction("MemberProfile");
+                            }
+                            catch (DbUpdateException ex) {
+                                // 處理異常
+                                TempData["Message"] = "修改失败：" + ex.Message;
+                            }
+                        }
+                        else {
+                            TempData["Change"] = "修改失敗";
+                        }
+                    }
+                }
+                else {
+					//更新現有實體對象
+					existingMember.MemberName = member.MemberName;
+					existingMember.MemberCity = member.MemberCity;
+					existingMember.MemberTownship = member.MemberTownship;
+					existingMember.MemberPostcode = member.MemberPostcode;
+					existingMember.MemberAddress = member.MemberAddress;
+					await _context.SaveChangesAsync();
+					TempData["Change"] = "修改成功";
+					return RedirectToAction("MemberProfile");
+				}
+                
             }
-            return View();
+            return RedirectToAction("MemberProfile");
         }
         #endregion
     }
