@@ -82,7 +82,7 @@ namespace paipaigo1005.Controllers {
                     ViewBag.ID = query.MemberId;
                     ViewBag.name = query.MemberName;
                     ViewBag.email = query.MemberEmail;
-                    ViewBag.phone = query.MemberPhoneNumber;
+                    ViewBag.phone = query.MemberPhoneNumber.Substring(0, 10); ;
                     //ViewBag.BankCode = query.BankCode;
                     //ViewBag.BankNum = query.BankNum;
                     ViewBag.Postcode = query.MemberPostcode;
@@ -247,7 +247,7 @@ namespace paipaigo1005.Controllers {
             if (IsValidUser(username, password)) {
 
                 HttpContext.Session.SetString("MemberID", Status.MemberId);
-                ViewBag.se = HttpContext.Session.GetString("MemberID");
+                //ViewBag.se = HttpContext.Session.GetString("MemberID");
                 //return View("Index");
                 return RedirectToAction("MemberProfile"); // 導向登入成功
             }
