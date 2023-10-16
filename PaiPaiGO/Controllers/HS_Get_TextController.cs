@@ -21,13 +21,15 @@ namespace PaiPaiGO.Controllers
         }
 
 
-        public IActionResult GetOrder_Pai(int id)
+        public IActionResult GetOrder_Pai(int? id,string? idstr)
         {
-            //int ID = 2023100801;
-            ViewBag.PID = id;
+			int y;
+			y = Convert.ToInt32(idstr);
+			//int ID = 2023100801;
+			ViewBag.PID = id;
             var PaiData = (from x in _context.Missions
-                           where x.MissionId == id
-                           select x).FirstOrDefault();
+                           where x.MissionId == y
+						   select x).FirstOrDefault();
 
 
 

@@ -37,7 +37,7 @@
 			displayEventTime: false,//隱藏事件上的時間
 			////點擊事件後的操作(寫個函式吧，要連結到任務介面)
 			eventClick: function (info) {
-				var eventId = info.event.id;
+				var eventId = (info.event.id);				
 				window.location.href = "/HS_Get_Text/GetOrder_Pai/" + eventId;
 			}
 		});
