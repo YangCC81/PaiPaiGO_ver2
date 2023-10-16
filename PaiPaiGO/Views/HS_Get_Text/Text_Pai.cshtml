@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
+    @* 地圖api *@
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVc0hKUxRv8PWCCNNhMsf7m_ZwIoivCZg"></script>
 </head>
 <style>
     .custom-capsule-button {
@@ -94,19 +96,21 @@
                         <br><br>
                         <div style="border: 1px solid #000; padding: 5px; box-sizing: border-box; overflow: auto;">
                             <textarea style="width: 100%; height: 150px; border: none;background-color: #CDF4D1;">
-                                                                                                                @TempData["PaiMissionDescription"]
+                                @TempData["PaiMissionDescription"]
                             </textarea>
                             <!-- 添加一个可以放置图片的空间 -->
                             <div style="margin-top: 10px;">
                                 <!-- 在这里放置图片 -->
                                 <div style="display: flex; flex-wrap: wrap;">
                                     <div style="max-width: 230px; flex: 1; margin: 5px;">
-                                        <img class="img-fluid" style="max-width: 100%; height: auto;" src="https://tse2.mm.bing.net/th?id=OIP.ae7bqo9B2ZEa0chxb50zDgHaEJ&pid=Api&P=0&h=180"
-                                             alt="">
+                                        @if (ViewBag.ImageData != null)
+                                        {
+                                            <img class="img-fluid" style="max-width: 100%; height: auto;" src="@ViewBag.ImageData" alt="Image from Session" alt="Uploaded Image" style="width:150px" />
+                                        }
                                     </div>
                                     <div style="max-width: 230px; flex: 1; margin: 5px;">
-                                        <img class="img-fluid" style="max-width: 100%; height: auto;" src=""
-                                             alt="">
+                                        @* <img class="img-fluid" style="max-width: 100%; height: auto;" src=""
+                                        alt=""> *@
                                     </div>
                                 </div>
                                 <!-- 继续添加更多图片，每行只放两张 -->
@@ -127,8 +131,25 @@
                     </div>
                     <br><br>
                     <!-- 截止時間 -->
+                    @{
+                        DateTime DeadlineDate;
+                        TimeSpan DeadlineTime;
+                        if (DateTime.TryParse(TempData["PaiDeadlineDate"]?.ToString(), out DeadlineDate))
+                        {
+                            if (TimeSpan.TryParse(TempData["PaiDeadlineTime"]?.ToString(), out DeadlineTime))
+                            {
+                                DateTime combinedDateTime = DeadlineDate + DeadlineTime;
+
+                                string datePart = combinedDateTime.ToString("yyyy-MM-dd");
+                                string timePart = combinedDateTime.ToString("tt hh:mm:ss");
+                                string combined = $"{datePart} {timePart}";
+
+                                ViewBag.CombinedDateTime = combined;
+                            }
+                        }
+                    }
                     <div style="padding-top:20px;">
-                        <img src="~/img/alarm.svg" alt="">案件截止時間:<span style="color:orange;">@TempData["PaiDeadlineDate"] @TempData["PaiDeadlineTime"]</span>
+                        <img src="~/img/alarm.svg" alt="">案件截止時間:<span style="color:orange;">@ViewBag.CombinedDateTime</span>
                     </div>
                     <!-- 任務金額 -->
                     <div>
@@ -138,15 +159,42 @@
                     <div>
                         <img src="~/img/map-pin.svg" alt="">執行地點:<span>@TempData["PaiAddress"]</span>
                         <p style="color:orange;">@TempData["PaiLocationCity"]/@TempData["PaiLocationDistrict"]</p>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3615.492929605777!2d121.5397518!3d25.0173405!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a98bcdf68a9b%3A0x8078d7b38c3ed495!2z6bql55W25YueLeWPsOWMl-WPsOWkp-mkkOW7sw!5e0!3m2!1szh-TW!2stw!4v1695696652172!5m2!1szh-TW!2stw"
-                                width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <div id="map" style="height: 400px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-1"></div>
     </div>
+    <script>
+        // 地圖api
+        function initialize() {
+            var mapOptions = {
+                zoom: 15,
+                center: { lat: 25.0173405, lng: 121.5397518 }  // 台北市的預設經緯度
+            };
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        }
+        function geocodeAddress() {
+            var geocoder = new google.maps.Geocoder();
+            var address = "@TempData["PaiLocationCity"]" + " " + "@TempData["PaiLocationDistrict"]" + " " + "@TempData["PaiAddress"]";  // 這裡填入您的縣市和地區字串
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    map.setCenter(results[0].geometry.location);
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        window.onload = function () {
+            initialize();  // 初始化地圖
+            geocodeAddress();  // 進行地理編碼
+        };
+    </script>
 </body>
 
 </html>

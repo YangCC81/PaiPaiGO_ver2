@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\moment.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\HS_Get_Text\GetOrder_Buy.cshtml" />
+    <None Include="Views\HS_Get_Text\GetOrder_Pai.cshtml" />
+    <None Include="Views\HS_Get_Text\Text_Buy.cshtml" />
+    <None Include="Views\HS_Get_Text\Text_Pai.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">

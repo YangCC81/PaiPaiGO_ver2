@@ -18,6 +18,9 @@ using Microsoft.Extensions.Caching.Memory;
 using NuGet.Common;
 using PaiPaiGO.Models;
 using System.Security.Cryptography;
+using System.Reflection;
+using System.Collections;
+using System.Drawing;
 
 namespace paipaigo1005.Controllers {
     public class CC_MembersController : Controller {
@@ -28,9 +31,44 @@ namespace paipaigo1005.Controllers {
             _context = context;
             _memoryCache = memoryCache;
         }
+        #region 行事曆
+        public IActionResult FullCalendar() {
+			var memberID = HttpContext.Session.GetString("MemberID");
 
-        #region 忘記密碼
-        [HttpGet]
+			var OrderEventList = _context.Missions
+	            .Where(mission => mission.OrderMemberId == memberID && mission.MissionStatus == "發布中") 
+				.Select(mission => new {
+					id = mission.MissionId,
+					title = mission.MissionName,
+					start = mission.OrderTime,
+					end = mission.DeadlineDate + mission.DeadlineTime,
+					color = "#AFD9E4"
+				})
+				.ToList();
+
+
+			var AcceptEventList = _context.Missions
+	        .Where(mission => mission.AcceptMemberId == memberID && mission.MissionStatus == "發布中")
+	        .Select(mission => new {
+				id = mission.MissionId,
+				title = mission.MissionName,
+		        start = mission.OrderTime,
+		        end = mission.DeadlineDate + mission.DeadlineTime,
+                color = "#ABD9C5"
+	        })
+	        .ToList();
+
+			ViewBag.OrderEventList = OrderEventList;
+			ViewBag.AcceptEventList = AcceptEventList;
+
+
+			return View();
+
+        }
+		#endregion
+
+		#region 忘記密碼
+		[HttpGet]
         public IActionResult ForgotPassword() {
             return View();
         }
@@ -360,7 +398,7 @@ namespace paipaigo1005.Controllers {
                 }
                 return View();
             }
-            return View();
+            return View("Login");
             //return RedirectToAction("MemberProfile");
         }
 
