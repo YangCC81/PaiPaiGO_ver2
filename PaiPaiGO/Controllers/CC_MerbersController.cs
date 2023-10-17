@@ -88,7 +88,7 @@ namespace paipaigo1005.Controllers {
 
                     // 發送電子郵件
                     var emailSubject = "paipaigo重設密碼驗證郵件";
-                    var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("SetPassword", "CC_Members", new { memberId = user.MemberId, token = GenerateToken(user.MemberId) }, protocol: HttpContext.Request.Scheme)}'>點擊重新設定密碼</a>";
+                    var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("SetPassword", "CC_Members", new { memberId = user.MemberId, token = GenerateToken(user.MemberId) }, protocol: HttpContext.Request.Scheme)}'>點擊重新設定密碼</a>。<br>此為系統郵件，請勿回復。<br>PaiPaiGO";
 
                     var emailService = new EmailService();
                     await emailService.SendEmailAsync(user.MemberEmail, emailSubject, emailMessage);
@@ -173,8 +173,9 @@ namespace paipaigo1005.Controllers {
                 numstring = "0" + numstring;
             }
             member.MemberId = numstring;
+            member.MemberStatus = "正常";
 
-            if (ModelState.IsValid) {
+			if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
                 member.MemberPassword = hashedPassword; // 將哈希後的密碼儲存到資料庫
                 member.Salt = salt; // 儲存鹽值到資料庫
@@ -182,11 +183,11 @@ namespace paipaigo1005.Controllers {
                 _context.Add(member);
                 await _context.SaveChangesAsync();
 
-                // 發送電子郵件
-                //var emailSubject = "paipaigo會員驗證郵件";
-                //var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("ConfirmEmail", "CC_Members", new { memberId = member.MemberId, token = GenerateToken(member.MemberId) }, protocol: HttpContext.Request.Scheme)}'>驗證並至登入頁面</a>";
-                //var emailService = new EmailService();
-                //await emailService.SendEmailAsync(member.MemberEmail, emailSubject, emailMessage);
+                //發送電子郵件
+                var emailSubject = "paipaigo會員驗證郵件";
+                var emailMessage = $"請點擊連結驗證您的Email地址以完成註冊會員：<a href='{Url.Action("ConfirmEmail", "CC_Members", new { memberId = member.MemberId, token = GenerateToken(member.MemberId) }, protocol: HttpContext.Request.Scheme)}'>驗證並至登入頁面</a>。<br>此為系統郵件，請勿回復。<br>PaiPaiGO";
+                var emailService = new EmailService();
+                await emailService.SendEmailAsync(member.MemberEmail, emailSubject, emailMessage);
                 ViewBag.RegistrationSuccess = "Success";
                 return View("Resgister");
             }

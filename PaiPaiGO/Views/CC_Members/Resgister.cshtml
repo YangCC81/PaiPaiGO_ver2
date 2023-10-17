@@ -26,12 +26,12 @@
                 <div class="col-md-12 mt-1 fs-5">
                     <label asp-for="MemberPassword" class="control-label">密碼</label>
                     <input asp-for="MemberPassword" type="password" class="form-control" id="inputPassword" />
-                    <span asp-validation-for="MemberPassword" class="text-danger fs-6"></span>
+                    <span asp-validation-for="MemberPassword" class="text-danger fs-6" id="passwordError"></span>
                 </div>
                 <div class="col-md-12 mt-1 fs-5">
                     <label asp-for="MemberName" class="control-label">姓名</label>
                     <input asp-for="MemberName" type="text" class="form-control" id="inputname" />
-                    <span asp-validation-for="MemberName" class="text-danger fs-6"></span>
+                    <span asp-validation-for="MemberName" class="text-danger fs-6" id="nameError"></span>
                 </div>
                 <div class="col-md-12 mt-1 fs-5">
                     <label asp-for="MemberPhoneNumber" class="control-label">行動電話</label>
@@ -52,7 +52,7 @@
 
                 <div class="col-md-12 mt-2">
                     <input asp-for="MemberAddress" type="text" class="form-control" placeholder="請輸入詳細地址" id="inputAddress" />
-                    <span asp-validation-for="MemberAddress" class="text-danger"></span>
+                    <span asp-validation-for="MemberAddress" class="text-danger" id="addressError"></span>
                 </div>
                 @*隱藏的欄位提交*@
                 <div class="invalid-feedback">
@@ -65,7 +65,7 @@
                 <div><button id="c_sendbtn" class="rounded mt-3 border-0 w-100  bg-info" type="submit">送出</button></div>
             </form>
 
-            錯誤訊息: @Html.ValidationSummary()
+            @*錯誤訊息: @Html.ValidationSummary()*@
         </div>
     </div>
 </div>
@@ -111,48 +111,119 @@
         $("#inputMemberTownship").val(selectedTown);
         $("#inputMemberPostcode").val(zipcode);
     });
-    //檢查表單並套用效果
-    console.log($("#emailError").text)
+
+    //檢查密碼正則
+    document.getElementById('inputPassword').addEventListener('blur', function () {
+        var passwordInput = this.value;
+        var passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+        if (passwordInput != ""){
+            if (!passwordRegex.test(passwordInput)) {
+                this.classList.add("is-invalid");
+                $("#passwordError").text("您的密碼長度必須為 8-20 個字符，包含字母和數字，且不得包含空格、特殊字符或表情符號。")
+            } else {
+                this.classList.remove("is-invalid");
+                $("#passwordError").text("")
+            }
+        }else{
+            this.classList.add("is-invalid");
+            $("#passwordError").text("請輸入密碼。")
+        }
+
+    });
+    //檢查必填 姓名 地址
+    document.getElementById('inputname').addEventListener('blur', function () {
+        var nameInput = this.value;
+        if (nameInput == "") {
+            this.classList.add("is-invalid");
+            $("#nameError").text("請輸入姓名。")
+        } else {
+            this.classList.remove("is-invalid");
+            $("#nameError").text("")
+        }
+    });
+    document.getElementById('inputAddress').addEventListener('blur', function () {
+        var addressInput = this.value;
+        if (addressInput == "") {
+            this.classList.add("is-invalid");
+            $("#addressError").text("請輸入詳細地址。")
+        } else {
+            this.classList.remove("is-invalid");
+            $("#addressError").text("")
+        }
+    });
 
 
     //檢查帳號是否重複
     $(document).ready(function () {
         $("#inputEmail").blur(function () {
             var email = $(this).val();
+            var emailRegex = /^[a-zA-Z0-9._-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if (email != ""){
+                $("#emailError").text("")
+                this.classList.remove("is-invalid");
+                if (!emailRegex.test(email)) {
+                    this.classList.add("is-invalid");
+                    $("#emailError").text("請輸入有效的Email地址。")
+                }else{
+                    this.classList.remove("is-invalid");
+                    $("#emailError").text("")
             // 發送ajax請求檢查郵箱是否被註冊過
-            $.ajax({
-                type: "GET",
-                url: "/CC_Members/CheckEmailAvailability?email=" + email,
-                success: function (response) {
-                    if (response.isAvailable) {
-                        console.log("OK")
-                        $("#emailError").text("");
-                    } else {
-                        $("#emailError").text("Email地址已經被註冊");
+                $.ajax({
+                    type: "GET",
+                    url: "/CC_Members/CheckEmailAvailability?email=" + email,
+                    success: function (response) {
+                        if (response.isAvailable) {
+                            $("#emailError").text("");
+                        } else {
+                            $("#emailError").text("Email地址已經被註冊。");
+                            $("#inputEmail").addClass("is-invalid");
+                        }
+                    },
+                    error: function () {
+                        console.log("錯誤");
                     }
-                },
-                error: function () {
-                    console.log("錯誤");
+                });
                 }
-            });
+            }else{
+                $("#emailError").text("請輸入Email地址。");
+                $("#inputEmail").addClass("is-invalid");
+            }
+
         });
         $("#inputphone").blur(function () {
             var phone = $(this).val();
-            $.ajax({
-                type: "GET",
-                url: "/CC_Members/CheckphoneAvailability?phone=" + phone,
-                success: function (response) {
-                    if (response.isAvailable) {
-                        console.log("OK")
-                        $("#phoneError").text("");
-                    } else {
-                        $("#phoneError").text("行動電話已經被註冊"); // 顯示錯誤
-                    }
-                },
-                error: function () {
-                    console.log("錯誤");
+            var phoneRegex = /^09\d{8}$/;
+            if (phone != ""){
+                this.classList.remove("is-invalid");
+                $("#phoneError").text("")
+                if (!phoneRegex.test(phone)) {
+                    this.classList.add("is-invalid");
+                    $("#phoneError").text("請輸入有效的行動電話號碼。")
+                }else{
+                    this.classList.remove("is-invalid");
+                    $("#phoneError").text("")
+                    $.ajax({
+                        type: "GET",
+                        url: "/CC_Members/CheckphoneAvailability?phone=" + phone,
+                        success: function (response) {
+                            if (response.isAvailable) {
+                                $("#inputphone").removeClass("text-danger");
+                                $("#phoneError").text("");
+                            } else {
+                                $("#phoneError").text("行動電話已經被註冊。"); // 顯示錯誤
+                                $("#inputphone").addClass("is-invalid");
+                            }
+                        },
+                        error: function () {
+                            console.log("錯誤");
+                        }
+                    });
                 }
-            });
+
+            }else{
+                $("#phoneError").text("請輸入行動電話號碼。"); // 顯示錯誤
+                $("#inputphone").addClass("is-invalid");
+            }
         });
     });
 
