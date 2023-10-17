@@ -4,6 +4,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
 <script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @*<h1>目前sessionID: @ViewBag.se</h1>*@
 <div class="row">
@@ -88,17 +89,21 @@
 
 @if (ViewBag.Status == "異常") {
     <script>
-        $(document).ready(function () {
-            $('#loginModal').modal('show');
-        @*顯示 Modal*@
-                        });
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: '您的帳號狀態有異常，請來信詢問<a href="mailto:paipaigo001@@gmail.com">客服</a>。',
+        })
     </script>
 }
 else if (ViewBag.Status == "空的") {
     <script>
-        $(document).ready(function () {
-            $('#loginModal2').modal('show');
-        @*顯示 Modal*@
-                                });
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: 'Email地址或密碼不正確，請檢查您的登入資訊並再試一次。',
+            timer: 2000,
+            timerProgressBar: true,
+        })
     </script>
 }

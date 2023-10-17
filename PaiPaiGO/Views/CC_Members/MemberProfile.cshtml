@@ -4,6 +4,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
 <script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <meta charset="UTF-8">
 <div class="d-flex align-items-center justify-content-center">
@@ -93,27 +94,6 @@
 <sapn id="cc_sapn" class="invalid-feedback">@ViewBag.MemberCity</sapn>
 <sapn id="cc_sapn2" class="invalid-feedback">@ViewBag.Township</sapn>
 
-@*修改成功&失敗通知*@
-<div class="modal fade" id="ChangeModal" tabindex="-1" role="dialog" aria-labelledby="loginFailureModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="d-flex justify-content-center"><img src="~/img/CC_check.png" style="height:100px;" /></div>
-                <p class="text-center fs-5">會員資料修改成功</p>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="ChangeModal2" tabindex="-1" role="dialog" aria-labelledby="loginFailureModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="d-flex justify-content-center"><img src="~/img/CC_check.png" style="height:100px;" /></div>
-                <p class="text-center fs-5">會員資料修改失敗，請再次確認輸入資料</p>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     console.log(@TempData["Message"])
     //縣市區域下拉選單
@@ -209,17 +189,22 @@
 
 @if (@ViewBag.Change == "修改成功") {
 	<script>
-		$(document).ready(function () {
-			$('#ChangeModal').modal('show');
-		@*顯示 Modal*@
-					});
+        Swal.fire({
+            icon: 'success',
+            title: '會員資料修改成功',
+            timer: 2000,
+            timerProgressBar: true,
+        })
 	</script>
 }
 else if (@ViewBag.Change == "修改失敗"){
     <script>
-        $(document).ready(function () {
-            $('#ChangeModal2').modal('show');
-        @*顯示 Modal*@
-                            });
+    Swal.fire({
+        icon: 'error',
+        title: '會員資料修改失敗',
+        text: '請檢查您輸入的資料並再試一次。',
+        timer: 2000,
+        timerProgressBar: true,
+    })
     </script>
 }
