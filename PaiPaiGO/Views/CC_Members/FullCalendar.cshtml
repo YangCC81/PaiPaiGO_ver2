@@ -13,7 +13,6 @@
 		var orderEvent = ViewBag.OrderEventList;
 		var AccepEvent = ViewBag.AcceptEventList;
 
-		// 將 OrderMember 資料轉換為 JSON 格式
 		var orderjson = Newtonsoft.Json.JsonConvert.SerializeObject(orderEvent);
 		var Accepjson = Newtonsoft.Json.JsonConvert.SerializeObject(AccepEvent);
 
@@ -22,8 +21,8 @@
 		jsonObject1.Merge(jsonObject2);
 		string mergedJson = jsonObject1.ToString();
 	}
-		// 將 JSON 資料指派給 JavaScript 變數
-		var EventList = @Html.Raw(mergedJson);
+	// 將資料指派給 JavaScript 變數
+	var EventList = @Html.Raw(mergedJson);
 
 	document.addEventListener('DOMContentLoaded', function () {
 		var calendarEl = document.getElementById('calendar');
@@ -31,11 +30,11 @@
 			initialView: 'dayGridMonth',
 			timeZone: 'Asia/Taipei',
 			events: EventList,
-			slotEventOverlap: true,//事件重疊
+			slotEventOverlap: true,
 			fixedWeekCount: false,
 			contentHeight: 500,
-			displayEventTime: false,//隱藏事件上的時間
-			////點擊事件後的操作(寫個函式吧，要連結到任務介面)
+			displayEventTime: false,
+			//點擊事件後的操作連結到詳細頁面
 			eventClick: function (info) {
 				var eventId = (info.event.id);				
 				window.location.href = "/HS_Get_Text/GetOrder_Pai/" + eventId;
@@ -47,9 +46,7 @@
 
 </script>
 
-
-
-<h1>行事曆</h1>
+<h1>FullCalendar</h1>
 <div class="row">
 	<div class="col-md-1 col-sm-12"></div>
 	<div class="col-md-10 col-sm-12">
@@ -67,28 +64,19 @@
 		background: white;
 		color: black;
 	}
-	/* 日期數字顏色 */
 	.fc-daygrid-day-number,
 	.fc-col-header-cell-cushion {
-		color: rgb(170, 102, 114);
+		color: black;
 		text-decoration: none;
 		font-size: 20px;
 	}
-
-	/* 改事件的文字顏色 */
 	.fc-event-title {
 		color: black;
 		font-size: 20px;
 	}
-
-	.fc-daygrid-day {
+	.fc-day-grid-event .fc-daygrid-day {
 		height: 10px;
 	}
-
-	.fc-day-grid-event {
-		height: 10px;
-	}
-
 	.fc-toolbar-chunk {
 		font-size: 20px;
 	}

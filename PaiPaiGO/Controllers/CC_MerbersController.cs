@@ -122,8 +122,6 @@ namespace paipaigo1005.Controllers {
                     ViewBag.name = query.MemberName;
                     ViewBag.email = query.MemberEmail;
                     ViewBag.phone = query.MemberPhoneNumber.Substring(0, 10); ;
-                    //ViewBag.BankCode = query.BankCode;
-                    //ViewBag.BankNum = query.BankNum;
                     ViewBag.Postcode = query.MemberPostcode;
                     ViewBag.MemberCity = query.MemberCity;
                     ViewBag.Township = query.MemberTownship;
@@ -149,6 +147,51 @@ namespace paipaigo1005.Controllers {
                 return View("SetPassword");
             }
             return View("SetPassword");
+        }
+        #endregion
+
+        # region 密碼 Salt + Hash處理
+        public class PasswordHasher {
+            public static (string hashedPassword, string salt) HashPassword(string password) {
+                // 生成一個隨機的鹽值
+                byte[] salt = new byte[16];
+                using (var rng = RandomNumberGenerator.Create()) {
+                    rng.GetBytes(salt);
+                }
+
+                // 將密碼和鹽值組合起來並進行哈希處理
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+                byte[] saltBytes = salt;
+                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
+                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
+                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
+
+                // 使用SHA-256哈希算法計算哈希值
+                using (var sha256 = SHA256.Create()) {
+                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
+                    string hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
+
+                    return (hashedPassword, Convert.ToBase64String(salt));
+                }
+            }
+
+            // 驗證輸入的密碼是否與儲存的哈希值匹配
+            public static bool VerifyPassword(string hashedPassword, string salt, string passwordToCheck) {
+                byte[] saltBytes = Convert.FromBase64String(salt);
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(passwordToCheck);
+                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
+                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
+                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
+
+                // 使用SHA-256哈希算法計算輸入密碼的哈希值
+                using (var sha256 = SHA256.Create()) {
+                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
+                    string computedHash = Convert.ToBase64String(hashedPasswordBytes);
+
+                    // 比較計算的哈希值與儲存的哈希值
+                    return hashedPassword == computedHash;
+                }
+            }
         }
         #endregion
 
@@ -278,51 +321,6 @@ namespace paipaigo1005.Controllers {
         }
         #endregion
 
-        # region 密碼 Salt + Hash處理
-        public class PasswordHasher {
-            public static (string hashedPassword, string salt) HashPassword(string password) {
-                // 生成一個隨機的鹽值
-                byte[] salt = new byte[16];
-                using (var rng = RandomNumberGenerator.Create()) {
-                    rng.GetBytes(salt);
-                }
-
-                // 將密碼和鹽值組合起來並進行哈希處理
-                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-                byte[] saltBytes = salt;
-                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
-                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
-                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
-
-                // 使用SHA-256哈希算法計算哈希值
-                using (var sha256 = SHA256.Create()) {
-                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
-                    string hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
-
-                    return (hashedPassword, Convert.ToBase64String(salt));
-                }
-            }
-
-            // 驗證輸入的密碼是否與儲存的哈希值匹配
-            public static bool VerifyPassword(string hashedPassword, string salt, string passwordToCheck) {
-                byte[] saltBytes = Convert.FromBase64String(salt);
-                byte[] passwordBytes = Encoding.UTF8.GetBytes(passwordToCheck);
-                byte[] combinedBytes = new byte[passwordBytes.Length + saltBytes.Length];
-                Array.Copy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
-                Array.Copy(saltBytes, 0, combinedBytes, passwordBytes.Length, saltBytes.Length);
-
-                // 使用SHA-256哈希算法計算輸入密碼的哈希值
-                using (var sha256 = SHA256.Create()) {
-                    byte[] hashedPasswordBytes = sha256.ComputeHash(combinedBytes);
-                    string computedHash = Convert.ToBase64String(hashedPasswordBytes);
-
-                    // 比較計算的哈希值與儲存的哈希值
-                    return hashedPassword == computedHash;
-                }
-            }
-        }
-        #endregion
-
         #region 登入頁面
         [HttpGet]
         public ActionResult Login() {
@@ -333,6 +331,7 @@ namespace paipaigo1005.Controllers {
         public ActionResult Login(string username, string password) {
             var Member = _context.Members
             .FirstOrDefault(x => x.MemberEmail == username );
+
             if (Member == null) {
 				ViewBag.Status = "空的";
 				return View("Login");
@@ -412,7 +411,7 @@ namespace paipaigo1005.Controllers {
                 if (oldPassword != null) {
                     if (existingMember != null) {
                         if (PasswordHasher.VerifyPassword(existingMember.MemberPassword, existingMember.Salt, oldPassword)) {
-                            //更新現有實體對象
+                            //更新所有實體對象
                             existingMember.MemberName = member.MemberName;
 						    existingMember.MemberCity = member.MemberCity;
 						    existingMember.MemberTownship = member.MemberTownship;
@@ -442,7 +441,7 @@ namespace paipaigo1005.Controllers {
                     }
                 }
                 else {
-					//更新現有實體對象
+					//更新除了密碼外現有實體對象
 					existingMember.MemberName = member.MemberName;
 					existingMember.MemberCity = member.MemberCity;
 					existingMember.MemberTownship = member.MemberTownship;
