@@ -1,7 +1,4 @@
-﻿body {
-}
-
-
+﻿
 .c_singinDiv {
     background-color: #fff;
     padding: 20px;
@@ -24,3 +21,101 @@
         max-height: 100%;
     }
 }
+
+.swal2-confirm {
+    background-color: aqua;
+}
+
+
+.CCbtn_submit {
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 25px;
+    font-family: 'Lato', sans-serif;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    box-shadow: inset 2px 2px 2px 0px rgba(255,255,255,.5), 7px 7px 20px 0px rgba(0,0,0,.1), 4px 4px 5px 0px rgba(0,0,0,.1);
+    outline: none;
+    background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(0,172,238,1) 100%);
+    width: 130px;
+    height: 40px;
+    line-height: 42px;
+    padding: 0;
+    border: none;
+}
+
+.CCbtn_submit span {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.CCbtn_submit:before,
+.CCbtn_submit:after {
+    position: absolute;
+    content: "";
+    right: 0;
+    top: 0;
+    background: rgba(0,172,238,1);
+    transition: all 0.3s ease;
+}
+
+.CCbtn_submit:before {
+    height: 0%;
+    width: 2px;
+}
+
+.CCbtn_submit:after {
+    width: 0%;
+    height: 2px;
+}
+
+.CCbtn_submit:hover {
+    background: transparent;
+    box-shadow: none;
+}
+
+.CCbtn_submit:hover:before {
+    height: 100%;
+}
+
+.CCbtn_submit:hover:after {
+    width: 100%;
+}
+
+.CCbtn_submit span:hover {
+    color: rgba(2,126,251,1);
+}
+
+.CCbtn_submit span:before,
+.CCbtn_submit span:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    background: rgba(0,172,238,1);
+    transition: all 0.3s ease;
+}
+
+.CCbtn_submit span:before {
+    width: 2px;
+    height: 0%;
+}
+
+.CCbtn_submit span:after {
+    width: 0%;
+    height: 2px;
+}
+
+.CCbtn_submit span:hover:before {
+    height: 100%;
+}
+
+.CCbtn_submit span:hover:after {
+    width: 100%;
+}
+

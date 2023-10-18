@@ -63,7 +63,8 @@
                     <input asp-for="MemberPostcode" id="inputMemberPostcode" />
                     <input asp-for="MemberId" value="45697" />
                 </div>
-                <div><button id="c_sendbtn" class="rounded mt-3 border-0 w-100  bg-info" type="submit">送出</button></div>
+                @*<div><button id="c_sendbtn" class="rounded mt-3 border-0 w-100  bg-info" type="submit">送出</button></div>*@
+                <div><button id="c_sendbtn" class="CCbtn_submit rounded mt-3 border-0 w-100 fs-5" type="submit"><span>送出</span></button></div>
             </form>
 
             @*錯誤訊息: @Html.ValidationSummary()*@

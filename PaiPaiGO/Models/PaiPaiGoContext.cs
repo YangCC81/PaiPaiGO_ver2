@@ -116,6 +116,7 @@ public partial class PaiPaiGoContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("MemberID");
+            entity.Property(e => e.Salt).HasMaxLength(100);
             entity.Property(e => e.Gearing).HasMaxLength(10);
             entity.Property(e => e.MemberAddress).HasMaxLength(100);
             entity.Property(e => e.MemberCity).HasMaxLength(10);

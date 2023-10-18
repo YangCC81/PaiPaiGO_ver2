@@ -41,11 +41,12 @@
 
 
                 <!-- 登入按鈕 -->
-                <button class="rounded mt-3 border-0 w-100 bg-info fs-5" type="submit">登入</button>
+                @*<button class="rounded mt-3 border-0 w-100 bg-info fs-5" type="submit">登入</button>*@
+                <button class="CCbtn_submit rounded mt-3 border-0 w-100 fs-5" type="submit"><span>登入</span></button>
 				<!-- 註冊連結 -->
                 <div class="d-flex mt-3 justify-content-between fs-5">
-                    <a href="/CC_Members/ForgotPassword">忘記密碼</a>
-                    <div>還沒有帳號嗎?<a href="/CC_Members/Resgister">立即註冊</a></div>
+                    <a href="/CC_Members/ForgotPassword" style="text-decoration:none">忘記密碼?</a>
+                    <div>還沒有帳號嗎?<a href="/CC_Members/Resgister" style="text-decoration:none">立即註冊</a></div>
 				</div>
             </form>
         </div>
@@ -93,6 +94,9 @@
             icon: 'error',
             title: '登入失敗',
             text: '您的帳號狀態有異常，請來信詢問<a href="mailto:paipaigo001@@gmail.com">客服</a>。',
+            buttons: {
+                confirm: { className: 'CC_OK' }
+            },
         })
     </script>
 }
