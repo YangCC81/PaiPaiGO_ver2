@@ -94,9 +94,7 @@
             icon: 'error',
             title: '登入失敗',
             text: '您的帳號狀態有異常，請來信詢問<a href="mailto:paipaigo001@@gmail.com">客服</a>。',
-            buttons: {
-                confirm: { className: 'CC_OK' }
-            },
+            confirmButtonColor: '#00acee',
         })
     </script>
 }
@@ -108,6 +106,7 @@ else if (ViewBag.Status == "空的") {
             text: 'Email地址或密碼不正確，請檢查您的登入資訊並再試一次。',
             timer: 2000,
             timerProgressBar: true,
+            confirmButtonColor: '#00acee',
         })
     </script>
 }
