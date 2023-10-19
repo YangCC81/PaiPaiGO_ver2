@@ -1,0 +1,37 @@
+﻿@model IEnumerable<PaiPaiGO.Models.Opinion>
+
+
+<!-- Modal body -->
+<div class="modal-body">
+    <table>
+        <tr>
+            <th>類型</th>
+            <th>任務編號</th>
+            <th>任務名稱</th>
+            <th>警告日期</th>
+            <th>警告內容</th>
+            <th hidden>ReportedMember</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+                <tr>
+                    <th>@Html.DisplayFor(modelItem => item.Type)</th>
+                    <th>@Html.DisplayFor(modelItem => item.MissionId)</th>
+                    <td>@Html.DisplayFor(modelItem => item.Mission.MissionName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Content)</td>
+                    <td hidden>@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+                </tr>
+        }
+    </table>
+</div>
+<!--新增警告-->
+
+<div class="modal-add">
+    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Add</button>
+</div>
+
+<!-- Modal footer -->
+<div class="modal-footer">
+	<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+</div>

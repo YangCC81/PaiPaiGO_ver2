@@ -31,6 +31,9 @@ namespace Lab1006_Time.Controllers {
 
 
         public IActionResult Index() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             var status = from y in _context.Missions
                          where y.MissionStatus == "已接單未完成"
                          select new {

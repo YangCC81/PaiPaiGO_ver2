@@ -20,16 +20,18 @@ namespace PaiPaiGO.Controllers
             _context = context;
         }
 
-
-        public IActionResult GetOrder_Pai(int? id,string? idstr)
+        #region 接單頁面資料帶入
+        public IActionResult GetOrder_Pai(int id)
         {
-			int y;
-			y = Convert.ToInt32(idstr);
-			//int ID = 2023100801;
-			ViewBag.PID = id;
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
+            //int ID = 2023100801;
+            ViewBag.PID = id;
             var PaiData = (from x in _context.Missions
-                           where x.MissionId == y
-						   select x).FirstOrDefault();
+                           where x.MissionId == id
+                           select x).FirstOrDefault();
 
 
 
@@ -80,6 +82,10 @@ namespace PaiPaiGO.Controllers
 
         public IActionResult GetOrder_Buy(int id)
         {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             //int ID = 2023100805;
             TempData["BID"] = id;
             var BuyData = (from x in _context.Missions
@@ -130,7 +136,7 @@ namespace PaiPaiGO.Controllers
             }
             return View();
         }
-
+        #endregion
 
         private bool MissionExists(int id)
         {
@@ -138,10 +144,12 @@ namespace PaiPaiGO.Controllers
             return (_context.Missions?.Any(e => e.MissionId == id)).GetValueOrDefault();
         }
 
-
+        #region 詳細頁面資料帶入
         public IActionResult Text_Pai(int id)
         {
-
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             //int ID = 2023100801;
             ViewBag.PID = id;
             var PaiData = (from x in _context.Missions
@@ -186,7 +194,9 @@ namespace PaiPaiGO.Controllers
             return View();
         }
         public IActionResult Text_Buy(int id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             //int ID = 2023100805;
             TempData["BID"] = id;
             var BuyData = (from x in _context.Missions
@@ -229,9 +239,14 @@ namespace PaiPaiGO.Controllers
             }
             return View();
         }
+        #endregion
+
+        #region 狀態資料更新
         [HttpPost]
         public async Task<IActionResult> GetOrder_Pai(int MissionId, string AcceptMemberId, string MissionStatus, string AcceptTime)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             var mission = await _context.Missions.FindAsync(MissionId);
             if (mission == null)
             {
@@ -256,7 +271,9 @@ namespace PaiPaiGO.Controllers
 
         [HttpPost]
         public async Task<IActionResult> GetOrder_Buy(int MissionId, string AcceptMemberId, string MissionStatus, string AcceptTime)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             var mission = await _context.Missions.FindAsync(MissionId);
             if (mission == null)
             {
@@ -278,6 +295,6 @@ namespace PaiPaiGO.Controllers
                 return Json(new { success = false });
             }
         }
-
+        #endregion
     }
 }

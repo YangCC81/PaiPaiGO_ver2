@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using PaiPaiGo.Controllers;
 using PaiPaiGO.Models;
 using System;
 using System.Globalization;
@@ -7,7 +10,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using static PaiPaiGO.Models.PendingVal;
 
-namespace PaiPaiGo.Controllers
+namespace PaiPaiGO.Controllers
 {
     public class HS_PendingController : Controller
     {
@@ -18,16 +21,20 @@ namespace PaiPaiGo.Controllers
         {
             _context = context;
         }
-
+        #region 排隊頁面輸入傳遞
         [HttpGet]
         public IActionResult PendingOrder_Pai()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             return View();
         }
 
         [HttpPost]
         public IActionResult PendingOrder_Pai(PendingVal.PaiVal model)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             // 使用 TempData 儲存表單數據
             TempData["Orderclass"] = model.Orderclass;
             TempData["QueueLabel"] = model.QueueLabel;
@@ -72,8 +79,11 @@ namespace PaiPaiGo.Controllers
 
             return RedirectToAction("CheckOrder_Pai");
         }
+      
         public IActionResult CheckOrder_Pai()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             // 使用 ViewBag 讀取 TempData
             ViewBag.Orderclass = TempData["Orderclass"] as string;
             ViewBag.QueueLabel = TempData["QueueLabel"] as string;
@@ -113,22 +123,33 @@ namespace PaiPaiGo.Controllers
             ViewBag.MissionId = newMissionId;
 
             // 特殊處理：將 "排隊" 和 "購買" 轉換為 1 和 2
+            //int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
+            //ViewBag.Category = category;
+            //TempData["Category"] = category;
             int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
-            ViewBag.Category = category;
+            ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", category);
+            TempData["Category"] = category; // 如果你還想在其他地方使用這個值
+            Console.WriteLine(TempData["Category"]);
 
             return View();
         }
+        #endregion
 
 
+        #region 購買頁面輸入傳遞
         [HttpGet]
         public IActionResult PendingOrder_Buy()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             return View();
         }
 
         [HttpPost]
         public IActionResult PendingOrder_Buy(PendingVal.BuyVal model)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             // 在這裡，您可以對 model 進行處理，例如保存到數據庫或進行其他業務邏輯
 
             // 使用 TempData 儲存表單數據
@@ -178,7 +199,9 @@ namespace PaiPaiGo.Controllers
         }
 
         public IActionResult CheckOrder_Buy()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             // 使用 ViewBag 讀取 TempData
             ViewBag.Orderclass = TempData["BuyOrderclass"] as string;
             ViewBag.BuyLabel = TempData["BuyLabel"] as string;
@@ -193,7 +216,7 @@ namespace PaiPaiGo.Controllers
             ViewBag.BuyDeliveryMethod = TempData["BuyDeliveryMethod"] as string;
             ViewBag.BuyTaskContent = TempData["BuyTaskContent"] as string;
             ViewBag.BuyTotalAmount = TempData["BuyTotalAmount"] as string;
-            
+
             byte[] BuystoredImageBytes;
             HttpContext.Session.TryGetValue("BuyImage", out BuystoredImageBytes);
             if (BuystoredImageBytes != null)
@@ -214,16 +237,24 @@ namespace PaiPaiGo.Controllers
             ViewBag.MissionId = newMissionId;
 
             // 特殊處理：將 "排隊" 和 "購買" 轉換為 1 和 2
+            //int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
+            //ViewBag.Category = category;
             int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
-            ViewBag.Category = category;
+            ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", category);
+            TempData["BuyCategory"] = category; // 如果你還想在其他地方使用這個值
+
 
             return View();
         }
+        #endregion
 
+        #region 新增至SQL
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PaiToDatabase([Bind("MissionId,Category,Tags,OrderMemberId,AcceptMemberId,MissionName,MissionAmount,Postcode,FormattedMissionAmount,LocationCity,LocationDistrict,Address,DeliveryDate,DeliveryTime,DeadlineDate,DeadlineTime,MissionDescription,DeliveryMethod,ExecutionLocation,MissionStatus,OrderTime,AcceptTime,ImagePath")] Mission mission)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             byte[] storedImageBytes;
             HttpContext.Session.TryGetValue("Image", out storedImageBytes);
             if (storedImageBytes != null)
@@ -232,49 +263,76 @@ namespace PaiPaiGo.Controllers
             }
 
             // 轉換和填充數據
-            int maxMissionId = _context.Missions.Max(m => m.MissionId);
-            int newMissionId = maxMissionId + 1;
-            ViewBag.MissionId = newMissionId;
-
-            //// 取得當前日期格式化字符串-------還有問題
-            //string currentDate = DateTime.Now.ToString("yyyyMMdd");
-
-            //// 嘗試從資料庫中獲取當天最大的任務ID
-            //int? maxMissionId = _context.Missions
-            //                           .Where(m => m.MissionId.ToString().StartsWith(currentDate))
-            //                           .Max(m => (int?)m.MissionId);
-
-            //int newMissionId;
-
-            //// 如果當天還沒有任務ID，則設置當天的第一個任務ID
-            //if (!maxMissionId.HasValue)
-            //{
-            //    newMissionId = int.Parse(currentDate + "001");
-            //}
-            //else
-            //{
-            //    newMissionId = maxMissionId.Value + 1;
-            //}
-
+            //應急簡易任務ID
+            //int maxMissionId = _context.Missions.Max(m => m.MissionId);
+            //int newMissionId = maxMissionId + 1;
             //ViewBag.MissionId = newMissionId;
-
-
-            // 特殊處理：將 "排隊" 和 "購買" 轉換為 1 和 2
-            int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
-            ViewBag.Category = category;
-
-
-
-            if (ModelState.IsValid)
+            //mission.MissionId = newMissionId;
+            //正式(yyyyMMddxx)
+            // 獲取今天日期的字符串形式（yyyyMMdd）
+            string dateStr = DateTime.Now.ToString("yyyyMMdd");
+            // 從資料庫中獲取最大的任務ID
+            int maxMissionId = _context.Missions.Max(m => m.MissionId);
+            string maxMissionIdStr = maxMissionId.ToString();
+            int newMissionNumber;
+            string newMissionDateStr;
+            if (maxMissionIdStr.StartsWith(dateStr))
             {
+                // 如果最大任務ID的日期與今天相同，取出數字部分，加1
+                newMissionDateStr = dateStr;
+                string numberPart = maxMissionIdStr.Substring(8);  // 從第9位開始是數字部分
+                newMissionNumber = int.Parse(numberPart) + 1;
+            }
+            else
+            {
+                // 如果最大任務ID的日期與今天不同，則用今天的日期和數字1作為新的任務ID的一部分
+                newMissionDateStr = dateStr;
+                newMissionNumber = 1;
+            }
+            // 生成新的任務ID
+            int newMissionId = int.Parse(newMissionDateStr + newMissionNumber.ToString("D2")); // D3表示至少3位數字，不足則補0
+            ViewBag.MissionId = newMissionId;
+            mission.MissionId = newMissionId;
 
-                _context.Add(mission);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("PendingOrder_Pai");
+
+            int selectedCategoryId = mission.Category;
+
+            var existingCategory = await _context.Categories.FindAsync(selectedCategoryId);
+            if (existingCategory != null)
+            {
+                mission.CategoryNavigation = existingCategory;
+                // 移除與 'CategoryNavigation' 相關的 ModelState 錯誤（如果有）
+                ModelState.Remove("CategoryNavigation");
+            }
+            else
+            {
+                Console.WriteLine("Category with ID 1 not found.");
             }
 
-            return View("YourErrorView"); // 替換為您實際的錯誤視圖
+            // 重新檢查 ModelState 是否有效
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
+            // 如果現在 ModelState 是有效的，則進行保存
+            if (ModelState.IsValid)
+            {
+                _context.Add(mission);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("YH_CasePage", "YH_CasePages");
+                //return RedirectToAction("/YH_CasePages/YH_CasePage");
+                //return View("/YH_CasePages/YH_CasePage");
+            }
+
+            ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", mission.Category);
+            return View(mission);
         }
+        #endregion
     }
 }
 

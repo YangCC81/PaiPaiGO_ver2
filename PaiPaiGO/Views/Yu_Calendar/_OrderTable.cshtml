@@ -1,0 +1,156 @@
+﻿@model IEnumerable< PaiPaiGO.Models.Mission>
+
+<div id="liveAlertPlaceholder"></div>
+<table id="OrderTable" class="table table-guest table-hover text-center table align-middle ">
+	<thead>
+		<tr>
+			<td style="width: 120px;">任務編號</td>
+			<td style="width: 100px;">接案人</td>
+			<td style="width: 300px">任務名稱</td>
+			<td style="width: 170px;">任務期限</td>
+			<td style="width: 120px;">任務金額</td>
+			<td style="width: 120px;">任務狀態</td>
+			<td style="width: 320px;">操作</td>
+		</tr>
+	</thead>
+	<!-- 關於操作：
+	取消任務：將任務狀態更新為"未接單"，並且降低該用戶評分
+	任務回報：跳出 檢舉/意見 頁面 -->
+	<tbody>
+
+		@foreach (var item in Model) {
+			<tr>
+				<td style="font-size:20px">
+					@*@item.MissionId*@
+					<!--點進任務編號或名稱時，要顯示對應的詳細頁面
+						判斷：如果類別是1(排)，就連結到排隊的版本；2(買)就連結到購買的版本
+					-->
+					@if (item.Category == 1) {
+						<a href="@Url.Action("Text_Pai", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionId</a>
+					}
+					else if (item.Category == 2) {
+						<a href="@Url.Action("Text_Buy", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionId</a>
+					}
+				</td>
+				<td>
+					@item.AcceptMemberId
+					<!-- <p style="font-size: 20px;">陳小廷20px=fs-5</p>
+					<p style="font-size: 24px;">陳小廷24px=fs-4</p>
+					<p style="font-size: 28px;">陳小廷28px=fs-3</p>
+					<p style="font-size: 32px;">陳小廷32px=fs-2</p> -->
+				</td>
+				<td>
+					@*@item.MissionName*@
+					@if (item.Category == 1) {
+						<a href="@Url.Action("Text_Pai", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionName</a>
+					}
+					else if (item.Category == 2) {
+						<a href="@Url.Action("Text_Buy", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionName</a>
+					}
+
+				</td>
+
+				<td>@Html.DisplayFor(modelItem => item.DeliveryDate) @item.DeadlineTime</td>
+				@*<td>$@item.MissionAmount</td>*@
+				<td>$@String.Format("{0:0}",item.MissionAmount)</td>
+
+				<td>
+					@*@item.MissionStatus*@
+					@if (item.MissionStatus == "等待接案人完成任務") {
+						<span>等待對方完成</span>
+					}
+					else if (item.MissionStatus == "等待發布人完成任務") {
+						<b>請確認任務完成</b>
+					}
+					else {
+						if (item.MissionStatus == "發布中") {
+							<b>@item.MissionStatus</b>
+						}
+						else {
+							<span style="color:slategray">@item.MissionStatus</span>
+						}
+					}
+
+				</td>
+				<td>
+					<!--應該只有任務是有人接，且未點選過完成的狀態下，才可以點擊完成任務-->
+					@if ((@item.MissionStatus != "發布中" && @item.MissionStatus != "等待發布人完成任務") || item.AcceptMemberId == "") {
+						<button disabled class=" btn btn-outline-dark btn-lg">完成任務</button>
+					}
+					else {
+						<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.OrderMemberId, othersId= @item.AcceptMemberId})" class=" btn btn-outline-dark btn-lg">完成任務</a>
+					}
+					<!--應該只有任務未點選過完成、也未下架的狀態下，才可以點擊取消任務-->
+					@if (@item.MissionStatus != "發布中") {
+						<button disabled class="btn btn-outline-dark btn-lg">取消任務</button>
+					}
+					else {
+						<input type="button" class="btn btn-outline-dark btn-lg cancelMission_O" data-mission-id="@item.MissionId" data-initial-status="@item.MissionStatus" data-bs-toggle="modal" value="取消任務">
+
+					}
+					<!--應該只有任務有人接過後，才可以點擊任務回報-->
+					@if (item.AcceptMemberId == "") {
+						<button disabled class="btn btn-outline-dark btn-lg">任務回報</button>
+					}
+					else {
+						<a href="@Url.Action("Yu_Report", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.OrderMemberId, othersId= @item.AcceptMemberId})" class=" btn btn-outline-dark btn-lg">任務回報</a>
+
+					}
+
+					@*<button class="apple">測試</button>*@
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<script>
+
+	$(document).ready(function () {
+
+		var changesQueue = []; // 設一個changesQueue(本地)的list，用來保存更改  (有保存變更按鈕)
+		$(".cancelMission_O").click(function () {
+			// 显示 Bootstrap 模态对话框
+			var missionId = $(this).data("mission-id");
+			var initialStatus = $(this).data("initial-status");
+			var newStatus = "已下架";
+
+			console.log(missionId)
+			console.log(initialStatus)
+			console.log(newStatus)
+
+			changesQueue.push({ missionId: missionId, newStatus: newStatus, initialStatus: initialStatus });
+
+			Swal.fire({
+				icon: 'question',
+				title: '要取消任務嗎？',
+				text: '取消任務後，您將無法直接重新上架（需要回到發布任務介面重新發布)，確定要取消嗎？？',
+				showCancelButton: true,
+				confirmButtonText: "確定取消任務",
+				cancelButtonText: "保留任務"
+			}).then((result) => {
+				console.log(result)
+				if (result.isConfirmed) {
+					$.ajax({
+						type: "POST",
+						url: "/Yu_Calendar/cancelMission",
+						data: { changes: changesQueue },
+						dataType: "json",
+						success: function (data) {
+							// 處理成功show出來
+						},
+						error: function () {
+							// 處理錯誤show出來
+							console.error('保存更改失败');
+						}
+					});
+					Swal.fire({
+						icon: 'success',
+						title: '您已取消任務',
+						text: '請重新整理查看任務更新後狀態',
+					})
+				}
+			})
+		});
+	})
+</script>

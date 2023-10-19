@@ -12,6 +12,8 @@
 	<!-- Boostrap 5.3.2 -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+	<!--sweetalert-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<style>
 		/* 瑋珊新增的樣式 */
@@ -26,6 +28,14 @@
 		.search-input {
 			width: 10em;
 		}
+		/*以下設定星星*/
+		.rating {
+			font-size: 24px; /* 根据需要调整星星的大小 */
+		}
+		.rating i.text-warning {
+			color: #f0ad4e; /* 选择的星星颜色，这里使用了黄色 */
+		}
+
 	</style>
 </head>
 
@@ -54,12 +64,7 @@
 							   data-bs-toggle="tooltip" data-bs-placement="right"></i>
 						</a>
 					</li>
-					@*<li>
-						<a href="#" class="nav-link py-3 border-bottom">
-							<i class="fa-solid fa-gear" style="font-size: 30px;" title="設定" data-bs-toggle="tooltip"
-							   data-bs-placement="right"></i>
-						</a>
-					</li>*@
+					
 				</ul>
 			</div>
 
@@ -81,86 +86,110 @@
 					<input type="text" class="form-control search-input" placeholder="關鍵字...">
 
 				</div>
-
+				<button type="button" class="btn btn-danger btn btn-primary" id="saveChangeButton">保存變更</button>
 
 				<table class="table table-condensed table-striped">
 					<!-- 標題 -->
 					<thead>
 						<tr>
 							<th></th>
-							@*<th>類型</th>*@
+							<th></th>
+							<th>填寫人</th>
 							<th>任務編號</th>
-							<th>日期</th>
-							<th>會員編號</th>
-							<th>回報人 </th>
+							<th>填寫日期</th>
+							<th>被評分|檢舉對象</th>
 							<th>評分星等</th>
-							<th>意見回覆狀態</th>
 							<th>下架任務</th>
 							<th>警告</th>
+							<th>意見處理狀態</th>
 
 						</tr>
 					</thead>
 					<!-- 內容 -->
-					@*@foreach (var item in Model)
-                    {*@
-					<tbody>
-						<tr>
-							<td>
-								<button class="btn btn-default btn-xs" data-bs-toggle="collapse"
-										data-bs-target="#collapseOpen">
-									<i class="fa-solid fa-eye"></i>
-								</button>
-							</td>
-							@*<td>意見or檢舉</td>*@
-								<td>2023010101@*@Html.DisplayFor(modelItem => item.MissionId)*@</td>
-								<td>檢舉日@*@Html.DisplayFor(modelItem => item.Date)*@</td>
-								<td>001@*@Html.DisplayFor(modelItem => item.ReportedMemberId)*@</td>
-								<td>003@*@Html.DisplayFor(modelItem => item.ReportMemberId)*@</td>
-								<td>3顆星</td>
-							<td>已處理</td>
-							<td>
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked>
-									<label class="form-check-label" for="flexSwitchCheckDefault"></label>
-								</div>
-							</td>
-							<td>
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-										data-bs-target="#myModal">
-									查閱
-								</button>
-							</td>
-						</tr>
-						<!-- 內容再展開 -->
-						<tr>
-							<td colspan="12" class="hiddenRow">
-								<div class="collapse" id="collapseOpen">
-									<!-- 內容展開-排版調整 -->
-									<table class="table table-striped">
-										<!-- 內容展開-標題 -->
-										<thead>
-											<tr class="info">
-												<th></th>
-												<th></th>
-												<th></th> <!-- 空列 -->
-												<th>意見 | 檢舉 內容</th>
-											</tr>
-										</thead>
-										<!-- 內容展開-內文 -->
-										<tbody>
-											<tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
-												<td></td>
-												<td></td> <!-- 空列 -->
-												<th></th> <!-- 空列 -->
-												<td></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				@*}*@
+					@foreach (var item in Model)
+					{
+						<tbody>
+							<tr>
+								<td>
+									<!--詳細內容的eye-->
+									<button class="btn btn-default btn-xs" data-bs-toggle="collapse"
+											data-bs-target=".test@(item.MissionId)">
+										<i class="fa-solid fa-eye"></i>
+									</button>
+								</td>
+								<td>@Html.DisplayFor(modelItem => item.Type)</td>
+								<td>@Html.DisplayFor(modelItem => item.ReportMemberId)</td>
+								<td><a href="@Url.Action("Text_排", "HS_Get_Text",new {id = item.MissionId})">@item.MissionId</a></td>
+								<td>@Html.DisplayFor(modelItem => item.Date)</td>
+								<td>@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+								<td>
+									<!--評分用星星顯示-->
+									<div class="rating" id="ratingStars">
+										@if (item.Score != null)
+										{
+											@for (int i = 1; i <= 5; i++)
+											{
+												<i class="fas fa-star @(i <= item.Score ? "text-warning" : "text-secondary")" data-rating="@i"></i>
+											}
+										}
+											</div>
+								</td>
+								<td>
+									<!--上下架任務-->
+									<div class="form-check form-switch">
+										<input class="form-check-input mission-checkbox" type="checkbox" @(item.Mission.MissionStatus == "發布中" ? "checked" : "") data-mission-id="@item.MissionId" data-initial-status="@item.Mission.MissionStatus" />
+									</div>
+								</td>
+								<td>
+									<!--查閱警告-->
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" data-reportedmemberid="@item.ReportedMemberId">
+										查閱
+									</button>
+								</td>
+								<td>
+									<!--管理員處理狀態-->
+									<div class="form-check">
+										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault @item.Ratingnumber" id="flexRadioDefault1" data-opinion-id="@item.Ratingnumber" value="已處理" @(item.State == "已處理" ? "checked" : "")>
+										<label class="form-check-label" for="flexRadioDefault1">
+											已處理
+										</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault @item.Ratingnumber" id="flexRadioDefault2" data-mission-id="@item.Ratingnumber" value="未處理" @(item.State == "未處理" ? "checked" : "")>
+										<label class="form-check-label" for="flexRadioDefault2">
+											未處理
+										</label>
+									</div>
+								</td>
+							</tr>
+							<!-- 內容再展開 -->
+							<tr>
+								<td colspan="12" class="hiddenRow">
+									<div class="collapse test@(item.MissionId)">
+										<!-- 內容展開-排版調整 -->
+										<table class="table table-striped">
+											<!-- 內容展開-標題 -->
+											<thead>
+												<tr class="info">
+													<th></th>
+													<th></th>
+													<th>意見 | 檢舉 內容</th>
+												</tr>
+											</thead>
+											<!-- 內容展開-內文 -->
+											<tbody>
+												<tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+													<td></td>
+													<th></th> <!-- 空列 -->
+													<td>@Html.DisplayFor(modelItem => item.Content)</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					}
 				</table>
 
 
@@ -171,13 +200,37 @@
 
 							<!-- Modal Header -->
 							<div class="modal-header">
-								<h4 class="modal-title">警告紀錄</h4>
+								<h4 class="modal-title">警告狀態</h4>
 								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 							</div>
-
 							<!-- Modal body -->
 							<div class="modal-body">
-								OOXX、要新增按鈕?
+								<table>
+									<tr>
+										<th>類型</th>
+										<th>任務編號</th>
+										<th>任務名稱</th>
+										<th>警告日期</th>
+										<th>警告內容</th>
+										<th hidden>ReportedMember</th>
+									</tr>
+									@foreach (var item in Model)
+									{
+										<tr>
+											<th>@Html.DisplayFor(modelItem => item.Type)</th>
+											<th>@Html.DisplayFor(modelItem => item.MissionId)</th>
+											<td>@Html.DisplayFor(modelItem => item.Mission.MissionName)</td>
+											<td>@Html.DisplayFor(modelItem => item.Date)</td>
+											<td>@Html.DisplayFor(modelItem => item.Content)</td>
+											<td hidden>@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+										</tr>
+									}
+								</table>
+							</div>
+							<!--新增警告-->
+
+							<div class="modal-add">
+								<button id="addButton" class="btn btn-primary">ADD</button>
 							</div>
 
 							<!-- Modal footer -->
@@ -213,10 +266,90 @@
 			tooltipTriggerList.forEach(function (tooltipTriggerEl) {
 				new bootstrap.Tooltip(tooltipTriggerEl)
 			})
-		})()
-
-
-
-
+		})
 	</script>
+
+	<script>
+	/*改停權 */
+		$(document).ready(function () {
+			var changedStatusList = [];
+
+			// 监听单选按钮的更改事件
+			$('.status-radio').change(function () {
+				var opinionId = $(this).data('opinion-id');
+				var newStatus = $(this).val();
+
+				// 将更改的值添加到列表中
+				changedStatusList.push({ OpinionId: opinionId, NewStatus: newStatus });
+			});
+
+			// 当点击保存变更按钮时，将更改的值发送到后端
+			$('#saveChangeButton').click(function () {
+				// 发送更改的值到后端，例如使用Ajax
+				$.ajax({
+					type: 'POST',
+					url: '/WS_Opinions/UpdateOpinionStatus', // 后端处理更改状态的URL
+					data: { changedStatusList: changedStatusList }, // 发送更改的数据
+					success: function (response) {
+						// 处理后端的响应，可能需要更新页面或显示成功消息
+					}
+				});
+			});
+		});
+	</script>
+
+	<script>
+		<script>
+			$('#addButton').click(function () {
+				const swalWithBootstrapButtons = Swal.mixin({
+					customClass: {
+						confirmButton: 'btn btn-success',
+						cancelButton: 'btn btn-danger'
+					},
+					buttonsStyling: false
+				})
+
+				swalWithBootstrapButtons.fire({
+					title: '是否新增警告?',
+					text: "請確認是否違反使用者規範!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: '新增!',
+					cancelButtonText: '取消!',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						// 使用AJAX請求將資料新增到資料庫
+						$.ajax({
+							type: "POST",
+							url: "/WS_Opinions/AddOpinion", // 控制器路由
+							data: { warningMessage: "警告" }, // 傳遞警告消息
+							success: function (response) {
+								swalWithBootstrapButtons.fire(
+									'Added!',
+									'Your warning has been added to the database.',
+									'success'
+								)
+							},
+							error: function (error) {
+								swalWithBootstrapButtons.fire(
+									'Error',
+									'An error occurred while adding the warning.',
+									'error'
+								)
+							}
+						});
+					} else if (
+						result.dismiss === Swal.DismissReason.cancel
+					) {
+						swalWithBootstrapButtons.fire(
+							'Cancelled',
+							'Your imaginary file is safe :)',
+							'error'
+						)
+					}
+				})
+			});
+	</script>
+
 </body>

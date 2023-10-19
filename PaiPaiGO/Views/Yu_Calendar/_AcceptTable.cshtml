@@ -1,0 +1,226 @@
+﻿@model IEnumerable< PaiPaiGO.Models.Mission>
+
+<div id="liveAlertPlaceholder2"></div>
+<table id="AcceptTable" class="table table-toolman table-hover text-center table align-middle ">
+	<thead>
+		<tr>
+			<td style="width: 120px;">任務編號</td>
+			<td style="width: 100px;">發布人</td>
+			<td style="width: 300px">任務名稱</td>
+			<td style="width: 170px;">任務期限</td>
+			<td style="width: 120px;">任務金額</td>
+			<td style="width: 120px;">任務狀態</td>
+			<td style="width: 320px;">操作</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model) {
+			<tr>
+				<td style="font-size:20px">
+					@*(@item.MissionId)*@
+					<!--點進任務編號或名稱時，要顯示對應的詳細頁面
+						判斷：如果類別是1(排)，就連結到排隊的版本；2(買)就連結到購買的版本
+					-->
+					@if (item.Category == 1) {
+						<a href="@Url.Action("Text_Pai", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionId</a>
+					}
+					else if (item.Category == 2) {
+						<a href="@Url.Action("Text_Buy", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionId</a>
+					}
+				</td>
+				<td>@item.OrderMemberId</td>
+				<td>
+					@*@item.MissionName*@
+					@if (item.Category == 1) {
+						<a href="@Url.Action("Text_Pai", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionName</a>
+					}
+					else if (item.Category == 2) {
+						<a href="@Url.Action("Text_Buy", "HS_Get_Text", new {id = @item.MissionId})" style="color:black;text-decoration:none">@item.MissionName</a>
+					}
+
+				</td>
+				<td>@Html.DisplayFor(modelItem => item.DeliveryDate) @item.DeadlineTime</td>
+				@*<td>$@item.MissionAmount</td>*@
+				<td>$@String.Format("{0:0}",item.MissionAmount)</td>
+				<td>
+					@*@item.MissionStatus*@
+					@if (item.MissionStatus == "等待發布人完成任務") {
+						<span>等待對方完成</span>
+					}
+					else if (item.MissionStatus == "等待接案人完成任務") {
+						<b>請確認任務完成</b>
+					}
+					else {
+						if (item.MissionStatus == "發布中") {
+							<b>@item.MissionStatus</b>
+						}
+						else {
+							<span style="color:slategray">@item.MissionStatus</span>
+						}
+					}
+				</td>
+				<td>
+					<!--<button type="button" class=" btn btn-outline-dark btn-lg" data-item-id="@item.MissionId" @* data-bs-toggle="modal" data-bs-target="#staticBackdrop"*@>完成任務</button>
+					-->
+					@*<a asp-action="Star" asp-route-id="@item.MissionId" class=" btn btn-outline-dark btn-lg">完成任務</a>*@
+				@*	<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.AcceptMemberId, othersId= @item.OrderMemberId})" class=" btn btn-outline-dark btn-lg">完成任務</a>
+					<button type="button" class="btn btn-outline-dark btn-lg">取消任務</button>
+					<a href="@Url.Action("Yu_Report", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.AcceptMemberId, othersId= @item.OrderMemberId})" class=" btn btn-outline-dark btn-lg">任務回報</a>*@
+
+					@*<button type="button" class="btn btn-outline-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">任務回報</button>
+				*@
+
+					@if (@item.MissionStatus != "發布中" && @item.MissionStatus != "等待接案人完成任務") {
+						<button disabled class="btn btn-outline-dark btn-lg">完成任務</button>
+						<button disabled class="btn btn-outline-dark btn-lg">放棄任務</button>
+					}
+					else {
+						<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.AcceptMemberId, othersId= @item.OrderMemberId})" class=" btn btn-outline-dark btn-lg">完成任務</a>
+						<input type="button" class="btn btn-outline-dark btn-lg cancelMission_A" data-mission-id="@item.MissionId" data-initial-status="@item.MissionStatus" data-bs-toggle="modal" value="放棄任務">
+					}
+
+					<a href="@Url.Action("Yu_Report", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.AcceptMemberId, othersId= @item.OrderMemberId})" class=" btn btn-outline-dark btn-lg">任務回報</a>
+
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+
+
+<!-- Bootstrap 模态对话框 -->
+<div class="modal fade" id="customConfirmModal2" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true" data-bs-backdrop="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="customConfirmModalLabel">要放棄任務嗎？</h5>
+			</div>
+			<div class="modal-body">
+				<p>放棄任務後，您將無法在此重新接單（需要回到發布任務介面重新接取)，確定要放棄嗎？？</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="customConfirmOk2">確定放棄任務</button>
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">保留任務</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	$(document).ready(function () {
+
+		var changesQueue = []; // 設一個changesQueue(本地)的list，用來保存更改  (有保存變更按鈕)
+		$(".cancelMission_A").click(function () {
+			// 显示 Bootstrap 模态对话框
+			var missionId = $(this).data("mission-id");
+			var initialStatus = $(this).data("initial-status");
+			var newStatus = "發布中";
+
+			console.log(missionId)
+			console.log(initialStatus)
+			console.log(newStatus)
+
+			changesQueue.push({ missionId: missionId, newStatus: newStatus, initialStatus: initialStatus });
+
+			Swal.fire({
+				icon: 'question',
+				title: '要放棄任務嗎？',
+				text: '放棄任務後，您將無法直接重新上架（需要回到發布任務介面重新發布)，確定要放棄嗎？？',
+				showCancelButton: true,
+				confirmButtonText: "確定放棄任務",
+				cancelButtonText: "保留任務"
+			}).then((result) => {
+				console.log(result)
+				if (result.isConfirmed) {
+					$.ajax({
+						type: "POST",
+						url: "/Yu_Calendar/cancelMission",
+						data: { changes: changesQueue },
+						dataType: "json",
+						success: function (data) {
+							// 處理成功show出來
+						},
+						error: function () {
+							// 處理錯誤show出來
+							console.error('保存更改失败');
+						}
+					});
+
+					Swal.fire({
+						icon: 'success',
+						title: '您已放棄任務',
+						text: '請重新整理查看任務更新後狀態',
+					})
+				}
+			})
+
+
+		});
+	})
+</script>
+
+
+@*
+<script>
+
+	$(document).ready(function () {
+
+		var changesQueue = []; // 設一個changesQueue(本地)的list，用來保存更改  (有保存變更按鈕)
+		$(".cancelMission").click(function () {
+			// 显示 Bootstrap 模态对话框
+			var missionId = $(this).data("mission-id");
+			var initialStatus = $(this).data("initial-status");
+			var newStatus = "發布中";
+
+			console.log(missionId)
+			console.log(initialStatus)
+			console.log(newStatus)
+
+			changesQueue.push({ missionId: missionId, newStatus: newStatus, initialStatus: initialStatus });
+
+
+			//$("#customConfirmModal").modal('show');
+		});
+
+		$("#customConfirmOk2").click(function () {
+			// 用户点击"是的"按钮，执行取消任务的代码
+
+			// 發送更改到Server
+			$.ajax({
+				type: "POST",
+				url: "/Yu_Calendar/cancelMission",
+				data: { changes: changesQueue },
+				dataType: "json",
+				success: function (data) {
+					// 處理成功show出來
+				},
+				error: function () {
+					// 處理錯誤show出來
+					console.error('保存更改失败');
+				}
+			});
+
+			//新增通知，讓使用者刷新頁面
+			const alertPlaceholder = document.getElementById('liveAlertPlaceholder2')
+			const appendAlert = (message, type) => {
+				const wrapper = document.createElement('div')
+				wrapper.innerHTML = [
+					`<div class="alert alert-${type} alert-dismissible" role="alert">`,
+					`   <div>${message}</div>`,
+					'   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+					'</div>'
+				].join('')
+
+				alertPlaceholder.append(wrapper)
+			}
+
+			appendAlert('您已取消任務，請重新整理查看任務更新後狀態', 'secondary')
+			// 隐藏对话框
+			$("#customConfirmModal2").modal('hide');
+			$('.modal-backdrop').remove();
+		});
+	});
+	</script>*@

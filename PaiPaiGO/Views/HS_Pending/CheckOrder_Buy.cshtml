@@ -44,17 +44,17 @@
 
 <body>
     <form asp-action="PaiToDatabase">
-    <div class="row g-3">
-        <div class="col-md-1">
-        </div>
-        <div class="col-md-10" style="background-color: #B5DFF1;">
-            <h1 style="text-align: center;">任務確認</h1>
-            <div class="row">
-                <div class="col-md-1"></div>
+        <div class="row g-3">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-10" style="background-color: #B5DFF1;">
+                <h1 style="text-align: center;">任務確認</h1>
+                <div class="row">
+                    <div class="col-md-1"></div>
 
-                <!-- 左側內容 -->
-                <div class="col-md-4">
-                        <p><strong>任務種類：</strong><span id="taskType">@ViewBag.Orderclass</span></p>
+                    <!-- 左側內容 -->
+                    <div class="col-md-4">
+                        <p><strong>任務種類：</strong><span id="taskType">購買</span></p>
                         <p><strong>標籤：</strong><span id="taskLabel">@ViewBag.BuyLabel</span></p>
                         <p><strong>名稱：</strong><span id="taskName">@ViewBag.BuyName</span></p>
                         <p><strong>執行地點：</strong><span id="taskLocation">@ViewBag.BuyLocation</span></p>
@@ -62,62 +62,68 @@
                         <p><strong>截止時間：</strong><span id="deliveryTime">@TempData["BuyDeadline"]</span></p>
                         <p><strong>商品交貨地址：</strong><span id="deliveryAddress">@ViewBag.BuyCity @ViewBag.BuyDistrict @ViewBag.BuyAddress</span></p>
                         <p><strong>收貨方式：</strong><span id="deliveryMethod">@ViewBag.BuyDeliveryMethod</span></p>
-                    <!-- 新增的圖片附件部分 -->
-                    <p><strong>圖片附件：</strong><span id="imageAttachment">
+                        <!-- 新增的圖片附件部分 -->
+                        <p>
+                            <strong>圖片附件：</strong><span id="imageAttachment">
                                 @if (!string.IsNullOrEmpty(ViewBag.BuyImageData))
                                 {
                                     <img src="data:image/jpeg;base64,@ViewBag.BuyImageData" alt="Uploaded Image" style="width:150px" />
                                 }
-                    </span></p>
-                </div>
-                <div class="col-md-1"></div>
-
-                <!-- 右側內容 -->
-                <div class="col-md-5">
-                    <!-- 任務內容（唯讀） -->
-                    <div class="col">
-                        <label for="buy-task-content" class="form-label me-2" style="font-size: 25px;">任務內容:</label>
-                        <textarea class="form-control" rows="5" placeholder="任務內容..." id="buy-task-content" style="font-size: 20px;"
-                                      readonly>@ViewBag.BuyTaskContent</textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-7"></div>
-                        <div class="col-md-5">
-                            <!-- 費用明細 -->
-                            <div id="costDetails" style="background-color: gainsboro;width: 200px;text-align: left;">
-                                <p><strong>任務金額：</strong><span id="taskAmount">$@ViewBag.BuyAmount</span></p>
-                                <p><strong>接單收費：</strong><span id="orderFee">$35</span></p>
-                                <p><strong>平台抽成：</strong><span id="platformFee">$15</span></p>
-                                <p><strong>總金額：</strong><span id="totalAmount">$@ViewBag.BuyTotalAmount</span></p>
-                            </div>
-                        </div>
+                            </span>
+                        </p>
                     </div>
                     <div class="col-md-1"></div>
 
-                    <!-- 修改和付款按鈕 -->
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
-                        <button class="btn btn-success" style="background-color: #4B3DE7;">付款</button>
-                    </div>
+                    <!-- 右側內容 -->
+                    <div class="col-md-5">
+                        <!-- 任務內容（唯讀） -->
+                        <div class="col">
+                            <label for="buy-task-content" class="form-label me-2" style="font-size: 25px;">任務內容:</label>
+                            <textarea class="form-control" rows="5" placeholder="任務內容..." id="buy-task-content" style="font-size: 20px;"
+                                      readonly>@ViewBag.BuyTaskContent</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7"></div>
+                            <div class="col-md-5">
+                                <!-- 費用明細 -->
+                                <div id="costDetails" style="background-color: gainsboro;width: 200px;text-align: left;">
+                                    <p><strong>任務金額：</strong><span id="taskAmount">$@ViewBag.BuyAmount</span></p>
+                                   @*  <p><strong>接單收費：</strong><span id="orderFee">$35</span></p>
+                                    <p><strong>平台抽成：</strong><span id="platformFee">$15</span></p>
+                                    <p><strong>總金額：</strong><span id="totalAmount">$@ViewBag.BuyTotalAmount</span></p> *@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
 
+                        <!-- 修改和付款按鈕 -->
+                        <div class="d-flex justify-content-end">
+                            <button type="button" id="changbtn" class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
+                            <button type="button" id="postbtn" class="btn btn-success" style="background-color: #4B3DE7;">發布</button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
+            <div class="col-md-1">
+            </div>
         </div>
-        <div class="col-md-1">
-        </div>
-    </div>
-    <div style="display:none">
-    
+        <div style="display:none">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="MissionId" class="control-label"></label>
                 <input asp-for="MissionId" class="form-control" value="@ViewBag.MissionId" />
                 <span asp-validation-for="MissionId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
                 <input asp-for="Category" class="form-control" value="@ViewBag.Category" />
                 <span asp-validation-for="Category" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" class="form-control"><option value="2" selected>2</option></select>
             </div>
             <div class="form-group">
                 <label asp-for="Tags" class="control-label"></label>
@@ -126,7 +132,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="OrderMemberId" class="control-label"></label>
-                <input asp-for="OrderMemberId" class="form-control" value="002" />
+                <input asp-for="OrderMemberId" class="form-control" value="@ViewBag.YU_ID" />
                 <span asp-validation-for="OrderMemberId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -181,7 +187,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="DeadlineDate" class="control-label"></label>
-                <input asp-for="DeadlineDate" class="form-control" value=""/>
+                <input asp-for="DeadlineDate" class="form-control" value="" />
                 <span asp-validation-for="DeadlineDate" class="text-danger"></span>
             </div>
             @{
@@ -245,12 +251,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="MissionStatus" class="control-label"></label>
-                <input asp-for="MissionStatus" class="form-control" value="發布中"/>
+                <input asp-for="MissionStatus" class="form-control" value="發布中" />
                 <span asp-validation-for="MissionStatus" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderTime" class="control-label"></label>
-                <input asp-for="OrderTime" class="form-control" value=""/>
+                <input asp-for="OrderTime" class="form-control" value="" />
                 <span asp-validation-for="OrderTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -264,10 +270,28 @@
                 <span asp-validation-for="ImagePath" class="text-danger"></span>
             </div>
             @* <div class="form-group">
-                <input id="create-button" type="submit" value="Create" class="btn btn-primary" />
+            <input id="create-button" type="submit" value="Create" class="btn btn-primary" />
             </div> *@
         </div>
     </form>
+    <script>
+        document.getElementById("changbtn").addEventListener("click", function () {
+            window.location.href = "/HS_Pending/PendingOrder_Buy";
+        });
+        document.getElementById("postbtn").addEventListener("click", function (event) {
+            // 將按鈕的 type 設為 button 以阻止表單提交
+            this.type = "button";
+
+            // 清除 Local Storage 中的資料
+            localStorage.removeItem("myFormData");
+
+            // 將按鈕的 type 改回 submit
+            this.type = "submit";
+
+            // 程式碼方式觸發 click 事件以提交表單
+            this.click();
+        });
+    </script>
 </body>
 
 </html>

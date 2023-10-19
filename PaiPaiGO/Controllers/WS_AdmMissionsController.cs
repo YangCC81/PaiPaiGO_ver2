@@ -25,8 +25,10 @@ namespace PaiPaiGo.Controllers
 
 		// GET: Missions
 		public async Task<IActionResult> WS_AdmMission(string sortOrder, string currentFilter, string searchString, int? page)
-        {
-            
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             if (_context.Missions != null)
 			{
                 var result = _context.Missions.Include(x => x.CategoryNavigation).ToList();
@@ -67,8 +69,10 @@ namespace PaiPaiGo.Controllers
         //改上下架
 		[HttpPost]
 		public IActionResult SaveMissionStatusChanges(List<MissionStatusChangeModel> changes)
-		{
-			if (_context.Missions == null)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            if (_context.Missions == null)
 			{
 				return Problem("Entity set 'PaiPaiGoContext.Missions' is null.");
 			}
@@ -96,10 +100,12 @@ namespace PaiPaiGo.Controllers
 		}
 		//篩選
 		[HttpPost]
-		public async Task<IActionResult> GetFilteredData(int selectedCategory, string selectedStatus, int? page)
-		{
-			// 使用 Entity Framework Core 建立查詢，篩選選擇的條件
-			var query = _context.Missions.Include(x => x.CategoryNavigation).AsQueryable();
+		public async Task<IActionResult> GetFilteredData(int selectedCategory, string selectedStatus, string selectedZipcode, int? page)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            // 使用 Entity Framework Core 建立查詢，篩選選擇的條件
+            var query = _context.Missions.Include(x => x.CategoryNavigation).AsQueryable();
 
 			if (selectedCategory > 0) // 如果選擇了種類，則進行篩選
 			{
@@ -111,19 +117,30 @@ namespace PaiPaiGo.Controllers
 				query = query.Where(m => m.MissionStatus == selectedStatus);
 			}
 
-			// 執行查詢，获取过滤后的数据
-			var filteredData = query.ToList();
+			if (!string.IsNullOrEmpty(selectedZipcode)) // 如果選擇了Zipcode，則進行篩選
+			{
+				query = query.Where(m => m.Postcode == selectedZipcode);
+			}
 
-			// 使用 PartialView 返回過濾后的數據
-			//return PartialView("_MissionTable", filteredData);
+			// 執行查詢，獲取過濾後的數據
+			var filteredData = await query.ToListAsync();
+
+
+			// 使用 PartialView 返回過濾後的數據
+			
 			var pageNumber = page ?? 1;
 			return PartialView("_MissionTable", await filteredData.ToPagedListAsync(pageNumber, 5));
 		}
 
 
-		// GET: Missions/Details/5
-		public async Task<IActionResult> Details(int? id)
-        {
+
+
+
+        // GET: Missions/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Missions == null)
             {
                 return NotFound();
@@ -141,7 +158,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: Missions/Create
         public IActionResult Create()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             return View();
         }
 
@@ -151,7 +170,9 @@ namespace PaiPaiGo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MissionId,Category,Tags,OrderMemberId,AcceptMemberId,MissionName,MissionAmount,Postcode,FormattedMissionAmount,LocationCity,LocationDistrict,Address,DeliveryDate,DeliveryTime,DeadlineDate,DeadlineTime,MissionDescription,DeliveryMethod,ExecutionLocation,MissionStatus,OrderTime,AcceptTime,ImagePath")] Mission mission)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (ModelState.IsValid)
             {
                 _context.Add(mission);
@@ -163,7 +184,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: Missions/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Missions == null)
             {
                 return NotFound();
@@ -185,7 +208,9 @@ namespace PaiPaiGo.Controllers
 		[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MissionId,Category,Tags,OrderMemberId,AcceptMemberId,MissionName,MissionAmount,Postcode,FormattedMissionAmount,LocationCity,LocationDistrict,Address,DeliveryDate,DeliveryTime,DeadlineDate,DeadlineTime,MissionDescription,DeliveryMethod,ExecutionLocation,MissionStatus,OrderTime,AcceptTime,ImagePath")] Mission mission)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id != mission.MissionId)
             {
                 return NotFound();
@@ -216,7 +241,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: Missions/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Missions == null)
             {
                 return NotFound();
@@ -236,7 +263,9 @@ namespace PaiPaiGo.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (_context.Missions == null)
             {
                 return Problem("Entity set 'PaiPaiGoContext.Missions'  is null.");

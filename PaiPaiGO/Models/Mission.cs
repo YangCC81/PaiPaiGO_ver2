@@ -77,3 +77,19 @@ public class MissionStatusChangeModel {
     public string NewStatus { get; set; }
     public string InitialStatus { get; set; }
 }
+
+//以下敏靖
+//時間倒數的
+public class MissionViewModel {
+    public string MissionName { get; set; }
+    public string RemainingTime { get; set; }
+}
+
+
+//慧荃建的↓
+public class MissionFinishModel {
+    public int MissionId { get; set; }
+    public string NewStatus { get; set; }
+
+    public string MemberId { get; set; }
+}

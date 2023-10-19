@@ -1,43 +1,56 @@
-﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>  // 確保模型類型與你的任務類型匹配
-          <!-- 與上方選單距離   /   hover   /      邊框 -->
-<table class="table mt-4 table table-hover table table-bordered fs-3" id="tableContainer">
+﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
+
+<style>
+    .custom-table-width{
+        overflow-x: auto;
+    }
+</style>
+
+
+          <!-- 與上方選單距離   /   hover   /      邊框         /字大小-->
+<table class="table mt-1 table table-hover table table-bordered fs-3 custom-table-width" id="tableContainer" style="text-align:center;">
     <thead>
         <tr>
-            <th>會員id</th>
-            <th>任務訂單編號</th>
-            <th>種類</th>
-            <th>類別</th>
-            <th>任務名稱</th>
-            <th>價格</th>
-            <th>刊登日期</th>
-            <th>任務時間</th>
-            <th>狀態</th>
-            <th>接單人員id</th>
-            <th>評價</th>
-            <th>上下架</th>
+            <th style="width:5%; vertical-align:middle;">會員編號</th>
+            <th style="vertical-align:middle;">任務編號</th>
+            <th style="width:5%; vertical-align:middle;">種類</th>
+            <th style="width:5%; vertical-align:middle;">類別</th>
+            <th style="vertical-align:middle;">任務名稱</th>
+            <th style="vertical-align:middle;">價格</th>
+            <th style="vertical-align:middle;">刊登日期</th>
+            <th style="vertical-align:middle;">任務時間</th>
+            <th style="width:7%; vertical-align:middle;">任務</br>狀態</th>
+            <th style="width:7%; vertical-align:middle;">接單員</br>編號</th>
+            <th style="width:7%; vertical-align:middle;">評價</th>
+            <th style="width:5%; vertical-align:middle;">上架下架</th>
         </tr>
     </thead>
         @foreach (var item in Model)
         {
     <tbody>
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.OrderMemberId)</td>
-                <td>@Html.DisplayFor(modelItem => item.MissionId)</td>
-                <td>@Html.DisplayFor(modelItem => item.CategoryNavigation.CategoryName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Tags)</td>
-                <td>@Html.DisplayFor(modelItem => item.MissionName)</td>
-                <td>@Html.DisplayFor(modelItem => item.MissionAmount)</td>
-                <td>@Html.DisplayFor(modelItem => item.OrderTime)</td>
-                <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
-                <td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.OrderMemberId)</td>
+                <td style="vertical-align:middle;">
+                    <a href="@Url.Action("Text_排", "HS_Get_Text",new {id = item.MissionId})">@item.MissionId</a>
+                    @*@Html.DisplayFor(modelItem => item.MissionId)*@</td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.CategoryNavigation.CategoryName)</td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.Tags)</td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.MissionName)</td>
+                <td style="vertical-align:middle;">$@String.Format("{0:0}", item.MissionAmount)</td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.OrderTime)</td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+                <td style="vertical-align:middle;">
                     @Html.DisplayFor(modelItem => item.MissionStatus)
                 </td>
-                <td>@Html.DisplayFor(modelItem => item.AcceptMemberId)</td>
-                <td>4星</td>
-                <td>
+                <td style="vertical-align:middle;">@Html.DisplayFor(modelItem => item.AcceptMemberId)</td>
+                <td style="vertical-align:middle;">4星</td>
+                <td style="vertical-align:middle;">
                     <div class="form-check form-switch">
                         <input class="form-check-input mission-checkbox" type="checkbox" @(item.MissionStatus == "發布中" ? "checked" : "") data-mission-id="@item.MissionId" data-initial-status="@item.MissionStatus" />
                     </div>
+                </td>
+                <td hidden>
+                    @Html.DisplayFor(modelItem => item.Postcode)
                 </td>
             </tr>
     </tbody>

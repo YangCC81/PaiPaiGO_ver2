@@ -1,0 +1,65 @@
+﻿.form-group {
+    position: relative;
+    margin-top: 50px;
+}
+
+label {
+    position: absolute;
+    left: 10px;
+    bottom: 100%;
+    transition: all 0.5s ease-in-out;
+}
+
+.iconicfill-pen-alt2 {
+    display: none;
+    position: absolute;
+    left: -50px;
+    bottom: 100%;
+    font-size: 19px;
+    transition: all 0.5s ease-in-out;
+    transform: scaleX(-1);
+}
+
+    .iconicfill-pen-alt2.show {
+        display: inline;
+        animation: slide-in-out 0.5s ease-in-out forwards, move-pen 1s ease-in infinite alternate;
+    }
+
+    .iconicfill-pen-alt2.hide {
+        display: inline;
+        animation: slide-out-in 0.5s ease-in-out forwards;
+    }
+    .iconicfill-pen-alt2.hide {
+        display: none;
+        animation: slide-out-in 0.5s ease-in-out forwards;
+    }
+
+@keyframes slide-in-out {
+    from {
+        left: -15px;
+    }
+
+    to {
+        left: 40px;
+    }
+}
+
+@keyframes slide-out-in {
+    from {
+        left: 40px;
+    }
+
+    to {
+        left: -15px;
+    }
+}
+
+@keyframes move-pen {
+    from {
+        transform: scaleX(-1) translateX(-5px);
+    }
+
+    to {
+        transform: scaleX(-1) translateX(10px);
+    }
+}

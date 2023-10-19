@@ -11,10 +11,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\Home\_RemainingTimePartial.cshtml" />
     <None Include="Views\HS_Get_Text\GetOrder_Buy.cshtml" />
     <None Include="Views\HS_Get_Text\GetOrder_Pai.cshtml" />
     <None Include="Views\HS_Get_Text\Text_Buy.cshtml" />
     <None Include="Views\HS_Get_Text\Text_Pai.cshtml" />
+    <None Include="Views\HS_Pending\CheckOrder_Buy.cshtml" />
+    <None Include="Views\HS_Pending\CheckOrder_Pai.cshtml" />
+    <None Include="Views\HS_Pending\PendingOrder_Buy.cshtml" />
+    <None Include="Views\HS_Pending\PendingOrder_Pai.cshtml" />
+    <None Include="Views\HS_Problem\CommonProblem.cshtml" />
+    <None Include="Views\HS_Problem\Explain.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\WS_AdmMembers\AdmMember.cshtml" />
+    <None Include="Views\WS_AdmMissions\MissionStatus.cshtml" />
+    <None Include="Views\WS_AdmMissions\WS_AdmMission.cshtml" />
+    <None Include="Views\WS_AdmMissions\WS_misDetail.cshtml" />
+    <None Include="Views\WS_AdmMissions\_MissionTable.cshtml" />
+    <None Include="Views\WS_Opinions\AdmOpinion.cshtml" />
+    <None Include="Views\Yu_Calendar\Index.cshtml" />
+    <None Include="Views\Yu_Calendar\Yu_Calendar.cshtml" />
+    <None Include="Views\Yu_Calendar\Yu_Star.cshtml" />
+    <None Include="Views\YU_Home\Index.cshtml" />
+    <None Include="Views\YU_Members\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

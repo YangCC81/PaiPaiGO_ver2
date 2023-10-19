@@ -1,0 +1,82 @@
+﻿@model IEnumerable<PaiPaiGO.Models.Member>
+
+<table class="table table-condensed table-striped">
+    <!-- 標題 -->
+    <thead>
+        <tr>
+            <th></th>
+            <th>會員編號</th>
+            <th>會員姓名</th>
+            <th>會員帳號</th>
+            <th>連動帳號</th>
+            <th>帳號狀態</th>
+            <th>警告</th>
+            <th>停權</th>
+        </tr>
+    </thead>
+    <!-- 內容 -->
+    @foreach (var item in Model)
+    {
+        <tbody>
+            <tr>
+                <td>
+                    <button class="btn btn-default btn-xs" data-bs-toggle="collapse"
+                            data-bs-target=".test@(item.MemberId)">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.MemberId)</td>
+                <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                <td>@Html.DisplayFor(modelItem => item.MemberEmail)</td>
+                <td>無</td>
+                <td data-status="@item.MemberStatus">@Html.DisplayFor(modelItem => item.MemberStatus)</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#myModal">
+                        查閱
+                    </button>
+                </td>
+                <td>
+                    <!--停權的switch checkbox-->
+                    <div class="form-check form-switch">
+                        <input class="form-check-input member-checkbox" type="checkbox" @(item.MemberStatus == "正常" ? "checked" : "") data-member-id="@item.MemberId" data-initial-status="@item.MemberStatus" />
+                    </div>
+                </td>
+            </tr>
+            <!-- 內容再展開 -->
+            <tr>
+                <td colspan="12" class="hiddenRow">
+                    <div class="collapse test@(item.MemberId)">
+                        <!-- 內容展開-排版調整 -->
+                        <table class="table table-striped">
+                            <!-- 內容展開-標題 -->
+                            <thead>
+                                <tr class="info">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th> <!-- 空列 -->
+                                    <th>通訊地</th>
+                                    <th>手機號碼</th>
+                                </tr>
+                            </thead>
+                            <!-- 內容展開-內文 -->
+                            <tbody>
+                                <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+                                    <td></td>
+                                    <td></td> <!-- 空列 -->
+                                    <th></th> <!-- 空列 -->
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MemberCity)
+                                        @Html.DisplayFor(modelItem => item.MemberTownship)
+                                        @Html.DisplayFor(modelItem => item.MemberAddress)
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.MemberPhoneNumber)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    }
+</table>    

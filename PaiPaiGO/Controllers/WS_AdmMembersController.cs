@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PaiPaiGO.Models;
+using X.PagedList;
 
 namespace PaiPaiGo.Controllers
 {
@@ -18,35 +19,82 @@ namespace PaiPaiGo.Controllers
             _context = context;
         }
 
-        //我想在這抓到Opinion的東西
+        //改封鎖狀況
+        [HttpPost]
+		public IActionResult UpdateStatus(List<MemberStatusChangeModel> changes)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            if (_context.Members == null)
+			{
+				return Problem("Entity set 'PaiPaiGoContext.Members' is null.");
+			}
 
-        //public class MyViewModel
-        //{
-        //    public IEnumerable<Member> Members { get; set; }
-        //    public Opinion Opinion { get; set; }
-        //}
+			foreach (var change in changes)
+			{
+				var member = _context.Members.FirstOrDefault(m =>Convert.ToInt32( m.MemberId )== change.MemberId);
 
-        //public ActionResult MyAction()
-        //{
-        //    var viewModel = new MyViewModel
-        //    {
-        //        Members = _context.Members.ToList(),
-        //        Opinion = _context.Opinions.FirstOrDefault()
-        //    };
-        //    return View(viewModel);
-        //}
+				if (member != null)
+				{
+					member.MemberStatus = change.NewStatus;
+				}
+			}
 
+			try
+			{
+				_context.SaveChanges(); // 保存更改到SQL
+				return Json(new { success = true }); // 丟回JSON
+			}
+			catch (Exception ex)
+			{
+				// 處理更新失敗
+				return Json(new { success = false, error = ex.Message });
+			}
+		}
 
-        // GET: WS_AdmMembers
-        public async Task<IActionResult> AdmMember()
-        {
-            var paiPaiGoContext = _context.Members.Include(m => m.MemberPostcodeNavigation);
-            return View(await paiPaiGoContext.ToListAsync());
+		public async Task<IActionResult> AdmMember(string memberStatusFilter)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            if (string.IsNullOrEmpty(memberStatusFilter))
+            {
+                // 初始加载时，返回完整视图并包含 ViewBags
+                var allMembers = await _context.Members.ToListAsync();
+                var selectList = _context.Members.Select(m => m.MemberStatus).Distinct().ToList();
+                ViewBag.MemberStatusList = new SelectList(selectList, selectList); // 为 ViewBags 设置数据
+                return View(allMembers);
+            }
+            else
+            {
+               var filteredMembers = await _context.Members
+                   .Where(m => m.MemberStatus == memberStatusFilter)
+                   .ToListAsync();
+                return PartialView("_MemberListPartial", filteredMembers);
+            }
         }
+        
+
+        public IActionResult FilterMembersByStatus(string memberStatus)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            // 根據選擇的狀態篩選會員數據
+            var filteredMembers = _context.Members
+                .Include(m => m.MemberPostcodeNavigation)
+                .Where(m => string.IsNullOrEmpty(memberStatus) || m.MemberStatus == memberStatus)
+                .ToList();
+
+            // 返回部分視圖
+            return PartialView("_MemberListPartial", filteredMembers);
+        }
+
+      
 
         // GET: WS_AdmMembers/Details/5
         public async Task<IActionResult> Details(string id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Members == null)
             {
                 return NotFound();
@@ -65,7 +113,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: WS_AdmMembers/Create
         public IActionResult Create()
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             ViewData["MemberPostcode"] = new SelectList(_context.Counties, "Postcode", "Postcode");
             return View();
         }
@@ -76,7 +126,9 @@ namespace PaiPaiGo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,Gearing")] Member member)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (ModelState.IsValid)
             {
                 _context.Add(member);
@@ -89,7 +141,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: WS_AdmMembers/Edit/5
         public async Task<IActionResult> Edit(string id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Members == null)
             {
                 return NotFound();
@@ -110,7 +164,9 @@ namespace PaiPaiGo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,Gearing")] Member member)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id != member.MemberId)
             {
                 return NotFound();
@@ -142,7 +198,9 @@ namespace PaiPaiGo.Controllers
 
         // GET: WS_AdmMembers/Delete/5
         public async Task<IActionResult> Delete(string id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Members == null)
             {
                 return NotFound();
@@ -163,7 +221,9 @@ namespace PaiPaiGo.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (_context.Members == null)
             {
                 return Problem("Entity set 'PaiPaiGoContext.Members'  is null.");

@@ -8,6 +8,7 @@
 <html>
 
 <head>
+    <title>PaiPaiGo-代排對與代購網</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -281,12 +282,12 @@
     <div class="content">
 
         <div class="main" id="section1">
-            <img src="./img/Logo.png" alt="left" style="width: 500px; height: 200px; position: absolute; left:4%;">
+            <img src="~/img/Logo.png" alt="left" style="width: 300px; height: 100px; position: absolute; left:8%;">
             <div class="bdtext">
-                <img src="./img/Home1-1.gif" style="width: 100px; height: 150px; display: block; margin-bottom: -150px;" alt="">
+                <img src="~/img/Home1-1.gif" style="width: 100px; height: 150px; display: block; margin-bottom: -150px;" alt="">
                 <h1>你 我<br>都能幫忙!</h1>
                 <p style="color: #0A5812; font-size: 35px;">原來大家都在這裡， <br> 關於代購、代排隊的互助基地。</p>
-                <a href="#">
+                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
                     <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
                         探索任務
                     </button>
@@ -337,13 +338,13 @@
                 <p style="font-size: 35px;"> 透過地圖的搜索任務與案件 <br> 在網站上，你可以尋求協助，也可以幫助別人!</p>
                 <p style="font-size: 35px;">還在等什麼? <br> 你想要尋求協助還是幫助他人呢?</p>
                 <br>
-                <a href="#">
+                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
                     <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
                         探索任務
                     </button>
                 </a>
                 &ensp;&ensp;
-                <a href="#">
+                <a href="@Url.Action("PendingOrder_Pai", "HS_Pending")">
                     <button style="background-color: blue; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
                         刊登任務
                     </button>
@@ -371,7 +372,7 @@
                 </p>
 
                 <h3 style="color: #130FD1;">都讀到這了，是該探索適合的案件了!!!</h3>
-                <a href="#">
+                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
                     <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
                         探索任務
                     </button>

@@ -4,7 +4,7 @@
 @using X.PagedList;
 @using X.PagedList.Web.Common;
 @{
-	ViewData["Title"] = "Index";
+	ViewData["Title"] = "Mission";
 
 }
 
@@ -30,7 +30,7 @@
 
 
 
-<div class="container-fluid mt-2">
+<div class="container-fluid mt-2" id="app">
 	<div class="row ">
 		<!-- 左側nav -->
 		<div class=" col-1 d-flex flex-column  bg-light">
@@ -65,49 +65,44 @@
 		<!-- 中間區塊 -->
 		<div class="col-10">
 			<!-- 上方選單-->
-			<div class="mt-3  d-flex justify-content-around">
-				@*排版未完成*@
+
+			<div class="d-flex mt-1 ">
+
 				@*選執行地*@
-				@*<lable class="fs-4">任務執行地點</lable>*@
-				<div id="twzipcode" class="form-row" style="width:30%">
-					<div class="form-group col">
-						<div data-role="county" data-name="county" data-value=""></div>
-					</div>
-					<div class="form-group col">
-						<div data-role="district" data-name="district" data-value=""></div>
-					</div>
+				<lable class="fs-4 align-middle">執行地點：</lable>
+				<div id="twzipcode" class="form-row align-middle" style="width: 30%;">
+					<div data-role="county" data-name="county" data-value="" class="form-group col-5 fs-1" style="display: inline-block;"></div>
+					<div data-role="district" data-name="district" data-value="" class="form-group col-5 fs-1" style="display: inline-block;"></div>
 					<!-- 隱藏的郵遞區號欄位，值可以 SQL 抓取 -->
-					<div class="form-group col" hidden>
-						<div data-role="zipcode" data-style="form-control" data-name="zipcode" data-value=""></div>
-					</div>
+					<div data-role="zipcode" data-style="form-control" data-name="zipcode" data-value="" hidden></div>
 				</div>
 
-				@*選取排隊或代購*@
-				@if (ViewData["MissionCatagoryViewModel"] != null)
-				{
-					var MissionCategoryViewModel = ViewData["MissionCatagoryViewModel"] as MissionCategoyViewModel;
-					<select id="selectMissionCategory" class="form-select menu fs-4" asp-items="MissionCategoryViewModel?.MissionCategory">
-					</select>
-				}
-				@*else
-				{
-				<select class="form-select menu fs-4">
-				</select>
-				}*@
 
-				@*選取任務狀態*@
-				@if (ViewData["MissionStatusViewModel"] != null)
-				{
-					var MissionStatusViewModel = ViewData["MissionStatusViewModel"] as MissionStatusViewModel;
-					<select id="selectMissionStatus" class="form-select menu fs-4" asp-items="MissionStatusViewModel?.MissionStatus">
-					</select>
-				}
-				
+				<lable class="fs-4">種類：</lable>
+				<div style="width: 10%;">
+					@*選取排隊或代購*@
+					@if (ViewData["MissionCatagoryViewModel"] != null)
+					{
+						var MissionCategoryViewModel = ViewData["MissionCatagoryViewModel"] as MissionCategoyViewModel;
+						<select id="selectMissionCategory" class="form-select menu" asp-items="MissionCategoryViewModel?.MissionCategory" v-model="obj.selectedStatus">
+						</select>
+					}
+				</div>
 
-				<div class="col-3  justify-content-end">
-					
+				<lable class="fs-4 align-middle">狀態：</lable>
+				<div style="width: 10%;">
+					@*選取任務狀態*@
+					@if (ViewData["MissionStatusViewModel"] != null)
+					{
+						var MissionStatusViewModel = ViewData["MissionStatusViewModel"] as MissionStatusViewModel;
+						<select id="selectMissionStatus" class="form-select menu" asp-items="MissionStatusViewModel?.MissionStatus">
+						</select>
+					}
+				</div>
+
+				<div class="col-3 ">
 					<form asp-controller="WS_AdmMissions" asp-action="WS_AdmMission" class="d-flex">
-						<input class="form-control me-2" type="text" name="SearchString" placeholder="請輸入關鍵字">
+						<input class="form-control " type="text" name="SearchString" placeholder="請輸入關鍵字">
 						<input type="submit" value="搜尋" />
 					</form>
 				</div>
@@ -115,24 +110,30 @@
 
 			<!-- 表格 -->
 			@*保存變更按鈕*@
-			<button type="button" class="btn btn-danger btn btn-primary" id="saveChangesButton">保存變更</button>
-			
-			@{Html.RenderPartial("_MissionTable");}
-			
+			<button type="button" class="btn btn-danger btn btn-primary fs-5" id="saveChangesButton" style="float: right; margin-bottom: 30px;	margin-top: 20px">
+				保存變更
+			</button>
 
-			@*  分頁跳轉 *@
-			Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-			@Html.PagedListPager(Model, page => Url.Action("WS_AdmMission",
-			new { page}), new PagedListRenderOptions {
-			LiElementClasses = new string[] { "page-item" },
-			PageClasses = new string[] { "page-link" }})
+			@{
+				Html.RenderPartial("_MissionTable");
+			}
+
+			<!--分頁跳轉-->
+			<div style="justify-content: center ; display:flex;">
+				@*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount*@
+				@Html.PagedListPager(Model, page => Url.Action("WS_AdmMission",
+				new { page}), new PagedListRenderOptions {
+				LiElementClasses = new string[] { "page-item" },
+				PageClasses = new string[] { "page-link" }})
+			</div>
 		</div>
+
 
 		<!-- 最右邊 -->
 		<div class="col-1">
 			<!-- 這裡保留空位，不放任何内容 -->
 			@*測試用*@
-			@Html.ValidationSummary()
+			@*@Html.ValidationSummary()*@
 		</div>
 	</div>
 
@@ -141,6 +142,15 @@
 
 
 <script>
+	var app = new vue({
+		el: "#app",
+		data: {
+			obj: {
+
+				selectedStatus: "",
+			}
+		}
+	})
 	@*左側選單 global bootstrap: false*@
 		(function () {
 			'use strict'
@@ -159,8 +169,8 @@
 		"css": ["city form-control", "town form-control"],
 		"countyName": "city", // 指定城市 select name
 		"districtName": "town", // 指定地區 select name
-	@*"zipcodeName": "zipcodeField"*@ // 保留郵遞區號欄位，但不顯示
-					})
+		"zipcodeName": "zipcodeField" // 保留郵遞區號欄位，但不顯示
+	})
 
 </script>
 
@@ -197,43 +207,23 @@
 	});
 </script>
 
-@*失敗的下拉選單抓資料*@
-@*<script type="text/javascript">
-	$(document).ready(function () {
-		$(".selectChange").change(function () {
-			// 抓所選類別和狀態的值
-			var selectedCategory = $("#selectMissionCategory").val();
-			var selectedStatus = $("#selectMissionStatus").val();
 
-			$.ajax({
-				type: "POST",
-				url: "/WS_AdmMissions/GetFilteredData",
-				data: { selectedCategory: selectedCategory, selectedStatus: selectedStatus },
-				dataType: "html",
-				success: function (data) {
-					// 更新第二個下拉列表的內容
-					$(".valueChange").html(data);
-				}
-			});
-		});
-	});
-</script>*@
 
 <script>
 	//這裡做"下拉選單抓資料"
 	$(document).ready(function () {
 		// 監聽selectMissionStatus值的變化
 		$("#selectMissionStatus").change(function () {
-			// 獲取所選狀態的值
+			// 抓所選狀態的值
 			var selectedStatus = $(this).val();
 
-			// 發送AJAX請求以獲取符合選擇條件的數據
+			// 發送AJAX請求取得符合選擇條件的數據(狀態)
 			$.ajax({
 				url: "/WS_AdmMissions/GetFilteredData",
 				type: "POST",
 				data: { selectedStatus: selectedStatus },
 				success: function (data) {
-					// 更新表格內容
+					// 更新PartialView表格內容
 					$("#tableContainer").html(data);
 				},
 				error: function () {
@@ -242,18 +232,19 @@
 			});
 		});
 
+
 		// 監聽selectMissionCategory值的變化
 		$("#selectMissionCategory").change(function () {
-			// 獲取所選種類的值
+			// 抓所選種類的值
 			var selectedCategory = $(this).val();
 
-			// 發送AJAX請求以獲取符合選擇條件的數據
+			// 發送AJAX請求取得符合選擇條件的數據
 			$.ajax({
 				url: "/WS_AdmMissions/GetFilteredData",
 				type: "POST",
 				data: { selectedCategory: selectedCategory },
 				success: function (data) {
-					// 更新表格內容
+					// 更新PartialView表格內容
 					$("#tableContainer").html(data);
 				},
 				error: function () {
@@ -261,5 +252,47 @@
 				}
 			});
 		});
+
+		// 監聽zipcode值的變化
+		$("select[name='county'], select[name='district']").on('change', function () {
+			var selectedZipcode = $("input[name='zipcode']").val();
+
+
+			// 發送AJAX請求取得符合選擇條件的數據
+			$.ajax({
+				url: "/WS_AdmMissions/GetFilteredData",
+				type: "POST",
+				data: { selectedZipcode: selectedZipcode },
+				success: function (data) {
+					// 更新PartialView内容
+					$("#tableContainer").html(data);
+				},
+				error: function () {
+					console.error('AJAX请求失败');
+				}
+			});
+		});
+
 	});
 </script>
+@*<script>
+// 监听zipcode值的变化
+$("#twzipcode input[data-role='zipcode']").on('change', function () {
+	var selectedZipcode = $("#twzipcode input[data-role='zipcode']").val();
+
+
+	// 发送AJAX请求以获取符合选择条件的数据
+	$.ajax({
+		url: "/WS_AdmMissions/GetFilteredData",  // 替换成你的Controller和Action的URL
+		type: "POST",
+		data: { selectedZipcode: selectedZipcode },
+		success: function (data) {
+			// 更新PartialView内容
+			$("#yourPartialViewContainer").html(data);
+		},
+		error: function () {
+			console.error('AJAX请求失败');
+		}
+	});
+});
+</script>*@

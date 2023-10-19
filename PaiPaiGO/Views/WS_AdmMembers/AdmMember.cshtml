@@ -1,5 +1,6 @@
-﻿@model IEnumerable<PaiPaiGO.Models.Member>
+﻿@using PaiPaiGo.Controllers
 
+@model IEnumerable<PaiPaiGO.Models.Member>
 
 
 <head>
@@ -69,94 +70,23 @@
             <div class="container col-10">
                 <!-- 上方選單-->
                 <div class="mt-3 d-flex">
-                    <select class="form-select menu">
-                        <option>帳號狀態</option>
-                        <option>啟用中</option>
-                        <option>停權中</option>
-                    </select>
-                    <input type="text" class="form-control search-input" placeholder="關鍵字...">
+                   
+                <select id="memberStatusFilter" class="form-control">
+                    <option value="">所有狀態</option>
+                    @foreach (var status in (SelectList)ViewBag.MemberStatusList)
+                    {
+                        <option value="@status.Value">@status.Text</option>
+                    }
+                </select>
+                   
+                <input type="text" class="form-control search-input" placeholder="關鍵字...">
 
                 </div>
-                <table class="table table-condensed table-striped">
-                    <!-- 標題 -->
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>會員編號</th>
-                            <th>會員姓名</th>
-                            <th>會員帳號</th>
-                            <th>連動帳號</th>
-                            <th>帳號狀態<br>修改日期</th>
-                            <th>警告</th>
-                            <th>停權</th>
-                        </tr>
-                    </thead>
-                    <!-- 內容 -->
-                  
-                    @foreach (var item in Model)
-                    {
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="btn btn-default btn-xs" data-bs-toggle="collapse"
-                                            data-bs-target=".test@(item.MemberId)">
-                                        <i class="fa-solid fa-eye"></i>
-                                     </button>
-                                </td>
-                                <td>@Html.DisplayFor(modelItem => item.MemberId)</td>
-                                <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
-                                <td>@Html.DisplayFor(modelItem => item.MemberEmail)</td>
-                                <td>無</td>
-                                <td>@Html.DisplayFor(modelItem => item.MemberStatus)<br>2030.01.01</td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#myModal">
-                                        查閱
-                                    </button>
-                                </td>
-                                <td>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked>
-                                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- 內容再展開 -->
-                            <tr>
-                                <td colspan="12" class="hiddenRow">
-                                    <div class="collapse test@(item.MemberId)">
-                                        <!-- 內容展開-排版調整 -->
-                                        <table class="table table-striped">
-                                            <!-- 內容展開-標題 -->
-                                            <thead>
-                                                <tr class="info">
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th></th> <!-- 空列 -->
-                                                    <th>通訊地</th>
-                                                    <th>手機號碼</th>
-                                                </tr>
-                                            </thead>
-                                            <!-- 內容展開-內文 -->
-                                            <tbody>
-                                                <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
-                                                    <td></td>
-                                                    <td></td> <!-- 空列 -->
-                                                    <th></th> <!-- 空列 -->
-                                                    <td>@Html.DisplayFor(modelItem => item.MemberCity)
-                                                        @Html.DisplayFor(modelItem => item.MemberTownship)
-                                                        @Html.DisplayFor(modelItem => item.MemberAddress)
-                                                    </td>
-                                                    <td>@Html.DisplayFor(modelItem => item.MemberPhoneNumber)</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                </table>
+                <button type="button" class="btn btn-danger btn btn-primary" id="saveChangeButton">保存變更</button>
+                <!--這裡放Partial-Member的Tbale -->
+                <div id="memberListPartial">
+                    @Html.Partial("_MemberListPartial", Model)
+                </div>
 
                 <!-- 彈跳視窗 -->
                 <div class="modal fade" id="myModal">
@@ -171,14 +101,17 @@
 
                             <!-- Modal body -->
                             <div class="modal-body">
+                                @*@Html.Partial("_OpinionPartial")*@ <!-- 使用Partial View來呈現Opinion.cs的資料 -->
                                 <table>
                                     <tr>
+                                        <th>任務編號</th>
                                         <th>任務名稱</th>
                                         <th>警告日期</th>
                                         <th>警告內容</th>
                                     </tr>
                                 @foreach (var item in Model){
                                     <tr>
+                                        <th>20230101001</th>
                                         <td>OOXX名稱</td>
                                         <td>20220101</td>
                                         <td>選單內容</td>
@@ -186,12 +119,6 @@
                                 }
                                 </table>
                             </div>
-
-                            <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -213,7 +140,7 @@
     </div>
 
     <script>
-        /* global bootstrap: false */
+        /* global bootstrap: false  左側導覽*/
         (function () {
             'use strict'
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -222,8 +149,107 @@
             })
         })()
 
-
-
-
     </script>
+
+    <!--改停權狀況-->
+    <script>
+        //改資料庫內容(switch checkbox)
+        $(document).ready(function () {
+            var statusChanges = []; // 設一個statusChanges(本地)的list，用來保存更改  (有保存變更按鈕)
+
+            $(".member-checkbox").change(function () {
+                var memberId = $(this).data("member-id");
+                var initialStatus = $(this).data("initial-status");
+                var newStatus = $(this).prop("checked") ? "正常" : "封鎖";
+
+                // 紀錄到changesQueue(本地)的list
+                statusChanges.push({ memberId: memberId, newStatus: newStatus, initialStatus: initialStatus });
+            });
+
+            $("#saveChangeButton").click(function () {
+                // 發送更改到Server
+                $.ajax({
+                    type: "POST",
+                    url: "/WS_AdmMembers/UpdateStatus",
+                    data: { changes: statusChanges },
+                    dataType: "json",
+                    success: function (data) {
+                        // 處理成功show出來
+                    },
+                    error: function () {
+                        // 處理錯誤show出來
+                        console.error('保存更改失败');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!--下拉選單-->
+    <script>
+        $(document).ready(function () {
+            // 監聽下拉選單的變化事件
+            $('#memberStatusFilter').on('change', function () {
+                var selectedStatus = $('#memberStatusFilter option:selected').text();
+                // 發送AJAX請求到後端控制器
+                $.ajax({
+                    url: '@Url.Action("AdmMember", "WS_AdmMembers")',
+                    type: 'GET',
+                    data: { memberStatusFilter: selectedStatus },
+                    success: function (result) {
+                        // 更新PartialView的內容
+                        $('#memberListPartial').html(result);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+  
+
+    @*以下是下拉選單---失敗
+    *@
+
+    @*<script>
+        $(document).ready(function () {
+            $("#memberStatusFilter").change(function () {
+                var selectedStatus = $(this).val();
+
+                // 隱藏所有行
+                $("table tbody tr").hide();
+
+                if (selectedStatus === "") {
+                    // 如果選擇了"所有狀態"，則顯示所有行
+                    $("table tbody tr").show();
+                } else {
+                    // 顯示與所選狀態匹配的行
+                    $("table tbody tr[data-status='" + selectedStatus + "']").show();
+                }
+            });
+        });
+    </script>*@
+
+    @* <script>
+    $(document).ready(function () {
+    $("#statusFilter").change(function () {
+    var selectedStatus = $(this).val();
+
+    // 隱藏所有行
+    $("table tbody tr").hide();
+
+    if (selectedStatus === "") {
+    // 如果選擇了"所有狀態"，則顯示所有行
+    $("table tbody tr").show();
+    } else {
+    // 顯示與所選狀態匹配的行
+    $("table tbody tr[data-status='" + selectedStatus + "']").show();
+    }
+    });
+    });
+    </script>*@
+
+
 </body>

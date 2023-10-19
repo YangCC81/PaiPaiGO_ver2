@@ -47,3 +47,18 @@ public partial class Member
 
     public virtual ICollection<Opinion> OpinionReportedMembers { get; set; } = new List<Opinion>();
 }
+
+
+//瑋珊的
+public class MemberStatusChangeModel {
+    public int MemberId { get; set; }
+    public string NewStatus { get; set; }
+    public string InitialStatus { get; set; }
+}
+
+public class MemberOpinion {
+    public Member member { get; set; }
+
+    public Opinion opinion { get; set; }
+}
+

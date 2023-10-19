@@ -17,19 +17,19 @@ body {
   margin-bottom: 60px;
 }
 
-/* 導覽列背景色 */
+/*/* 導覽列背景色 */
 .navbar {
     background-color: antiquewhite !important;
 }
 
 .nav-link {
-    font-size: 22px;
+    font-size: 35px!important;
 }
 /* 導覽列字體色與大小 */
 li a {
     justify-content: right;
     color: black !important;
-    font-size: 22px;
+    font-size: 35px ;
 }
 /* 下拉選單滑鼠經過就會出現 */
 .dropdown:hover .dropdown-menu {
@@ -61,28 +61,6 @@ li a:hover {
         height: 24px;
     }
 
-/* 導覽列旁的小圖示(3) */
-.notification {
-    /* background-color: #555; */
-    color: white;
-    text-decoration: none;
-    padding: 5px 6px;
-    position: relative;
-    display: inline-block;
-    border-radius: 2px;
+.custom-brand {
+    margin-right: 20px; /* 調整右邊距 */
 }
-
-    /* .notification:hover {
-    background: red;
-  } */
-
-    /* 導覽列旁的小圖示(3) */
-    .notification .badge {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        padding: 5px 8px;
-        border-radius: 50%;
-        background-color: red;
-        color: white;
-    }

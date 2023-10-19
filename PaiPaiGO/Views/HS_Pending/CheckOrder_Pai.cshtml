@@ -4,6 +4,7 @@
 @{
 }
 @model PaiPaiGO.Models.Mission
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,6 +18,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+
     <style>
         /* 新增的 CSS 樣式 */
         #costDetails {
@@ -42,7 +46,9 @@
     </style>
 </head>
 <body>
-    <form asp-action="PaiToDatabase">
+    <form method="post" action="PaiToDatabase">
+        @Html.AntiForgeryToken()
+
         <div class="row g-3">
             <div class="col-md-1">
             </div>
@@ -52,7 +58,7 @@
                     <div class="col-md-1"></div>
                     <!-- 左側內容 -->
                     <div class="col-md-4">
-                        <p><strong>任務種類:</strong><span>@ViewBag.Orderclass</span></p>
+                        <p><strong>任務種類:</strong><span>排隊</span></p>
                         <p><strong>標籤：</strong><span>@ViewBag.QueueLabel</span></p>
                         <p><strong>名稱：</strong><span>@ViewBag.PaiName</span></p>
                         <p><strong>執行地區：</strong><span>@ViewBag.City @ViewBag.Location @ViewBag.Address</span></p>
@@ -84,9 +90,9 @@
                                 <!-- 費用明細 -->
                                 <div id="costDetails" style="background-color: gainsboro;width: 200px;text-align: left;">
                                     <p><strong>任務金額：</strong><span>$@ViewBag.Amount</span></p>
-                                    <p><strong>接單收費：</strong><span>$35</span></p>
+                                   @*  <p><strong>接單收費：</strong><span>$35</span></p>
                                     <p><strong>平台抽成：</strong><span>$15</span></p>
-                                    <p><strong>總金額：</strong><span>$@ViewBag.TotalAmount</span></p>
+                                    <p><strong>總金額：</strong><span>$@ViewBag.TotalAmount</span></p> *@
                                 </div>
                             </div>
                         </div>
@@ -94,8 +100,8 @@
 
                         <!-- 修改和付款按鈕 -->
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
-                            <button type="submit" class="btn btn-success" style="background-color: #4B3DE7;">付款</button>
+                            <button type="button" id="changbtn" class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
+                            <button type="button" id="postbtn" class="btn btn-success" style="background-color: #4B3DE7;">發布</button>
                         </div>
                     </div>
                 </div>
@@ -104,7 +110,6 @@
             </div>
         </div>
         <div style="display:none">
-    
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="MissionId" class="control-label"></label>
@@ -113,8 +118,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" value="ViewBag.Category" />
-                <span asp-validation-for="Category" class="text-danger"></span>
+                <select asp-for="Category" class="form-control"><option value="1" selected>1</option></select>
             </div>
             <div class="form-group">
                 <label asp-for="Tags" class="control-label"></label>
@@ -123,7 +127,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="OrderMemberId" class="control-label"></label>
-                <input asp-for="OrderMemberId" class="form-control" value="001" />
+                <input asp-for="OrderMemberId" class="form-control" value="@ViewBag.YU_ID" />
                 <span asp-validation-for="OrderMemberId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -178,10 +182,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="DeadlineDate" class="control-label"></label>
-                <input asp-for="DeadlineDate" class="form-control" value=""/>
+                <input asp-for="DeadlineDate" class="form-control" value="" />
                 <span asp-validation-for="DeadlineDate" class="text-danger"></span>
             </div>
-           
             @{
                 DateTime DeadlineDate;
                 if (DateTime.TryParse(TempData["Deadline"]?.ToString(), out DeadlineDate))
@@ -201,7 +204,7 @@
                     var car = nowdatetime.ToString("yyyy-MM-dd HH:mm").Replace(' ', 'T');
                     ViewBag.car = car;
                 }
-                
+
             }
 
 
@@ -212,10 +215,10 @@
                     var inputOrderTime = document.querySelector("input[name='OrderTime']");
                     var inputDeadline = document.querySelector("input[name='DeadlineDate']");
                     if (inputDelivery) {
-                        inputDelivery.value = "@ViewBag.Bee"; 
+                        inputDelivery.value = "@ViewBag.Bee";
                     }
                     if (inputDeadline) {
-                        inputDeadline.value = "@ViewBag.Apple"; 
+                        inputDeadline.value = "@ViewBag.Apple";
                     }
                     if (inputOrderTime) {
                         inputOrderTime.value = "@ViewBag.car";
@@ -223,6 +226,7 @@
 
                 });
             </script>
+
             <div class="form-group">
                 <label asp-for="DeadlineTime" class="control-label"></label>
                 <input asp-for="DeadlineTime" class="form-control" value="@TempData["DeadlineTime"]" />
@@ -245,12 +249,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="MissionStatus" class="control-label"></label>
-                <input asp-for="MissionStatus" class="form-control" value="發布中"/>
+                <input asp-for="MissionStatus" class="form-control" value="發布中" />
                 <span asp-validation-for="MissionStatus" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderTime" class="control-label"></label>
-                <input asp-for="OrderTime" class="form-control" value=""/>
+                <input asp-for="OrderTime" class="form-control" value="" />
                 <span asp-validation-for="OrderTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -263,22 +267,26 @@
                 <input asp-for="ImagePath" class="form-control" value="@ViewBag.ImageData" />
                 <span asp-validation-for="ImagePath" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <input id="create-button" type="submit" value="Create" class="btn btn-primary" />
-            </div> *@
         </div>
     </form>
-           
-@*     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var paymentButton = document.getElementById("payment-button");
-            var createButton = document.getElementById("create-button");
-
-            paymentButton.addEventListener("click", function () {
-                createButton.click();  // 觸發 "Create" 按鈕的 click 事件
-            });
+    <script>
+        document.getElementById("changbtn").addEventListener("click", function () {
+            window.location.href = "/HS_Pending/PendingOrder_Pai"; 
         });
-    </script> *@
+        document.getElementById("postbtn").addEventListener("click", function (event) {
+            // 將按鈕的 type 設為 button 以阻止表單提交
+            this.type = "button";
+
+            // 清除 Local Storage 中的資料
+            localStorage.removeItem("myFormData");
+
+            // 將按鈕的 type 改回 submit
+            this.type = "submit";
+
+            // 程式碼方式觸發 click 事件以提交表單
+            this.click();
+        });
+    </script>
 </body>
 
 </html>

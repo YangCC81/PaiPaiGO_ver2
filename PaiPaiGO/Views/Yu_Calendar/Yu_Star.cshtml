@@ -1,6 +1,13 @@
-﻿@model PaiPaiGO.Models.Opinion
+﻿@model PaiPaiGO.Models.Opinion_Star
 
-			錯誤訊息: @Html.ValidationSummary()
+
+<!--SweetAlert2-->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+
+
+<link rel="stylesheet" href="~/css/CC_members.css" />
+@*	錯誤訊息: @Html.ValidationSummary()*@
 <!--評分的樣式-->
 <style>
 	.rating {
@@ -35,105 +42,100 @@
 			border: 1px solid #000;
 		}
 </style>
+
+
+<!--評分星星的素材-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+<!--jquery-->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-		crossorigin="anonymous"></script>
 
 
-<div class="container">
+<!--內容-->
 
-
-
-
-
-	<!-- 評分 -->
-	<div class="mb-3">
-		<!-- <label for="rating" class="form-label">評分</label> -->
-		<div class="rating" id="ratingStars">
-			<i class="fas fa-star" data-rating="1"></i>
-			<i class="fas fa-star" data-rating="2"></i>
-			<i class="fas fa-star" data-rating="3"></i>
-			<i class="fas fa-star" data-rating="4"></i>
-			<i class="fas fa-star" data-rating="5"></i>
+<div class="col-lg-2 col-1"></div>
+<div class="d-flex col-lg-8 col-10">
+	<div class="mw-25 mt-5 h-auto c_loginImg col-lg-7"></div>
+	<!-- 登入資訊框框div -->
+	<div class="c_singinDiv rounded mw-50 mt-5 col-lg-4 col-12" style="background-color:rgb(253, 249, 249,0.6);">
+		<!-- 評分 -->
+		<div class="mb-3">
+			<h3>任務評分</h3>
+			<!-- <label for="rating" class="form-label">評分</label> -->
+			<div class="rating" id="ratingStars">
+				<i class="fas fa-star" data-rating="1"></i>
+				<i class="fas fa-star" data-rating="2"></i>
+				<i class="fas fa-star" data-rating="3"></i>
+				<i class="fas fa-star" data-rating="4"></i>
+				<i class="fas fa-star" data-rating="5"></i>
+			</div>
+			<input type="hidden" id="rating" name="rating">
 		</div>
-		<input type="hidden" id="rating" name="rating">
-	</div>
+
+		<!-- 評論 -->
+		<div class="mb-3">
+			<h3>請選擇評論</h3>
+			<!-- class="btn-group" role="group" aria-label="Basic example"-->
+			<div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">優質服務</div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">便利好用</div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">解決很多問題</div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">值得推薦</div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">未標示清楚</div>
+				<div class="btn-checkbox" onclick="toggleColor(this)">商品有誤</div>
+
+			</div>
+			@*	<p>您选择的选项是：<span id="selected-options"></span></p>*@
 
 
-
-	<!-- 評論 -->
-	<div class="mb-3">
-		<h3>評論</h3>
-		<!-- class="btn-group" role="group" aria-label="Basic example"-->
-		<div>
-			<div class="btn-checkbox" onclick="toggleColor(this)">选项1</div>
-			<div class="btn-checkbox" onclick="toggleColor(this)">选项2</div>
-			<div class="btn-checkbox" onclick="toggleColor(this)">选项3</div>
-			<div class="btn-checkbox" onclick="toggleColor(this)">选项4</div>
+			<!--這邊放入了表單要送出的隱藏數值，也就是要送到資料庫的有哪些項目-->
+			<form asp-action="Yu_Star" id="Starform">
+				@*<input type="hidden" asp-for="MissionId" name="MissionId" value="" />*@
+				<input type="hidden" id="Score_" name="Score" value="" class="form-control" />
+				<input type="hidden" id="Content_" name="Content" value="" class="form-control" />
+				<input type="hidden" name="MissionId" value="@ViewData["MissionId"]" class="form-control" />
+				<input type="hidden" name="State" value="未處理" class="form-control" />
+				<input type="hidden" name="Date" value="@ViewData["Date"]" class="form-control" />
+				<input type="hidden" name="ReportMemberId" value="@ViewData["MemberId"]" class="form-control" />
+				<input type="hidden" name="ReportedMemberId" value="@ViewData["OthersId"]" class="form-control" />
+				<input type="hidden" name="Type" value="意見" class="form-control" />
+				<input type="hidden" name="Ratingnumber" value="@ViewData["Ratingnumber"]" class="form-control" />
+				<br />
+				<input type="submit" value="提交評論以完成任務" class="btn btn-secondary btn-finish" data-mission-id="@ViewData["MissionId"]" data-member-id="@ViewData["MemberId"]" />
+				<a @*asp-action="Yu_Calendar" *@ href="@Url.Action("Yu_Calendar", "Yu_Calendar")" class="btn btn-outline-secondary btn-finish" data-mission-id="@ViewData["MissionId"]" data-member-id="@ViewData["MemberId"]">不予評論直接完成任務</a>
+			</form>
+			<br />
 		</div>
-		<p>您选择的选项是：<span id="selected-options"></span></p>
-
-
-
-		<form asp-action="Yu_Star">
-			@*<input type="hidden" asp-for="MissionId" name="MissionId" value="" />*@
-			<input id="Score_" name="Score" value="" class="form-control" />
-			<input id="Content_" name="Content" value="" class="form-control" />
-			<input name="MissionId" value="@ViewData["MissionId"]" class="form-control" />
-			<input name="ReportMemberId" value="@ViewData["MemberId"]" class="form-control" />
-			<input name="State" value="未處理" class="form-control" />
-			<input name="Date" value="@ViewData["Date"]" class="form-control" />
-			<input name="ReportedMemberId" value="@ViewData["OthersId"]" class="form-control" />
-			<input name="Type" value="意見" class="form-control" />
-			<input name="Ratingnumber" value="04" class="form-control" />
-
-
-			@*<input asp-for="State" />*@
-
-			<input type="submit" value="提交" class="btn btn-primary" />
-		</form>
-
 	</div>
 </div>
-
-<div>
-	<!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>-->
-	<a asp-action="Calendar" class="btn btn-primary">完成任務</a>
-	@*<button type="button" class="btn btn-primary">不進行評分</button>*@
-	@*<button type="button" class="btn btn-primary">完成</button>*@
-</div>
+<br />
 
 <!--評分的JS-->
 <script>
 
-
-	//JavaScript 代碼
-	const ratingStars = document.querySelectorAll(".rating i");
-	const ratingInput = document.getElementById("rating");
-	let selectedRating = null; // 添加一个用于存储用户选择的评分的变量
+	//評分星星
+	const ratingStars = document.querySelectorAll(".rating i");//選取所有的星星
+	const ratingInput = document.getElementById("rating");//選取包住星星的div
+	let selectedRating = null; //新增一個用於儲存使用者選擇評分的變數
 
 	ratingStars.forEach(star => {
 		star.addEventListener("click", () => {
-			const ratingValue = parseInt(star.getAttribute("data-rating"));
-			selectedRating = ratingValue; // 将用户选择的评分值存储在selectedRating变量中
+			const ratingValue = parseInt(star.getAttribute("data-rating"));//取得被點選的那顆星的值
+			selectedRating = ratingValue; // 將被點選的星值存進去變數裡
 			ratingInput.value = ratingValue;
 			resetRating();
+
 			star.classList.add("rated");
-			// 同時讓左側星星恢復原色
+			// 同時讓左側星星變色
 			let prevStars = star.previousElementSibling;
 			while (prevStars) {
 				prevStars.classList.add("rated");
 				prevStars = prevStars.previousElementSibling;
 			}
 			document.getElementById("Score_").value = selectedRating
-
-
 		});
 	});
 
@@ -143,36 +145,7 @@
 		});
 	}
 
-
-	//function submitForm() {
-	//	const selectedOptions = document.getElementById("selected-options").innerText; // 获取选项值（如果需要）
-	//	const selectedRating = ratingInput.value; // 获取用户选择的评分值
-
-	//	// 创建一个包含要发送的数据的对象
-	//	const data = {
-	//		rating: selectedRating,
-	//		options: selectedOptions // 如果需要，你可以将选项一并发送
-	//	};
-
-	//	// 发送AJAX请求
-	//	const xhr = new XMLHttpRequest();
-	//	xhr.open("POST", "/your-controller-url"); // 替换为你的控制器的URL
-	//	xhr.setRequestHeader("Content-Type", "application/json");
-	//	xhr.onreadystatechange = function () {
-	//		if (xhr.readyState === 4 && xhr.status === 200) {
-	//			// 请求成功，可以执行其他操作
-	//			console.log("Data sent successfully.");
-	//		}
-	//	};
-
-	//	// 将数据对象转换为JSON字符串并发送
-	//	xhr.send(JSON.stringify(data));
-	//}
-
-
-
-
-	//第四版
+	//評論的JS，點下按鈕後把按鈕變色，讓評論者知道自己選了什麼
 	function toggleColor(button) {
 		button.classList.toggle("selected");
 
@@ -185,14 +158,53 @@
 		document.getElementById("Content_").value = selectedOptionText;
 	}
 
-	function submitForm() {
-		var selectedOptions = document.querySelectorAll(".btn-checkbox.selected");
-		var selectedOptionsText = Array.from(selectedOptions).map(function (option) {
-			return option.textContent;
-		}).join(', ');
 
-		// 这里可以添加提交表单的逻辑
-		//alert("表单已提交，选择的选项是: " + selectedOptionsText);
+	//完成任務：按下提交後，把任務狀態更改為已完成
+	$(document).ready(function () {
+		var changesQueue = []; // 設一個changesQueue(本地)的list，用來保存更改  (有保存變更按鈕)
+		$(".btn-finish").click(function () {
 
-	}
+			var missionId = $(this).data("mission-id");
+			var memberId = $(this).data("member-id");
+			var newStatus = "已完成";
+
+			console.log(missionId)
+			console.log(memberId)
+			console.log(newStatus)
+
+			changesQueue.push({ missionId: missionId, newStatus: newStatus, memberId: memberId });
+
+			// 發送更改到Server
+			$.ajax({
+				type: "POST",
+				url: "/Yu_Calendar/FinishMission",
+				data: { changes: changesQueue },
+				dataType: "json",
+				success: function (data) {
+
+				},
+				error: function () {
+					// 處理錯誤show出來
+					console.error('保存更改失败');
+				}
+			});
+
+		});
+	});
+
+	// 如果未填寫則阻止表單提交
+	$(document).ready(function () {
+		$("#Starform").submit(function (e) {
+			if (!$.trim($("#Content_").val())) {
+
+				e.preventDefault();
+				Swal.fire({
+					icon: 'warning',
+					text: '請選擇評論選項，或點擊<不予評論直接完成任務>',
+				})
+			}
+		});
+	});
+
+
 </script>

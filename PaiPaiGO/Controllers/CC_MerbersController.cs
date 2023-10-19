@@ -71,10 +71,17 @@ namespace paipaigo1005.Controllers {
 		#region 忘記密碼
 		[HttpGet]
         public IActionResult ForgotPassword() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email) {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             var user = _context.Members
             .FirstOrDefault(x => x.MemberEmail == email && x.MemberStatus == "正常");
 
@@ -112,6 +119,10 @@ namespace paipaigo1005.Controllers {
         }
         [HttpGet]
         public IActionResult SetPassword() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             //搜尋緩存中有沒有token
             if (_memoryCache.TryGetValue("Setpass", out string Setpass)) {
                 //緩存移除token
@@ -198,12 +209,19 @@ namespace paipaigo1005.Controllers {
 
         #region 註冊會員
         public IActionResult Resgister() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Resgister([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword,Gearing")] Member member) {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 
             var maxId = _context.Members
                     .AsEnumerable() // 轉為内存查詢以使用LINQ to Objects
@@ -241,6 +259,10 @@ namespace paipaigo1005.Controllers {
         //Email驗證Action
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string memberId, string token) {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             if (string.IsNullOrEmpty(memberId) || string.IsNullOrEmpty(token)) {
                 return View("Error");
             }
@@ -325,11 +347,19 @@ namespace paipaigo1005.Controllers {
         #region 登入頁面
         [HttpGet]
         public ActionResult Login() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             return View();
         }
         [HttpPost]
         //public ActionResult Login(Member model)
         public ActionResult Login(string username, string password) {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             var Member = _context.Members
             .FirstOrDefault(x => x.MemberEmail == username );
 
@@ -342,6 +372,8 @@ namespace paipaigo1005.Controllers {
             if (Member != null && Member.MemberStatus == "正常" && PasswordHasher.VerifyPassword(Member.MemberPassword, Member.Salt, password)) {
 
                 HttpContext.Session.SetString("MemberID", Member.MemberId);
+                HttpContext.Session.SetString("MemberName", Member.MemberName);
+
                 //ViewBag.se = HttpContext.Session.GetString("MemberID");
                 //return View("Index");
                 return RedirectToAction("MemberProfile"); // 導向登入成功
@@ -363,20 +395,23 @@ namespace paipaigo1005.Controllers {
         #endregion
 
         #region 登出功能
-        [HttpPost]
         public ActionResult Logout() {
             // 清除Session
             HttpContext.Session.Remove("MemberID");
-            // 重新導向首頁
-            return RedirectToAction("Login");
-            //HTML內程式碼
-            //< a href = "@Url.Action("Logout", "CC_Members")" > 登出 </ a >
-        }
-        #endregion
+			// 重新導向首頁
+			return View("Login");
+			//HTML內程式碼
+			//< a href = "@Url.Action("Logout", "CC_Members")" > 登出 </ a >
+		}
+		#endregion
 
-        #region 會員資訊
-        [HttpGet]
+		#region 會員資訊
+		[HttpGet]
         public ActionResult MemberProfile() {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
             var SessioID = HttpContext.Session.GetString("MemberID");
             if (TempData["Change"] != null) {
                 ViewBag.Change = TempData["Change"];
@@ -406,6 +441,9 @@ namespace paipaigo1005.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MemberProfile([Bind("MemberId,MemberName,MemberPhoneNumber,MemberPostcode,MemberCity,MemberTownship,MemberAddress,MemberEmail,MemberStatus,MemberPassword")] Member member,string? oldPassword) {
+            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 
             if (ModelState.IsValid) {
                 var existingMember = _context.Members.FirstOrDefault(x => x.MemberId == member.MemberId);

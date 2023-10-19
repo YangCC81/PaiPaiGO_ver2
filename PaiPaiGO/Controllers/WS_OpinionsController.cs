@@ -18,65 +18,73 @@ namespace PaiPaiGo.Controllers
             _context = context;
         }
 
-        // GET: WS_Opinions
-        public async Task<IActionResult> AdmOpinion()
-        {
+
+		//改狀態
+		[HttpPost]
+		public IActionResult UpdateOpinionStatus(List<OpinionStatusUpdate> changedStatusList)
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            if (ModelState.IsValid)
+			{
+				// 遍历changedStatusList并更新数据库中Opinion的状态
+				foreach (var statusUpdate in changedStatusList)
+				{
+					var opinion = _context.Opinions.Find(statusUpdate.Ratingnumber);
+					if (opinion != null)
+					{
+						opinion.State = statusUpdate.NewStatus;
+					}
+				}
+				// 保存更改
+				_context.SaveChanges();
+
+				// 返回成功的响应
+				return Ok(new { message = "状态更新成功" });
+			}
+
+			// 如果出现错误，返回错误的响应
+			return BadRequest(new { message = "状态更新失败" });
+		}
+
+		//新增警告
+		// GET: WS_Opinions/AddOpinion
+		public IActionResult AddOpinion()
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            // 在這裡處理新增警告到資料庫的邏輯
+            // 使用你的Opinion模型來執行新增操作
+            string warningMessage = Request.Form["warningMessage"]; // 從請求中獲取警告消息
+
+			// 在這裡執行將警告消息新增到資料庫的操作
+			using (var dbContext = new PaiPaiGoContext())
+			{
+				var opinion = new Opinion { Warn = warningMessage };
+				dbContext.Opinions.Add(opinion);
+				dbContext.SaveChanges();
+			}
+
+			// 返回JSON回應，表示成功
+			return Json(new { success = true });
+		}
+
+		// GET: WS_Opinions
+		public async Task<IActionResult> AdmOpinion()
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             var paiPaiGoContext = _context.Opinions.Include(o => o.Mission).Include(o => o.ReportMember).Include(o => o.ReportedMember);
             return View(await paiPaiGoContext.ToListAsync());
         }
 
-        // GET: WS_Opinions/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null || _context.Opinions == null)
-            {
-                return NotFound();
-            }
 
-            var opinion = await _context.Opinions
-                .Include(o => o.Mission)
-                .Include(o => o.ReportMember)
-                .Include(o => o.ReportedMember)
-                .FirstOrDefaultAsync(m => m.Type == id);
-            if (opinion == null)
-            {
-                return NotFound();
-            }
-
-            return View(opinion);
-        }
-
-        // GET: WS_Opinions/Create
-        public IActionResult Create()
-        {
-            ViewData["MissionId"] = new SelectList(_context.Missions, "MissionId", "MissionId");
-            ViewData["ReportMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId");
-            ViewData["ReportedMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId");
-            return View();
-        }
-
-        // POST: WS_Opinions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Type,Date,MissionId,ReportMemberId,ReportedMemberId,Content,State,Score")] Opinion opinion)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(opinion);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MissionId"] = new SelectList(_context.Missions, "MissionId", "MissionId", opinion.MissionId);
-            ViewData["ReportMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId", opinion.ReportMemberId);
-            ViewData["ReportedMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId", opinion.ReportedMemberId);
-            return View(opinion);
-        }
 
         // GET: WS_Opinions/Edit/5
         public async Task<IActionResult> Edit(string id)
-        {
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
             if (id == null || _context.Opinions == null)
             {
                 return NotFound();
@@ -93,87 +101,13 @@ namespace PaiPaiGo.Controllers
             return View(opinion);
         }
 
-        // POST: WS_Opinions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Type,Date,MissionId,ReportMemberId,ReportedMemberId,Content,State,Score")] Opinion opinion)
-        {
-            if (id != opinion.Type)
-            {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(opinion);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OpinionExists(opinion.Type))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MissionId"] = new SelectList(_context.Missions, "MissionId", "MissionId", opinion.MissionId);
-            ViewData["ReportMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId", opinion.ReportMemberId);
-            ViewData["ReportedMemberId"] = new SelectList(_context.Members, "MemberId", "MemberId", opinion.ReportedMemberId);
-            return View(opinion);
-        }
-
-        // GET: WS_Opinions/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null || _context.Opinions == null)
-            {
-                return NotFound();
-            }
-
-            var opinion = await _context.Opinions
-                .Include(o => o.Mission)
-                .Include(o => o.ReportMember)
-                .Include(o => o.ReportedMember)
-                .FirstOrDefaultAsync(m => m.Type == id);
-            if (opinion == null)
-            {
-                return NotFound();
-            }
-
-            return View(opinion);
-        }
-
-        // POST: WS_Opinions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            if (_context.Opinions == null)
-            {
-                return Problem("Entity set 'PaiPaiGoContext.Opinions'  is null.");
-            }
-            var opinion = await _context.Opinions.FindAsync(id);
-            if (opinion != null)
-            {
-                _context.Opinions.Remove(opinion);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool OpinionExists(string id)
-        {
-          return (_context.Opinions?.Any(e => e.Type == id)).GetValueOrDefault();
+        {            //layout用
+            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+            return (_context.Opinions?.Any(e => e.Type == id)).GetValueOrDefault();
         }
     }
 }
