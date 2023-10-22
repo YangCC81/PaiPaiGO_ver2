@@ -128,9 +128,9 @@
     var dbPassword = "@ViewBag.password";
     //測試按鈕
     function PasswordChange() {
-        document.getElementById('inputPassword').value = "pin123456";
-        document.getElementById('inputPassword2').value = "pin654321";
-        document.getElementById('inputPassword3').value = "pin654321";
+        document.getElementById('inputPassword').value = "pin01033010";
+        document.getElementById('inputPassword2').value = "pin01033010";
+        document.getElementById('inputPassword3').value = "pin01033010";
     }
     //密碼驗證
     $("#inputPassword2").blur(function () {
@@ -193,8 +193,8 @@
         Swal.fire({
             icon: 'success',
             title: '會員資料修改成功',
-            timer: 2000,
-            timerProgressBar: true,
+@*            timer: 2000,
+            timerProgressBar: true,*@
             confirmButtonColor: '#00acee',
         })
 	</script>
@@ -205,8 +205,8 @@ else if (@ViewBag.Change == "修改失敗"){
         icon: 'error',
         title: '會員資料修改失敗',
         text: '請檢查您輸入的資料並再試一次。',
-        timer: 2000,
-        timerProgressBar: true,
+@*        timer: 2000,
+        timerProgressBar: true,*@
         confirmButtonColor: '#00acee',
     })
     </script>

@@ -219,21 +219,25 @@
         document.getElementById('inputphone').value = "0943456456";
         document.getElementById('inputAddress').value = "臺灣大道三段301號";
     }
-
+    function emailText() {
+        document.getElementById('inputEmail').value = "chaewon0801@gmail.com";
+    }
 
 </script>
 
+
 @if (ViewBag.RegistrationSuccess == "Success") {
     <script>
-    Swal.fire({
-        icon: 'success',
-        title: '註冊會員成功',
-        text: '驗證郵件已發送至您的Email地址，請登入Email確認後即可完成註冊',
-        showConfirmButton:false,
-        footer: '<a id="countdown" href="/CC_Members/Login">網頁將自動跳轉至登入頁面，若沒有跳轉請點擊此連結</a>'
-        confirmButtonColor: '#00acee',
-    })
-        var secondsRemaining = 7;
+        console.log("OK");
+        Swal.fire({
+            icon: 'success',
+            title: '註冊會員成功',
+            text: '驗證郵件已發送至您的Email地址，請登入Email確認後即可完成註冊',
+            showConfirmButton: false,
+            footer: '<a id="countdown" href="/CC_Members/Login">網頁將自動跳轉至登入頁面，若沒有跳轉請點擊此連結</a>'
+            @*confirmButtonColor: '#00acee',*@
+        })
+        var secondsRemaining = 10;
         var countdownInterval = setInterval(function () {
             secondsRemaining--;
             if (secondsRemaining <= 0) {
@@ -243,5 +247,4 @@
         }, 1000);
     </script>
 }
-
 
