@@ -1,0 +1,45 @@
+﻿/* 容器 */
+.wrap-label {
+    position: relative;
+    margin-bottom: 25px; /* 增加與下一個元素的距離 */
+}
+
+    /* 標籤 */
+    .wrap-label label {
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 2; /* 提高層次 */
+        margin-bottom: 5px; /* 與input的距離 */
+    }
+
+    /* 圖標 */
+    .wrap-label .iconicfill-pen-alt2 {
+        position: absolute;
+        top: 0; /* 調整到label的高度 */
+        left: -30px; /* 調整到label的左邊 */
+        z-index: 1;
+        opacity: 0;
+        transition: left 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* 輸入框 */
+    .wrap-label input {
+        position: relative;
+        z-index: 0;
+    }
+
+/* 圖標動畫 */
+.move-pen {
+    animation: move-pen 1s ease-in infinite alternate;
+}
+
+@keyframes move-pen {
+    from {
+        transform: translateX(-4px) rotate(6deg);
+    }
+
+    to {
+        transform: translateX(4px) rotate(-3deg);
+    }
+}

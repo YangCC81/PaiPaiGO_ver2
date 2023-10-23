@@ -102,38 +102,6 @@ padding: 16px 20px;
 .form-container .btn1:hover, .open-button:hover {
 opacity: 1;
 }
-/*時間的對話*/
-.chat-popups {
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-border: 3px solid #f1f1f1;
-z-index: 9;
-}
-.btn1.cancels {
-background-color: brown;
-padding: 6px 10px;
-width: 40%;
-}
-
-
-#timePopup {
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-padding: 20px;
-background-color: red;
-color: whitesmoke;
-border-radius: 18px;
-border: 1px solid #ccc;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-z-index: 1000;
-}
-
 
 .notification-popup {
 display: none;

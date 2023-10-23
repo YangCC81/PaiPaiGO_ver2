@@ -1,10 +1,10 @@
 ﻿$(document).ready(function () {
-    $('input').focusin(function () {
+    $('input, textarea').focusin(function () {
         $(this).prev('label').css('left', '100px');
         $(this).next('.iconicfill-pen-alt2').removeClass('hide').addClass('show move');
     });
 
-    $('input').focusout(function () {
+    $('input, textarea').focusout(function () {
         $(this).prev('label').css('left', '10px');
         var $icon = $(this).next('.iconicfill-pen-alt2');
         $icon.removeClass('show move').addClass('hide');

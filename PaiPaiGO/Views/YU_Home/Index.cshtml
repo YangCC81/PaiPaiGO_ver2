@@ -282,19 +282,17 @@
     <div class="content">
 
         <div class="main" id="section1">
-            <img src="~/img/Logo.png" alt="left" style="width: 300px; height: 100px; position: absolute; left:8%;">
+            <img src="~/img/Logo.png" alt="left" style="width: 330px; height: 100px; position: absolute; left:8%; top:2%;">
             <div class="bdtext">
                 <img src="~/img/Home1-1.gif" style="width: 100px; height: 150px; display: block; margin-bottom: -150px;" alt="">
                 <h1>你 我<br>都能幫忙!</h1>
                 <p style="color: #0A5812; font-size: 35px;">原來大家都在這裡， <br> 關於代購、代排隊的互助基地。</p>
-                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
-                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
-                        探索任務
-                    </button>
-                </a>
+                <form action="@Url.Action("YH_CasePage", "YH_CasePages")">
+                    <input type="submit" value="探索任務" style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                </form>
             </div>
             <div class="bdimg">
-                <img src="~/img/Home1.png" style="width:1200px; height:655px;" alt="尚未放入圖片">
+                <img src="~/img/Home1.png" style="width:1200px; height:648px;" alt="尚未放入圖片">
             </div>
 
         </div>
@@ -328,7 +326,11 @@
 
         </div>
     </div>
-
+	@* <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
+	<button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+	探索任務
+	</button>
+	</a>*@
     <!-- 第三頁 -->
     <div class="content">
         <div class="main" id="section3">
@@ -338,20 +340,20 @@
                 <p style="font-size: 35px;"> 透過地圖的搜索任務與案件 <br> 在網站上，你可以尋求協助，也可以幫助別人!</p>
                 <p style="font-size: 35px;">還在等什麼? <br> 你想要尋求協助還是幫助他人呢?</p>
                 <br>
-                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
-                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
-                        探索任務
-                    </button>
-                </a>
-                &ensp;&ensp;
-                <a href="@Url.Action("PendingOrder_Pai", "HS_Pending")">
-                    <button style="background-color: blue; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
-                        刊登任務
-                    </button>
-                </a>
+                <div style="display: flex; justify-content: flex-start; align-items: center;">
+                    <form action="@Url.Action("YH_CasePage", "YH_CasePages")" style="margin-right: 20px;">
+                        <input type="submit" value="探索任務" style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                    </form>
+                    &ensp;&ensp;
+                    <form action="@Url.Action("Login", "CC_Members")" style="margin-right: 20px;">
+                        <input type="submit" value="刊登任務" style="background-color: blue; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                    </form>
+                    
+                </div>
+               
             </div>
             <div class="bdimg1">
-                <img src="~/img/2.png" style="float: right" alt="尚未放入圖片">
+                <img src="~/img/humanWalking-unscreen.gif" style="float: right; width:150%; height: 150%;" alt="尚未放入圖片">
             </div>
         </div>
     </div>
@@ -371,12 +373,10 @@
                     不過，現在有了更好的辦法了，因為我們的出現，讓你的選擇不再只是放棄。
                 </p>
 
-                <h3 style="color: #130FD1;">都讀到這了，是該探索適合的案件了!!!</h3>
-                <a href="@Url.Action("YH_CasePage", "YH_CasePages")">
-                    <button style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
-                        探索任務
-                    </button>
-                </a>
+                <h3 style="color: #130FD1;">&ensp;&ensp;都讀到這了，是該探索適合的案件了!!!</h3>
+                <form action="@Url.Action("YH_CasePage", "YH_CasePages")" style="margin-left:250px;">
+                    <input type="submit" value="探索任務" style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
+                </form>
             </div>
             <div class="bdimg2">
                 <img src="~/img/Home4.gif" style="width: 700px; height: 700px;" alt="尚未放入圖片">

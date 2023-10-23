@@ -1,262 +1,443 @@
-﻿
-@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
+﻿		@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
 
-@using X.PagedList.Mvc.Core;
-@using X.PagedList;
-@using X.PagedList.Web.Common;
-<head>
-    <title>Document</title>
-    <link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JQ -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    @*選地區zipcode*@
-    <script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
-    <script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
-</head>
+		@using X.PagedList.Mvc.Core;
+		@using X.PagedList;
+		@using X.PagedList.Web.Common;
 
-<style>
+		<head>
+			<title>Document</title>
+			<link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true" />
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+			<!-- JQ -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    .body {
-        font-size: 50px;
-    }
+			<script src="~/path_to_jquery/jquery.min.js"></script>
+			<script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
+			<script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
 
-    .panel-control {
-        position: absolute;
-        opacity: 0;
-    }
+	@* 地位API *@
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVc0hKUxRv8PWCCNNhMsf7m_ZwIoivCZg"></script> 
 
-    .active {
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-    }
+		</head>
 
-    #dropdownMenuButton1 {
-        width:100px;
-        margin-left: 40px;
-    
-    }
+		<style>
 
-    .tab-group label {
-        display: inline-block;
-        padding: 10px 30px;
-        border: 1px solid #ccc;
-        border-bottom: none;
-        background-color: #ccc;
-    }
+			.gridcontainer {
+				margin-top: 20px;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-around;
+				gap: 20px;
+				margin-bottom: 30px;
+			}
 
+			.card {
+				height: 450px;
+				width: 325px;
+				margin: auto;
+				margin-top: 30px;
+				justify-content: space-around;
+				border-radius: 20px;
+				border: solid 3px;
+				border-color: darkgreen;
+			}
 
+				.card:hover {
+					transform: scale(1.07,1.07);
+					border-color: #1CFFFF;
+				}
 
-    .content {
-        display: none;
-    }
+			.card-img-top {
+				position: relative;
+				width: 245px;
+				height: 200px;
+				margin: auto;
+				margin-top: 15px;
+			}
 
+			.add-cart {
+				background: orange;
+				color: bisque;
+			}
 
-    #radio1:checked ~ .tab-group [for="radio1"],
-    #radio2:checked ~ .tab-group [for="radio2"],
-    #radio3:checked ~ .tab-group [for="radio3"] {
-        background-color: #fff;
-    }
+			/* 修改页码项的样式 */
+			.page-item {
+				margin: 15px 10px;
+			}
 
+			.page-link.active {
+				background-color: #abd9c5;
+				border-color: #abd9c5;
+			}
 
-    #radio1:checked ~ .content-group .content1,
-    #radio2:checked ~ .content-group .content2,
-    #radio3:checked ~ .content-group .content3 {
-        display: block
-    }
+			.page-link:hover {
+				background-color: #79D699;
+				border-color: #79D699;
+			}
 
-    .gridcontainer {
-        margin-top: 20px;
-    }
+		</style>
 
-    .card {
-        height: 450px;
-        width: 325px;
-        margin: auto;
-        margin-top: 30px;
-        margin-left:46px;
-        margin-right: 23px;
-        justify-content: space-around;
-        border-radius: 20px;
-        border: solid 3px;
-        border-color: darkgreen;
-    }
-
-        .card:hover {
-            transform: scale(1.07,1.07);
-            border-color: #1CFFFF;
-        }
-
-    .card-img-top {
-        position: relative;
-        width: 245px;
-        height: 200px;
-        margin: auto;
-        margin-top: 15px;
-    }
-
-    .add-cart {
-        background: orange;
-        color: bisque;
-    }
-
-    /* 修改页码项的样式 */
-    .page-item {
-        display: flex;
-        justify-content: center;
-        margin: 0 5px; /* 调整页码项之间的间距 */
-    }
-
-    /* 修改页码链接的样式 */
-    .page-link {
-        display: flex;
-        justify-content: center;
-        padding: 5px 10px;
-        background-color: #007bff;
-        color: #fff;
-        border: 1px solid #007bff;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
-        /* 修改激活页码链接的样式 */
-        .page-link.active {
-            background-color: #fff;
-            color: #007bff;
-        }
-
-        /* 修改禁用页码链接的样式 */
-        .page-link.disabled {
-            background-color: #ccc;
-            color: #555;
-            cursor: not-allowed;
-        }
-
-</style>
-<body>
+			
+			
 
 
 
-    <div class="row HbodyRow">
-        <div class="col-1 ">
-        </div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-1"></div>  <!-- Left Spacer -->
 
-        <div class="col-10 ">
-            <div class="panel-group">
-                <input type="radio" name="panel-radio" id="radio1" class="panel-control" checked>
-                <input type="radio" name="panel-radio" id="radio2" class="panel-control">
-                <input type="radio" name="panel-radio" id="radio3" class="panel-control">
-                <div class="tab-group">
-                    <label for="radio1" class="active" style="background-color: #abd9c5;">依位置找</label>
-                    <label for="radio2" class="active" style="background-color: #99e1b1;">代購</label>
-                    <label for="radio3" class="active" style="background-color: #79D699;">代排隊</label>
-                </div>
+		<div class="col-10">
+			<!-- Main Content -->
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+							role="tab" aria-controls="home" aria-selected="true" style="background-color: #abd9c5;">
+						依位置找
+					</button>
+				</li>
 
-                <div class="content-group">
-                    <div class="content content1" style="background-color: #abd9c5;">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+							role="tab" aria-controls="profile" aria-selected="false" style="background-color:#99e1b1;"
+							data-category="2">
+						代購
+					</button>
+				</li>
 
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+							role="tab" aria-controls="contact" aria-selected="false" style="background-color: #79D699;"
+							data-category="1">
+						代排隊
+					</button>
+				</li>
+			</ul>
 
+			<!-- Address Selector and Search Bar -->
 
-                        <div id="twzipcode" class="row " >
+			<div class="row">
+				<!-- Address Selector -->
+				<div class="col-6" id="TWAddress" style="display:none;">
+					
+					@* <label or="City" class="form-label me-2"> 縣市:</label> *@
 
-                            <div class="col-1">
-                                <div data-role="county" data-name="county" data-value="" id="dropdownMenuButton1"></div>
-                            </div>
+					<div class="d-flex">
+						<div class="col-4" data-role="county" id="TWAddress1">
+						</div>
+						@* <label for="Location" class="form-label me-2">地區:</label><br /> *@
+						<div class="col-4" data-role="district" id="TWAddress2">
+						</div>
+						<div style="display:none" class="col-4 invalid-feedback" data-role="zipcode" id="TWAddress3">
+						</div>
+						<button onclick="moveToSelectedLocation()">前往</button>
+					</div>
+				</div>
 
-                            <div class="col-1">
-                                <div data-role="district" data-name="district" data-value="" id="dropdownMenuButton1"></div>
-                            </div>
+				<!-- Search Bar -->
+				<div class="col-6 d-flex justify-content-end">
+					<form asp-controller="YH_CasePages" asp-action="YH_CasePage" class="d-flex">
+						<input class="form-control me-2" type="text" name="SearchString" placeholder="請輸入關鍵字">
+						<input type="submit" value="搜尋" />
+					</form>
+				</div>
+			</div>
 
-                            <!-- 隱藏的郵遞區號欄位，值可以 SQL 抓取 -->
-                            <div class="col-1" >
-                                <div data-role="zipcode" data-style="form-control" data-name="zipcode" data-value="" id="dropdownMenuButton1"></div>
-                            </div>
-                      
-
-                            <div class="col-7"></div>
-
-
-
-                            @* 搜尋框 *@
-
-                                <div class="col-2  justify-content-end">
-
-                                    <form asp-controller="YH_CasePages" asp-action="YH_CasePage" class="d-flex">
-                                        <input class="form-control me-2" type="text" name="SearchString" placeholder="請輸入關鍵字">
-                                        <input type="submit" value="搜尋" />
-                                    </form>
-                                </div>
-                            </div>
-                   
-
-
-
-
-
-                      
-                            
-                           
-
-                            
-
-
-                            @* 接案卡片 *@
-                            <div class="row gridcontainer">
-                              @foreach (var item in Model)
-                               {
+			
 
 
-                                <div class="card col-3 ">
-                                    <img src="~/image/images-7.jpeg" class="card-img-top">
-                                    <div class="card-body">
-                                        <h3 class="card-title">任務名稱</h3>
-                                            <p class="card-text bg-warning">@Html.DisplayFor(modelItem => item.MissionName)</p>
-                                    </div>
-                                    <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">地點：@Html.DisplayFor(modelItem => item.LocationCity)@Html.DisplayFor(modelItem => item.LocationDistrict)</li>
-                                            <li class="list-group-item">結束時間：@Html.DisplayFor(modelItem => item.DeadlineDate)@Html.DisplayFor(modelItem => item.DeadlineTime)</li>
-                                            <li class="list-group-item">報價：NT$@Html.DisplayFor(modelItem => item.MissionAmount)</li>
-                                    </ul>
-                                    <div class="card-body">
-                                        <button class="add-cart">我要接案</button>
-                                    </div>
-                                </div>
+			<div class="tab-content" id="myTabContent">
 
-                            }
+				<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" style="background-color: #abd9c5;">
+					<div id="homePartialViewContainer">
+						<div id="map" style="height: 800px; width: 100%;">1</div>
+						
+					</div>
+				</div>
 
-                            </div>
+				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" style="background-color:#99e1b1;" data-category="2">
+					<div id="profilePartialViewContainer">
+						@Html.Partial("_MissionsPartial")
+					</div>
+				</div>
 
-                           @*  分頁跳轉 *@
-                            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-                            @Html.PagedListPager(Model, page => Url.Action("YH_CasePage",
-                            new { page}), new PagedListRenderOptions {
-                            LiElementClasses = new string[] { "page-item" },
-                            PageClasses = new string[] { "page-link" }})
+				<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab" style="background-color: #79D699;" data-category="1">
+					<div id="contactPartialViewContainer">
+						@Html.Partial("_MissionsPartial")
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-1"></div>  <!-- Right Spacer -->
+	</div>
+</div>
+
+<div id="paginationControl">
+	Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+	@Html.PagedListPager(Model, page => Url.Action("YH_CasePage",
+	new { page}), new PagedListRenderOptions {
+	LiElementClasses = new string[] { "page-item" },
+	PageClasses = new string[] { "page-link" }
+	})
+</div>
 
 
+		
 
 
-
-                </div>
-            </div>
-        </div>
-        <div class="col-1 ">
-        </div>
-    </div>
-
-</body>
 
 
 
 <script>
-    // TWzipcode.js
-    $("#twzipcode").twzipcode({
-        "zipcodeIntoDistrict": false,
-        "css": ["city form-control", "town form-control"],
-        "countyName": "City", @*// 指定城市 select name*@
-        "districtName": "Area", @*// 指定地區 select name*@
-    @*"zipcodeName": "zipcodeField"*@ @*// 保留郵遞區號欄位，但不顯示*@
-                })
 
-    console.log(twzipcode.get());
+
+	//縣市選單
+	$("#TWAddress").twzipcode({
+		"css": ["city form-control", "town form-control", "zipcode form-control"],
+		"countyName": "City", // 指定城市name
+		"districtName": "Location",
+	});
+
+	// 定位系統
+	var map;
+
+	// 初始化地圖
+	function initialize() {
+		console.log("Initializing map...");
+		var mapOptions = {
+			zoom: 15,
+			center: { lat: 25.0173405, lng: 121.5397518 }
+		};
+		map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	}
+
+	// 請求使用者位置
+	function getUserLocation() {
+		console.log("Getting user location...");
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function (position) {
+				var pos = {
+					lat: position.coords.latitude,
+					lng: position.coords.longitude
+				};
+				console.log("User position obtained:", pos);
+
+				// 使用反地理編碼獲取縣市和地區
+				var geocoder = new google.maps.Geocoder();
+				geocoder.geocode({ 'location': pos }, function (results, status) {
+					if (status === 'OK') {
+						if (results[0]) {
+							var city, district;
+							for (var i = 0; i < results[0].address_components.length; i++) {
+								var component = results[0].address_components[i];
+								if (component.types.indexOf('administrative_area_level_1') !== -1) {
+									city = component.long_name;
+								}
+								if (component.types.indexOf('locality') !== -1) {
+									district = component.long_name;
+								}
+							}
+							console.log("City and district obtained:", city, district);
+							sendLocationToServer(city, district);
+						}
+					} else {
+						console.log("Geocoding failed:", status);
+					}
+				});
+
+				map.setCenter(pos);
+				loadNearbyOrders(pos);
+			}, function () {
+				handleLocationError(true);
+			});
+		} else {
+			handleLocationError(false);
+		}
+	}
+
+	// 處理位置錯誤並顯示彈出視窗
+	function handleLocationError(browserHasGeolocation) {
+		console.log("Handling location error...");
+		if (!browserHasGeolocation) {
+			alert("錯誤：您的瀏覽器不支持地理定位。");
+		}
+		document.getElementById('TWAddress').style.display = 'block';
+	}
+
+	// 將地圖移到彈出視窗中選擇的位置
+	function moveToSelectedLocation() {
+		console.log("Moving to selected location...");
+		// 使用jQuery尋找動態生成的<select>元素
+		var city = $("#TWAddress1 select").val();
+		var district = $("#TWAddress2 select").val();
+
+		// 新增這個判斷
+		if (!city || !district) {
+			alert("請選擇有效的城市和地區");
+			return;
+		}
+
+		console.log("Selected City:", city);
+		console.log("Selected District:", district);
+
+		// 新增代碼：使用 Google 地理編碼服務來找到縣市和地區的經緯度
+		var geocoder = new google.maps.Geocoder();
+		geocoder.geocode({ 'address': city + " " + district }, function (results, status) {
+			if (status === 'OK') {
+				var pos = results[0].geometry.location;
+				map.setCenter(pos);
+			} else {
+				console.log('Geocoding failed:', status);
+			}
+		});
+
+		sendLocationToServer(city, district);
+		var address = city + " " + district;
+		loadNearbyOrders(address);
+	}
+
+
+	// 發送縣市和地區到後端
+	function sendLocationToServer(city, district) {
+		console.log("Sending location to server...");
+		$.ajax({
+			type: "POST",
+			url: "/YH_CasePages/Map",
+			data: { city: city, district: district },
+			success: function (response) {
+				var ordersFromServer = response.orders;
+				console.log("Detailed raw order:", JSON.stringify(ordersFromServer, null, 2));
+
+				if (!ordersFromServer || !Array.isArray(ordersFromServer) || ordersFromServer.length === 0) {
+					console.log("Invalid or empty orders array received from server.");
+					return;
+				}
+
+				// 注意，我更改了這裡的字段名稱
+				var orders = ordersFromServer.map(function (order) {
+					if (order.locationCity && order.locationDistrict && order.address) {
+						return order.locationCity + " " + order.locationDistrict + " " + order.address;
+					}
+					return null;
+				}).filter(Boolean);  // Remove null or undefined items
+
+				console.log("Valid orders to pass for geocoding:", orders);
+				loadNearbyOrders(orders);
+			}
+		});
+		
+	
+	}
+
+	// 載入附近訂單的函數
+	function loadNearbyOrders(orders) {
+		console.log("Loading nearby orders...");
+		var geocoder = new google.maps.Geocoder();
+
+		// 確保 orders 是一個有效的數組
+		if (!Array.isArray(orders) || orders.length === 0) {
+			console.log("No valid orders for geocoding.");
+			return;
+		}
+
+		for (var i = 0; i < orders.length; i++) {
+			var address = orders[i];
+			// 避免發送空或不完整的地址
+			if (address && address.trim() !== "") {
+				geocoder.geocode({ 'address': address }, function (results, status) {
+					if (status === 'OK') {
+						var marker = new google.maps.Marker({
+							position: results[0].geometry.location,
+							map: map,
+							title: results[0].formatted_address
+						});
+					} else {
+						console.log('Geocoding failed for address:', address, 'Reason:', status);
+					}
+				});
+			}
+		}
+	}
+
+	// 當視窗載入時
+	window.onload = function () {
+		console.log("Window loaded...");
+		initialize();
+		getUserLocation();
+	};
+
+
+
+
+
+	
+		
+	// 綁定標籤切換事件
+	function filterMissions() {
+		var selectedCategory = $('.nav-link.active').attr('data-category');
+
+		// This might be the missing part to define visibleCards
+		var visibleCards = $('.card[data-category="' + selectedCategory + '"]');
+
+		// 根據當前顯示的卡片數量顯示或隱藏分頁控件
+		if (visibleCards.length > 8) {
+			$('#paginationControl').show();
+		} else {
+			$('#paginationControl').hide();
+		}
+	}
+
+	// This event listener should be outside the filterMissions function
+	$("select[name='City'], select[name='Location']").on('change', function () {
+		var selectedZipcode = $("input[name='zipcode']").val();
+
+		$.ajax({
+			type: "POST",
+			url: "/YH_CasePages/GetFilterData",
+			data: { selectedZipcode: selectedZipcode },
+			success: function (data) {
+				$('#cardcontainer').html(data);
+				// Call filterMissions to apply category filters after loading data
+				filterMissions();
+			},
+			error: function () {
+				console.log('錯誤');
+			}
+		});
+	});
+
+	// 當用戶點擊"代排隊"標籤時
+	$('#contact-tab').on('click', function () {
+		$('.card[data-category="2"]').parent('a').hide();
+		$('.card[data-category="1"]').parent('a').show();
+		// alert('代排隊' + $('.card').length);
+
+		// 隱藏所有任務卡片
+
+		// $('#contact-tab .card').show();
+		// // 畫面上有元素的id值是profile-tab裡面的有一個院訴的calss值是card  我要藏起來
+		// $('#profile-tab .card').hide();
+
+		// 只顯示Category為1的任務卡片
+		// $('.card[data-category="1"]').show();
+		// You may want to call filterMissions here if needed
+	});
+
+	// 當用戶點擊"代購"標籤時
+	$('#profile-tab').on('click', function () {
+		$('.card[data-category="1"]').parent('a').hide();
+		$('.card[data-category="2"]').parent('a').show();
+		// alert('代購');
+		// $('.card[data-category="1"]').hide();
+		// $('.card[data-category="2"]').show();
+		// // 隱藏所有任務卡片
+		// $('.card').hide();
+		// // 只顯示Category為2的任務卡片
+		// $('.card[data-category="2"]').show();
+		// // You may want to call filterMissions here if needed
+	});
+
+
+
+
 </script>
