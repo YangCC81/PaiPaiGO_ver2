@@ -53,7 +53,7 @@ namespace PaiPaiGO.Controllers
         [HttpGet]
         public IActionResult RemainingTimePartial()
         {
-            //包持連線
+            //保持連線
             ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
 
             var memberId = HttpContext.Session.GetString("MemberID");
@@ -98,10 +98,6 @@ namespace PaiPaiGO.Controllers
 
         public IActionResult Privacy()
         {
-            //layout用
-            ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
-            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
-
             return View();
         }
 

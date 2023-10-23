@@ -13,6 +13,8 @@
 	<script src="~/js/time.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+	<!-- FontAwesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 	<style>
 		.collapse-horizontal {
 			width: 0;
@@ -29,20 +31,13 @@
 	<!-- 導覽列 -->
 	<!-- navbar-expand-md 為隱藏成小按鈕 -->
 	<nav class="navbar navbar-expand-sm  navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 sticky-top">
-		@*<div class="container-fluid>
-		<div class="col-1 ">
-
-		</div>
-
-		<div class="col-10 ">
+		<div class="container-fluid">
+		
 		<!-- 未讀訊息設定 -->
-		@*<div id="unread-messages" class="unread-messages-badge"></div>*@
+		<div id="unread-messages" class="unread-messages-badge"></div>
 		<!-- 導覽列小圖 -->
-		<a class="navbar-brand" href="#" style="margin-left:40px"><img src="~/img/Logo.png" style="width:13em" alt=""></a>
-		@*@if (ViewBag.MemberData != null)
-		{
-			<p style="color:dodgerblue; flex:auto;font-size:26px;">歡迎，@ViewBag.MemberData.MemberName ☆</p>
-		}*@
+			<a class="navbar-brand" href="@Url.Action("Index", "YU_Home")" style="margin-left:40px"><img src="~/img/Logo.png" style="width:13em" alt=""></a>
+		
 		<!-- 響應式導覽列整列變成小圖列 -->
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
 				aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,14 +53,22 @@
 				<li class="nav-item">
 					<a id="action" class="nav-link active" aria-current="page" href="@Url.Action("YH_CasePage", "YH_CasePages")">任務瀏覽</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" asp-controller="HS_Pending" asp-action="PendingOrder_Pai">任務刊登</a>
+					<li class="nav-item">
+					@if (ViewBag.YU_ID != null)
+					{
+
+						<a class="nav-link" asp-controller="HS_Pending" asp-action="PendingOrder_Pai">任務刊登</a>
+					}
+					else
+						{
+						<a class="nav-link" href="@Url.Action("Login", "CC_Members")">任務刊登</a>
+					}
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="@Url.Action("Index", "YU_Home")#section4">關於我們</a>
 				</li>
 				@*通知的小圖示*@
-			@* 	@if (ViewBag.YU_ID != null)
+				@*@if (ViewBag.YU_ID != null)
 				{
 
 					<div style="position: relative;">
@@ -82,15 +85,18 @@
 						</div>
 					</div>
 
-				}
- *@
+				}*@
+
 
 				@*下拉選單*@
 				<div class="dropdown">
 				<li class="nav-item dropdown">
-
+							@if (ViewBag.YU_ID != null)
+							{
+							<p style="color:dodgerblue; flex:auto;font-size:26px; margin-top: -6px; margin-bottom: -2rem; padding-left: 22px;">歡迎~@ViewBag.YU_Name</p>
+							}
 					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-					   aria-expanded="false" style="margin-right:40px">
+					   aria-expanded="false" style="margin-right:40px;">
 						會員專區
 					</a>
 
@@ -100,7 +106,7 @@
 
 							<li><a class="dropdown-item" href="@Url.Action("Yu_Calendar", "Yu_Calendar")">訂單追蹤</a></li>
 							<li><a class="dropdown-item" href="@Url.Action("MemberProfile", "CC_Members")">會員資料</a></li>
-							<li><a class="dropdown-item" href="@Url.Action("Logout", "CC_Members")">登出</a></li>
+								<li><a class="dropdown-item" href="@Url.Action("Logout", "CC_Members")">登出</a></li>
 							}
 							else
 							{
@@ -113,10 +119,8 @@
 				</li>
 
 		</div>
-				@*</div>*@
-				@*</div>
-		<div class="col-1 ">
-		</div>*@
+				
+		</div>
 	</nav>
 
 	@*通知小圖示*@
@@ -134,29 +138,36 @@
 
 
 	<!-- 點一下按鈕產生時間 -->
-
-	
-
-	<div class="timee" id="countdown-icon" onclick="getYourData()">
-		<img src="~/img/time3.png" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
+	<div class="timee  btn-primary" onclick="getYourData()">
+		<img src="~/img/time3.png" id="liveToastBtn" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
 	</div>
-	<div class="chat-popups" id="myForms">
-		<form action="/action_page.php" class="form-container">
-
-			<h2>時間倒數</h2>
-			<div id="remainingTimeContainer" style="font-size:20px;"></div>
-			<button type="button" class="btn1 cancels" onclick="closeForms()">Close</button>
-		</form>
+	<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+		<div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<i class="fa-solid fa-triangle-exclamation fs-2" style="color:  #ffc800;"></i>
+				<b class="rounded me-auto fs-4" >任務截止提醒</b>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div id="remainingTimeContainer" class="toast-body" style="font-size:25px;">
+				@*<p>任務名稱:</br> @Model.MissionName</p>
+				<p>任務剩餘時間:</br> @Model.RemainingTime</p>*@
+			</div>
+		</div>
 	</div>
 
-	@* 時間的彈跳視窗，點擊會出現，點Close會關閉*@
+
 	<script>
+		var liveToastBtn = document.getElementById('liveToastBtn');
+		var liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
+
+		liveToastBtn.addEventListener('click', function () {
+			liveToast.show();
+		});
+	
+	@* 時間的彈跳視窗，點擊會出現，點Close會關閉*@
+	
 		function openForms() {
 			document.getElementById("myForms").style.display = "block";
-		}
-
-		function closeForms() {
-			document.getElementById("myForms").style.display = "none";
 		}
 
 		@*後端帶入任務倒數*@
@@ -190,7 +201,8 @@
 			setInterval(fetchAndUpdateRemainingTime, 1000);
 		}
 	</script>
-
+	@if(ViewBag.YU_ID !=null)
+	{
 	<!-- 客服 -->
 	<div class="open-button">
 		<img src="~/img/chat2.png" style="width: 50px; height: 50px;" onclick="openForm()" alt="">
@@ -220,7 +232,7 @@
 
 		</form>
 	</div>
-
+	}
 
 	@* //客服的JS*@
 	<script>
@@ -256,6 +268,10 @@
 			document.getElementById("msgInput").value = "您好，已收到訊息，謝謝您的選擇，將盡速為您解決。";
 
 
+			// 存儲數據在sessionStorage中
+			sessionStorage.setItem('selectedOption', selectedOption);
+			sessionStorage.setItem('message', message);
+
 			const message = `我想反應：${selectedOption}`;
 			connection.invoke("SendOption", message).catch(function (err) {
 				return console.error(err.toString());
@@ -268,11 +284,8 @@
 	</script>
 
 
-
-
 	<div>
 		@RenderBody()
-
 	</div>
 
 

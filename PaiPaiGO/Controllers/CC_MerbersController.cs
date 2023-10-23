@@ -84,7 +84,6 @@ namespace paipaigo1005.Controllers {
 
             var user = _context.Members
             .FirstOrDefault(x => x.MemberEmail == email && x.MemberStatus == "正常");
-
             if (user == null) {
                 ViewBag.Status = "空的";
                 return View("ForgotPassword");
@@ -99,8 +98,8 @@ namespace paipaigo1005.Controllers {
                     var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("SetPassword", "CC_Members", new { memberId = user.MemberId, token = GenerateToken(user.MemberId) }, protocol: HttpContext.Request.Scheme)}'>點擊重新設定密碼</a>。<br>此為系統郵件，請勿回復。<br>PaiPaiGO";
 
                     var emailService = new EmailService();
-                    //await emailService.SendEmailAsync(user.MemberEmail, emailSubject, emailMessage);
-                    await emailService.SendEmailAsync("mi0103yeon@gmail.com", emailSubject, emailMessage);
+                    await emailService.SendEmailAsync(user.MemberEmail, emailSubject, emailMessage);
+                    //await emailService.SendEmailAsync("mi0103yeon@gmail.com", emailSubject, emailMessage);
                     ViewBag.Status = "正常";
                     return View("ForgotPassword");
                 }
@@ -236,7 +235,7 @@ namespace paipaigo1005.Controllers {
                 numstring = "0" + numstring;
             }
             member.MemberId = numstring;
-            member.MemberEmail = "mi0103yeon@gmail.com";
+            //member.MemberEmail = "mi0103yeon@gmail.com";
 
 			if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
@@ -412,7 +411,7 @@ namespace paipaigo1005.Controllers {
         public ActionResult MemberProfile() {
             //layout用
             ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
-            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 
             var SessioID = HttpContext.Session.GetString("MemberID");
             if (TempData["Change"] != null) {
