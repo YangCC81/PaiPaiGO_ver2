@@ -237,7 +237,7 @@ namespace paipaigo1005.Controllers {
             member.MemberId = numstring;
             //member.MemberEmail = "mi0103yeon@gmail.com";
 
-			if (ModelState.IsValid) {
+            if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
                 member.MemberPassword = hashedPassword; // 將哈希後的密碼儲存到資料庫
                 member.Salt = salt; // 儲存鹽值到資料庫
