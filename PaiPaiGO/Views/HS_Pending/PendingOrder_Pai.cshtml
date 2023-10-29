@@ -75,7 +75,7 @@
 
 <body>
     <form method="post" id="orderForm" action="/HS_Pending/PendingOrder_Pai">
-        <div class="container mt-5">
+     
             <div class="row g-3">
                 <div class="col-md-1"></div>
                 <div class="col-md-10" style="background-color: #BCE5F6;" id="HSfont">
@@ -112,6 +112,8 @@
                                 <div class="form-group" style="letter-spacing: 1px;">
                                     <label for="Amount">金額:</label>
                                     <input type="text" class="form-control" name="Amount" id="Amount">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+
                                 </div>
                                  @* 執行縣市及地區 *@
                                 <br />
@@ -147,24 +149,34 @@
                                         <label for="QueueTime">排隊時間:</label>
                                         <input type="datetime-local" class="form-control" name="QueueTime"
                                                id="QueueTime">
+                                        <span class="iconicfill-pen-alt2">&#9998;</span>
+
                                     </div>
                                     <div class="form-group" style="letter-spacing: 1px;">
                                         <label for="Deadline">任務截止時間:</label>
                                         <input type="datetime-local" class="form-control" name="Deadline" id="Deadline">
+                                        <span class="iconicfill-pen-alt2">&#9998;</span>
+
                                     </div>
-                                    <li class="list-group-item" style="font-size: 25px;letter-spacing: 1px;">任務內容:</li>
-                                    <li class="list-group-item">
-                                        <textarea class="form-control" rows="5" placeholder="任務內容..." name="TaskContent"
-                                                  id="TaskContent" style="font-size: 25px;letter-spacing: 1px;"></textarea>
+                                    <li class="list-group-item" style="font-size: 25px;letter-spacing: 1px;padding-bottom: 50px;">
+                                        <div class="form-group">
+                                            <div style="position: relative;">
+                                                <label for="TaskContent">任務內容:</label>
+                                                <span class="iconicfill-pen-alt2">&#9998;</span>
+                                            </div>
+                                            <textarea class="form-control" rows="5" placeholder="請輸入詳細任務需求..." name="TaskContent"
+                                                      id="TaskContent" style="font-size: 25px;letter-spacing: 1px;height:200px;"></textarea>
+                                        </div>
                                     </li>
-                                    <li class="list-group-item">
+
+                                    <li class="list-group-item" style="clear:both;">
                                         <label for="imageInput" class="btn btn-secondary mt-2">上傳圖片</label>
                                         <input type="file" class="image-upload" id="imageInput" accept="image/*"
                                                multiple onchange="previewImages(this, 'uploaded-images')">
                                         <input type="hidden" id="base64Image" name="Image" />
                                     </li>
                                     <!-- 上傳的圖片列表 -->
-                                    <li class="list-group-item uploaded-images" id="uploaded-images" name="queue_images">
+                                    <li class="list-group-item uploaded-images" id="uploaded-images" name="queue_images" style="clear:both;margin-top: 20px;">
                                         <!-- 這裡會顯示上傳的圖片 -->
                                     </li>
                                 </ul>
@@ -179,7 +191,7 @@
                 </div>
                 <div class="col-md-1"></div>
             </div>
-        </div>
+       
     
 </form>
 
@@ -197,7 +209,7 @@
             loadFormData();
         };
         function saveFormData() {
-            var formElements = document.querySelectorAll("input, select, textarea"); // 收集所有的 input, select 和 textarea 元素
+            var formElements = document.querySelectorAll("input, select, textarea"); 
             var formData = {};
 
             formElements.forEach(function (element) {
@@ -233,7 +245,7 @@
         //縣市區域下拉選單
         $("#TWAddress").twzipcode({
             "css": ["city form-control", "town form-control", "zipcode form-control"],
-            "countyName": "City", // 指定城市name
+            "countyName": "City", 
             "districtName": "Location",
             "zipcodeName": "Postcode"
         });
@@ -259,8 +271,8 @@
             var chineseCharacters = PaiNameInput.match(/[\u4e00-\u9fa5]/g);
             // 如果中文字的數量超過10個，截斷輸入
             if (chineseCharacters && chineseCharacters.length > 10) {
-                this.value = PaiNameInput.slice(0, 10);
-                showPopover("PaiName", "最多只能輸入10個字");
+                this.value = PaiNameInput.slice(0, 15);
+                showPopover("PaiName", "最多只能輸入15個字");
             }
         });
 
@@ -321,10 +333,6 @@
             // 將時間格式轉換為日期對象
             var selectedDate = new Date(value.replace(/-/g, "/"));
 
-            // if (value === "" || isNaN(selectedDate)) {
-            //     input.setCustomValidity("請輸入日期和時間");
-            //     return;
-            // }BUG
 
             if (selectedDate <= now) {
                 input.setCustomValidity("請選擇未來的日期和時間");
@@ -366,8 +374,8 @@
         QueueTimeInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
         DeadlineInput.min = currentDate.toISOString().split("T")[0] + "T" + currentDate.toTimeString().split(" ")[0].substring(0, 5);
 
-        //監聽下一步按鈕的點擊事件
-        // 自訂驗證函數
+     
+        // 自訂驗證
         function validateForm() {
             var valid = true;
             var selectedOption = document.getElementById("Orderclass").value;
@@ -476,7 +484,7 @@
             return valid;
         }
 
-        // 監聽下一步按鈕
+       
         document.getElementById("next-button").addEventListener("click", function (event) {
             if (validateForm()) {
                 saveFormData();
@@ -487,18 +495,6 @@
                 event.preventDefault();
             }
         });
-
-
-                                        // var temp = 0
-                                        // if (temp < 1) {
-                                        //     //訂單類型初始化
-                                        //     document.getElementById("Orderclass").dispatchEvent(new Event("change"));
-                                        //     temp += 1;
-                                        // }
-      
-
-
-
 
     </script>
 </body>

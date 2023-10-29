@@ -28,14 +28,22 @@
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="Views\WS_AdmMembers\AdmMember.cshtml" />
+    <None Include="Views\WS_AdmMembers\_MemberListPartial.cshtml" />
+    <None Include="Views\WS_AdmMembers\_OpinionPartial.cshtml" />
     <None Include="Views\WS_AdmMissions\MissionStatus.cshtml" />
     <None Include="Views\WS_AdmMissions\WS_AdmMission.cshtml" />
     <None Include="Views\WS_AdmMissions\WS_misDetail.cshtml" />
     <None Include="Views\WS_AdmMissions\_MissionTable.cshtml" />
     <None Include="Views\WS_Opinions\AdmOpinion.cshtml" />
+    <None Include="Views\WS_Opinions\_OpinionWarn.cshtml" />
+    <None Include="Views\YH_CasePages\YH_CasePage.cshtml" />
     <None Include="Views\Yu_Calendar\Index.cshtml" />
     <None Include="Views\Yu_Calendar\Yu_Calendar.cshtml" />
+    <None Include="Views\Yu_Calendar\Yu_Report.cshtml" />
     <None Include="Views\Yu_Calendar\Yu_Star.cshtml" />
+    <None Include="Views\Yu_Calendar\_AcceptTable.cshtml" />
+    <None Include="Views\Yu_Calendar\_Fullcalender.cshtml" />
+    <None Include="Views\Yu_Calendar\_OrderTable.cshtml" />
     <None Include="Views\YU_Home\Index.cshtml" />
     <None Include="Views\YU_Members\Index.cshtml" />
   </ItemGroup>

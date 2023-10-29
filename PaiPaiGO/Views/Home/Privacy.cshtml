@@ -1,6 +1,89 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
-<p>Use this page to detail your site's privacy policy.</p>
+
+@model MissionViewModel
+
+
+
+測試中
+<div class="timee  btn-primary"  onclick="getYourData()">
+	<img src="~/img/time3.png" id="liveToastBtn" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
+</div>
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+	<div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<h7 class="rounded me-auto">任務截止提醒</h7>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		</div>
+		<div id="remainingTimeContainer" class="toast-body" style="font-size:20px;" class="toast-body">
+			@*<p>任務名稱:</br> @Model.MissionName</p>
+			<p>任務剩餘時間:</br> @Model.RemainingTime</p>*@
+		</div>
+	</div>
+</div>
+
+
+<script>
+	var liveToastBtn = document.getElementById('liveToastBtn');
+	var liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
+
+	liveToastBtn.addEventListener('click', function () {
+		liveToast.show();
+	});
+</script>
+
+
+
+@*<div class="timee" id="countdown-icon" onclick="getYourData()">
+	<img src="~/img/time3.png" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
+</div>
+<div class="chat-popups" id="myForms">
+	<form action="/action_page.php" class="form-container">
+
+		<h2>時間倒數</h2>
+		<div id="remainingTimeContainer" style="font-size:20px;"></div>
+		<button type="button" class="btn1 cancels" onclick="closeForms()">Close</button>
+	</form>
+</div>*@
+
+<script>
+	function openForms() {
+		document.getElementById("myForms").style.display = "block";
+	}
+
+	function closeForms() {
+		document.getElementById("myForms").style.display = "none";
+	}
+	  
+	@*後端帶入任務倒數*@
+
+		function updateRemainingTime(data) {
+			$('#remainingTimeContainer').html(data);
+
+			// 如果需要，您可以在这里添加其他根据 MissionStatus 的值执行的操作
+		}
+
+	function fetchAndUpdateRemainingTime() {
+		$.ajax({
+			url: '@Url.Action("RemainingTimePartial", "Home")',
+			type: 'GET',
+			success: function (data) {
+				if (data != null) {
+					updateRemainingTime(data);
+				} else {
+					alert('No data received.');
+				}
+			},
+			error: function () {
+				alert('An error occurred while fetching data.');
+			}
+		});
+	}
+
+	function getYourData() {
+		fetchAndUpdateRemainingTime();
+
+		setInterval(fetchAndUpdateRemainingTime, 1000);
+	}
+</script>

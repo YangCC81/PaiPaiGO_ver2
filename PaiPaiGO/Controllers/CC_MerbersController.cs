@@ -99,8 +99,8 @@ namespace paipaigo1005.Controllers {
                     var emailMessage = $"請點擊連結驗證您的Email地址：<a href='{Url.Action("SetPassword", "CC_Members", new { memberId = user.MemberId, token = GenerateToken(user.MemberId) }, protocol: HttpContext.Request.Scheme)}'>點擊重新設定密碼</a>。<br>此為系統郵件，請勿回復。<br>PaiPaiGO";
 
                     var emailService = new EmailService();
-                    //await emailService.SendEmailAsync(user.MemberEmail, emailSubject, emailMessage);
-                    await emailService.SendEmailAsync("mi0103yeon@gmail.com", emailSubject, emailMessage);
+                    await emailService.SendEmailAsync(user.MemberEmail, emailSubject, emailMessage);
+                    //await emailService.SendEmailAsync("mi0103yeon@gmail.com", emailSubject, emailMessage);
                     ViewBag.Status = "正常";
                     return View("ForgotPassword");
                 }

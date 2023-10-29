@@ -22,12 +22,11 @@
     <script src="~/jQuery-TWzipcode-master/jquery.twzipcode.js"></script>
     <script src="~/jQuery-TWzipcode-master/twzipcode.js"></script>
     @* 特效 *@
-    @* <link rel="stylesheet" href="~/css/HS_write.css" asp-append-version="true" />
-    <script src="~/js/HS_write.js"></script>
-   *@
+    <link rel="stylesheet" href="~/css/HS_writeB.css" asp-append-version="true" />
+    <script src="~/js/HS_writeB.js"></script>
+  
 </head>
 <style>
-    /* 通用 CSS 樣式，與前面的代碼相同 */
     .image-upload {
         display: none;
     }
@@ -65,7 +64,6 @@
         width: 150px
     }
 
-    /* 新增的 CSS 樣式，字體大小為20px */
     h1,
     label,
     select,
@@ -74,7 +72,7 @@
         font-size: 25px;
     }
 
-    /* 新增的 CSS 樣式，標題字體大小為25px */
+ 
     h1 {
         font-size: 25px;
     }
@@ -82,7 +80,7 @@
 
 <body>
     <form method="post" id="orderForm" action="/HS_Pending/PendingOrder_Buy">
-        <div class="container mt-5">
+       
             <div class="row g-3">
                 <div class="col-md-1"></div>
                 <div class="col-md-10" style="background-color: #BCE5F6;" id="HSfont">
@@ -91,9 +89,7 @@
                     <br>
                     <div class="form-group">
                         <label for="BuyOrderclass" style="letter-spacing: 1px;">選擇任務類別:</label>
-                        <select class="form-control" name="BuyOrderclass" id="BuyOrderclass"
-                                style="letter-spacing: 2px;font-size: 25px;">
-                            <!-- <option value="請選擇...">請選擇...</option> -->
+                        <select class="form-control" name="BuyOrderclass" id="BuyOrderclass" style="letter-spacing: 2px;font-size: 25px;">
                             <option value="1">排隊</option>
                             <option value="2" selected>購買</option>
                         </select>
@@ -103,133 +99,129 @@
                         <!-- 標籤 select 和 名稱 input -->
                         <div class="row g-3 align-items-center">
                             <div class="col">
-                                <label for="BuyLabel" class="form-label me-2"
-                                       style="letter-spacing: 1px;">任務標籤:</label>
+                                <label for="BuyLabel" class="form-label me-2" style="letter-spacing: 1px;">任務標籤:</label>
                                 <select class="form-select" name="BuyLabel" id="BuyLabel" style="max-width: 400px;">
-                                    <!-- 在此添加选项 -->
                                     <option value="食物">食物</option>
                                     <option value="日用品">日用品</option>
                                 </select>
                             </div>
-                            <div class="col" style="letter-spacing: 1px;">
-                                <label for="BuyName" class="form-label me-2">名稱:</label>
-                                <input type="text" class="form-control" name="BuyName" id="BuyName"
-                                       style="max-width: 400px;">
+                            <div class="col">
+                                <div class="wrap-label">
+                                    <label for="BuyName" class="form-label me-2">名稱:</label>
+                                    <input type="text" class="form-control" name="BuyName" id="BuyName" style="max-width: 400px;">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                         </div>
-
                         <!-- 金額 input -->
                         <div class="row g-3 align-items-center">
-                            <div class="col" style="letter-spacing: 1px;">
-                                <label for="BuyLocation" class="form-label me-2">任務執行地點:</label>
-                                <input type="text" class="form-control" name="BuyLocation" id="BuyLocation"
-                                       style="max-width: 400px;">
+                            <div class="col">
+                                <div class="wrap-label">
+                                    <label for="BuyLocation" class="form-label me-2" style="letter-spacing: 1px;">任務執行地點:</label>
+                                    <input type="text" class="form-control" name="BuyLocation" id="BuyLocation" style="max-width: 400px;">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                             <div class="col">
-                                <label for="BuyAmount" class="form-label me-2">金額:</label>
-                                <input type="text" class="form-control" name="BuyAmount" id="BuyAmount"
-                                       style="max-width: 400px;">
+                                <div class="wrap-label">
+                                    <label for="BuyAmount" class="form-label me-2">金額:</label>
+                                    <input type="text" class="form-control" name="BuyAmount" id="BuyAmount" style="max-width: 400px;">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                         </div>
-
                         <!-- 交貨時間時間格式的 input -->
                         <div class="row g-3 align-items-center">
                             <div class="col">
-                                <label for="BuyDelivery" class="form-label me-2">交貨時間:</label>
-                                <input type="datetime-local" class="form-control" name="BuyDelivery"
-                                       id="BuyDelivery" style="max-width: 400px;">
+                                <div class="wrap-label">
+                                    <label for="BuyDelivery" class="form-label me-2">交貨時間:</label>
+                                    <input type="datetime-local" class="form-control" name="BuyDelivery" id="BuyDelivery" style="max-width: 400px;">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                             <div class="col">
-                                <label for="BuyDeadline" class="form-label me-2">任務截止時間:</label>
-                                <input type="datetime-local" class="form-control" name="BuyDeadline"
-                                       id="BuyDeadline" style="max-width: 400px;">
+                                <div class="wrap-label">
+                                    <label for="BuyDeadline" class="form-label me-2">任務截止時間:</label>
+                                    <input type="datetime-local" class="form-control" name="BuyDeadline" id="BuyDeadline" style="max-width: 400px;">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                         </div>
-
-                        <br />
-                        <h3 for="BuyCity" class="form-label me-2">交貨地址:</h3>
-                        <div class="d-flex mt-1 fs-5" id="TWAddress">
-                            @* <label or="City" class="form-label me-2"> 縣市:</label> *@
-
-                            <div class="col-md-2" data-role="county" id="TWAddress1">
-                            </div>
-                            @* <label for="Location" class="form-label me-2">地區:</label><br /> *@
-                            <div class="col-md-2" data-role="district" id="TWAddress2">
-                            </div>
-                            <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
-                            </div>
-                        </div>
-                        <br />
                         <!-- 交貨地址詳細地址 input -->
                         <div class="row g-3 align-items-center">
-                            <div class="col" style="letter-spacing: 1px;">
-                                <label for="BuyAddress" class="form-label me-2">詳細地址:</label>
-                                <input type="text" class="form-control" name="BuyAddress" id="BuyAddress"
-                                       placeholder="請輸入詳細地址">
+                            <div class="col">
+                                <h3 for="BuyCity" class="form-label me-2">交貨地址:</h3>
+                                <div class="d-flex mt-1 fs-5" id="TWAddress">
+                                    <div class="col-md-3" data-role="county" id="TWAddress1">
+                                    </div>
+                                    <div class="col-md-3" data-role="district" id="TWAddress2">
+                                    </div>
+                                    <div class="col-md-3 invalid-feedback" data-role="zipcode" id="TWAddress3">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="wrap-label">
+                                    <label for="BuyAddress" class="form-label me-2" style="letter-spacing: 1px;">詳細地址:</label>
+                                    <input type="text" class="form-control" name="BuyAddress" id="BuyAddress" placeholder="請輸入詳細地址">
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- 收貨方式 select 和  -->
+                        <!-- 收貨方式 select 和 -->
                         <div class="row g-3 align-items-center">
-                            <div class="col" style="letter-spacing: 1px;">
-                                <label for="BuyDeliveryMethod" class="form-label me-2">收貨方式:</label>
-                                <select class="form-select" name="BuyDeliveryMethod" id="BuyDeliveryMethod"
-                                        style="max-width:400px">
-                                    <!-- 在此添加选项 -->
-                                    <option value="面交">面交</option>
-                                    <option value="管理員代收">管理員代收</option>
-                                </select>
+                            <div class="col">
+                                <div class="wrap-label">
+                                    <label for="BuyDeliveryMethod" class="form-label me-2" style="letter-spacing: 1px;">收貨方式:</label>
+                                    <select class="form-select" name="BuyDeliveryMethod" id="BuyDeliveryMethod" style="max-width:400px">
+                                        <option value="面交">面交</option>
+                                        <option value="管理員代收">管理員代收</option>
+                                         <option value="宅配">宅配</option>
+                                        <option value="放門口">放門口</option>
+                                    </select>
+                                </div>
                             </div>
-       
                         </div>
-
                         <!-- 任務內容和圖片上傳 -->
                         <div class="row g-3 align-items-center">
-                            <div class="col" style="letter-spacing: 1px;">
-                                <label for="BuyTaskContent" class="form-label me-2"
-                                       style="font-size: 25px;">任務內容:</label>
-                                <textarea class="form-control" rows="5" placeholder="任務內容..." name="BuyTaskContent"
-                                          id="BuyTaskContent" style="font-size: 20px;"></textarea>
+                            <div class="col">
+                                <div class="wrap-label">
+                                    <label for="BuyTaskContent" class="form-label me-2" style="font-size: 25px;">任務內容:</label>
+                                    <textarea class="form-control" rows="5" placeholder="請輸入詳細任務需求..." name="BuyTaskContent" id="BuyTaskContent" style="font-size: 20px;"></textarea>
+                                    <span class="iconicfill-pen-alt2">&#9998;</span>
+                                </div>
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
                             <div class="row g-3 align-items-center">
                                 <div class="col">
-                                    @*  <!-- <label for="buy_image_upload" class="form-label me-2">上传图片:</label> -->
-                                    <label for="buy_image_upload" class="btn btn-secondary mt-2">上傳圖片</label>
-                                    <input type="file" class="image-upload" id="imageInput" accept="image/*"
-                                    multiple  onchange="previewImages(this, 'buy_uploaded_images')">
-                                    <input type="hidden" id="base64Image" name="Image" />
-                                    <!-- 这里会显示上传的图片 -->
-                                    <div class="uploaded-images" id="buy_uploaded_images"> *@
-                                    <li class="list-group-item">
+                                    <div class="wrap-label">
                                         <label for="imageInput" class="btn btn-secondary mt-2">上傳圖片</label>
-                                        <input type="file" class="image-upload" id="imageInput" accept="image/*"
-                                               multiple onchange="previewImages(this, 'buy_uploaded_images')">
+                                        <input type="file" class="image-upload" id="imageInput" accept="image/*" multiple onchange="previewImages(this, 'buy_uploaded_images')">
                                         <input type="hidden" id="base64Image" name="BuyImage" />
-                                    </li>
-                                    <!-- 上傳的圖片列表 -->
-                                    <li class="list-group-item buy_uploaded_images" id="buy_uploaded_images" name="queue_images">
-                                        <!-- 這裡會顯示上傳的圖片 -->
-                                    </li>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-                    </div><div class="d-flex justify-content-end mt-3">
-                        <input type="button" value="下一步" id="next-button" class="btn btn-primary mt-3"
-                               style="background-color: #4B3DE7;">
+                        <div class="row g-3 align-items-center">
+                            <li class="list-group-item buy_uploaded_images" id="buy_uploaded_images" name="queue_images">
+                            </li>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <div class="wrap-label">
+                            <input type="button" value="下一步" id="next-button" class="btn btn-primary mt-3" style="background-color: #4B3DE7;">
+                        </div>
                     </div>
                     <div style="height:50px"></div>
                 </div>
-
-
-
+                <div class="col-md-1"></div>
             </div>
-            <div class="col-md-1"></div>
-        </div>
-        </div>
+            
+       
     </form>
+
+
     <script>
 
         window.onload = function () {
@@ -241,15 +233,15 @@
                 temp += 1;
             }
 
-            // 然後從 Local Storage 加載資料
+            //  Local Storage 加載資料
             loadFormData();
         };
         function saveFormData() {
-            var formElements = document.querySelectorAll("input, select, textarea"); // 收集所有的 input, select 和 textarea 元素
+            var formElements = document.querySelectorAll("input, select, textarea"); 
             var formData = {};
 
             formElements.forEach(function (element) {
-                if (element.name) { // 檢查元素是否有 'name' 屬性，這對於保存數據是必需的
+                if (element.name) { // 檢查元素是否有 'name' 屬性
                     formData[element.name] = element.value; // 保存每個元素的值
                 }
             });
@@ -305,8 +297,8 @@
             var chineseCharacters = BuyNameInput.match(/[\u4e00-\u9fa5]/g);
             // 如果中文字的數量超過10個，截斷輸入
             if (chineseCharacters && chineseCharacters.length > 10) {
-                this.value = BuyNameInput.slice(0, 10);
-                showPopover("BuyName", "最多只能輸入10個字");
+                this.value = BuyNameInput.slice(0, 15);
+                showPopover("BuyName", "最多只能輸入15個字");
             }
         });
 
@@ -366,10 +358,6 @@
             // 將時間格式轉換為日期對象
             var selectedDate = new Date(value.replace(/-/g, "/"));
 
-            // if (value === "" || isNaN(selectedDate)) {
-            //     input.setCustomValidity("請輸入日期和時間");
-            //     return;
-            // }BUG
 
             if (selectedDate <= now) {
                 input.setCustomValidity("請選擇未來的日期和時間");
@@ -535,7 +523,7 @@
             return valid;
         }
 
-        // 監聽下一步按鈕
+   
         document.getElementById("next-button").addEventListener("click", function (event) {
             if (validateBuyForm()) {
                 saveFormData();

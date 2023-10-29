@@ -29,9 +29,9 @@
     margin: 10px; /* 可以調整圖片和文字之間的間距 */
 }
 
-.item img {
-    max-width: 100%; /* 確保圖片不會超出容器的寬度 */
-}
+    .item img {
+        max-width: 100%; /* 確保圖片不會超出容器的寬度 */
+    }
 
 
 
@@ -51,7 +51,6 @@
     right: 1%;
     top: 8%;
     width: -50%;
-    /*flex: 1;*/
 }
 
 
@@ -60,7 +59,7 @@
     width: 60em;
     position: relative;
     top: 250px;
-    left:-15%;
+    left: -15%;
     max-width: 1200px;
     flex: 1;
 }
@@ -70,7 +69,8 @@
 .bdimg1 {
     float: right;
     position: relative;
-    top: 8em;
+    top: 5em;
+    right: -3em;
 }
 
 
@@ -78,7 +78,8 @@
 .bdtext1 {
     float: left;
     /* 文字在左邊 */
-    width: 35em;
+    left: -1em;
+    width: 30em;
     position: relative;
     top: 5em;
 }
@@ -86,17 +87,17 @@
 .bdtext2 {
     float: left;
     /* 文字在左邊 */
-    width: 25em;
+    width: 30em;
     position: relative;
     right: 0em;
-    top: 5em;
+    top: 2em;
 }
 
 .bdimg2 {
     float: right;
+    left: 5em;
     position: relative;
-    top: 5em;
-    right: -4em;
+    top: 5.5em;
 }
 
 

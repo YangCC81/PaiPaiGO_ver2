@@ -16,8 +16,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
             @* 地圖API *@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVc0hKUxRv8PWCCNNhMsf7m_ZwIoivCZg"></script>
+    @* 效果 *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+    <link rel="stylesheet" href="~/css/HS_Get.css" asp-append-version="true" />
+
 </head>
 <style>
     .capsule-button {
@@ -53,6 +62,37 @@
             border-radius: 0 25px 25px 0; /* 控制右半圆的圆角半径 */
             transform: translateX(100%);
         }
+    /* 彈出視窗樣式 */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        width: auto; /* 自動寬度 */
+        max-height: 0; /* 初始為 0 */
+        transition: max-height 0.5s ease-out; /* 動畫效果 */
+        object-fit: contain; /* 保持寬高比 */
+    }
+
+
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+    }
+
 </style>
 
 <body>
@@ -68,80 +108,126 @@
                     <h1>@TempData["BuyMissionName"]</h1>
                     <div style="color: gray;">
                         <span>發布時間:</span>
-                        <span>@TempData["BuyOrderTime"]</span>
+                        @{
+                            DateTime OrderTime;
+                            if (DateTime.TryParse(TempData["BuyOrderTime"]?.ToString(),out OrderTime)){
+                                string OT = OrderTime.ToString("yyyy/M/d tt hh:mm");
+                                ViewBag.OT = OT;
+                            }
+                        }
+                        <span>@ViewBag.OT</span>
                     </div>
-                    <!-- 任務內容 OK-->
-                    <div style="position: relative; width: 400px;">
-                        <div style="position: absolute; top: 50px; left: -5px;background-color: #CDF4D1; padding: 5px; height: 20px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard"
-                                 width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                 fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                 style="display: inline-block; vertical-align: middle; margin-right: -7px; margin-top: -15px;background-color: #CDF4D1;">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                                <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-                            </svg>
-                            <p style="display: inline-block; vertical-align: middle;background-color: #CDF4D1;">代購內容:</p>
-                        </div>
-                        <br><br>
-                        <div style="border: 1px solid #000; padding: 5px; box-sizing: border-box; overflow: auto;">
-                            <textarea style="width: 100%; height: 150px; border: none;background-color: #CDF4D1;">
-                                                                                                            @TempData["BuyMissionDescription"]
-            </textarea>
-                            <!-- 添加一个可以放置图片的空间 -->
-                            <div style="margin-top: 10px;">
-                                <!-- 在这里放置图片 -->
-                                @if (ViewBag.BuyImageData != null)
-                                {
-                                    <img src="@ViewBag.BuyImageData" alt="Image from Session" alt="Uploaded Image" style="width:150px" />
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <br><br>
+                   
                 </div>
                 <!-- 右邊 -->
                 <div class="col-md-6" style="font-size: 25px;">
                     <!-- 標籤 -->
-                    <div style="padding-top: 90px;padding-left: 370px;">
+                    <div class="col-md-11 d-flex justify-content-end" style="padding-top: 90px;">
                         <button class="capsule-button"><strong>#@TempData["BuyTags"]</strong></button>
                     </div>
                     <br><br>
-                    <!-- 截止時間 -->
-                    @{
-                        DateTime DeadlineDate;
-                        TimeSpan DeadlineTime;
-                        if (DateTime.TryParse(TempData["BuyDeadlineDate"]?.ToString(), out DeadlineDate))
-                        {
-                            if (TimeSpan.TryParse(TempData["BuyDeadlineTime"]?.ToString(), out DeadlineTime))
-                            {
-                                DateTime combinedDateTime = DeadlineDate + DeadlineTime;
+                </div>
+                <div class="row">
+                    <!-- 左邊 -->
+                    <div class="col-md-6" style="font-size: 25px;padding-left: 40px;">
+                        @{
+                            DateTime DeliveryDate;
+                            TimeSpan DeliveryTime;
+                            if (DateTime.TryParse(TempData["BuyDeliveryDate"]?.ToString(), out DeliveryDate)) {
+                                if (TimeSpan.TryParse(TempData["BuyDeliveryTime"]?.ToString(), out DeliveryTime)) {
+                                    DateTime combinedDeliveryDateTime = DeliveryDate + DeliveryTime;
 
-                                string datePart = combinedDateTime.ToString("yyyy-MM-dd");
-                                string timePart = combinedDateTime.ToString("tt hh:mm:ss");
-                                string combined = $"{datePart} {timePart}";
+                                    string datePart = combinedDeliveryDateTime.ToString("yyyy/M/d");
+                                    string timePart = combinedDeliveryDateTime.ToString("tt hh:mm");
+                                    string combined = $"{datePart} {timePart}";
 
-                                ViewBag.CombinedDateTime = combined;
+                                    ViewBag.DeliveryDateTime = combined;
+                                }
                             }
                         }
-                    }
-                    <div style="padding-top:20px;">
-                        <img src="./img/alarm.svg" alt="">案件截止時間:<span style="color:orange;">@ViewBag.CombinedDateTime</span>
+                        <p class="mb-1">交貨時間:<span>@ViewBag.DeliveryDateTime</span></p>
+                        <br /><br />
+                        <!-- 任務內容 OK-->
+                        <div style="position: relative; width: 700px;">
+                            <div style="position: absolute; top: 50px; left: -5px;background-color: #CDF4D1; padding: 5px; height: 20px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard"
+                                     width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                     fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                     style="display: inline-block; vertical-align: middle; margin-right: -7px; margin-top: -15px;background-color: #CDF4D1;">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                </svg>
+                                <p style="display: inline-block; vertical-align: middle;background-color: #CDF4D1;">代購內容:</p>
+                            </div>
+                            <br><br>
+                            <div style="border: 1px solid #000; padding: 5px; box-sizing: border-box; overflow: auto;">
+                                <textarea style="width: 100%; height: 170px; border: none;background-color: #CDF4D1;">
+                                                                                                            @TempData["BuyMissionDescription"]
+            </textarea>
+                                <!-- 添加一个可以放置图片的空间 -->
+                                <div style="margin-top: 10px;">
+                                    <!-- 在这里放置图片 -->
+                                    @if (ViewBag.BuyImageData != null) {
+                                        <!-- 顯示的圖片 -->
+                                        <img id="myImage" src="@ViewBag.BuyImageData" alt="Uploaded Image" style="width:150px; cursor: pointer;" />
+
+                                        <!-- 彈出視窗（Modal） -->
+                                        <div id="myModal" class="modal">
+                                            <span class="close">&times;</span>
+                                            <img class="modal-content" id="img01">
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
                     </div>
-                    <!-- 任務金額 -->
-                    <div>
-                        <img src="./img/payments_FILL0_wght400_GRAD0_opsz24.svg" alt="">任務金額:<span>@TempData["BuyMissionAmount"]</span>
-                    </div>
-                    <!-- 配送地點 -->
-                    <div>
-                        <img src="./img/map-pin.svg" alt="">配送地點:
-                        <p style="color:orange;">@TempData["BuyLocationCity"]/@TempData["BuyLocationDistrict"]</p>
-                        @* 地圖放置 *@
-                        <div id="map" style="height: 400px; width: 100%;"></div>
-                    </div>
-                    <!-- 接單 -->
-                    <div style="padding-left: 370px;">
-                        <button type="button" id="updateMissionButton" class="btn btn-primary mt-3" style="background-color: #4B3DE7;font-size: 25px;">接單</button>
+                    <!-- 右邊 -->
+                    <div class="col-md-6" style="font-size: 25px;">
+                        <!-- 標籤 -->
+                        <!-- 截止時間 -->
+                        @{
+                            DateTime DeadlineDate;
+                            TimeSpan DeadlineTime;
+                            if (DateTime.TryParse(TempData["BuyDeadlineDate"]?.ToString(), out DeadlineDate)) {
+                                if (TimeSpan.TryParse(TempData["BuyDeadlineTime"]?.ToString(), out DeadlineTime)) {
+                                    DateTime combinedDateTime = DeadlineDate + DeadlineTime;
+
+                                    string datePart = combinedDateTime.ToString("yyyy/M/d");
+                                    string timePart = combinedDateTime.ToString("tt hh:mm");
+                                    string combined = $"{datePart} {timePart}";
+
+                                    ViewBag.CombinedDateTime = combined;
+                                }
+                            }
+                        }
+                        <div>
+                            <img src="./img/alarm.svg" alt="">案件截止時間:<span style="color:orange;">@ViewBag.CombinedDateTime</span>
+                        </div>
+                        <!-- 任務金額 -->
+                        <div>
+                            <img src="./img/payments_FILL0_wght400_GRAD0_opsz24.svg" alt="">任務金額:<span>@TempData["BuyMissionAmount"]</span>
+                        </div>
+                        <!-- 配送地點 -->
+                        <div>
+                            <img src="./img/map-pin.svg" alt="">配送地點:
+                            <p style="color:orange;">@TempData["BuyLocationCity"]/@TempData["BuyLocationDistrict"]</p>
+                            @* 地圖放置 *@
+                            <div id="map" style="height: 400px; width: 100%;"></div>
+                        </div>
+                        <!-- 接單 -->
+                        <div style="padding-left: 370px;">
+                            <button type="button" id="updateMissionButton" class="btn btn-primary mt-3 colins-submit" style="background-color: #4B3DE7; font-size: 25px;">
+                                <svg width="196" height="70">
+                                    <rect class="btn-shape" x="3" y="3" width="190" height="64" rx="32" ry="32" />
+                                    <text class="textNode" x="50%" y="43" text-anchor="middle">接單</text>
+                                    <text class="checkNode" x="35" y="40">✔</text>
+                                </svg>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -155,12 +241,12 @@
         @* 要改變----------------------- *@
         <div class="form-group">
             <label asp-for="AcceptMemberId" class="control-label"></label>
-            <input asp-for="AcceptMemberId" class="form-control" value="005" />
+            <input asp-for="AcceptMemberId" class="form-control" value="@ViewBag.YU_ID" />
             <span asp-validation-for="AcceptMemberId" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="MissionStatus" class="control-label"></label>
-            <input asp-for="MissionStatus" class="form-control" value="接單中" />
+            <input asp-for="MissionStatus" class="form-control" value="進行中" />
             <span asp-validation-for="MissionStatus" class="text-danger"></span>
         </div>
         <div class="form-group">
@@ -179,7 +265,7 @@
             }
             function geocodeAddress() {
                 var geocoder = new google.maps.Geocoder();
-                var address = "@TempData["BuyLocationCity"]" + " " + "@TempData["BuyLocationDistrict"]";  // 這裡填入您的縣市和地區字串
+                var address = "@TempData["BuyLocationCity"]" + " " + "@TempData["BuyLocationDistrict"]";  
                 geocoder.geocode({ 'address': address }, function (results, status) {
                     if (status === 'OK') {
                         map.setCenter(results[0].geometry.location);
@@ -197,40 +283,109 @@
                 geocodeAddress();  // 進行地理編碼
             };
 
+            // Model放大圖片
+            document.addEventListener("DOMContentLoaded", function () {
+
+                var modal = document.getElementById("myModal");
+
+                var img = document.getElementById("myImage");
+                var modalImg = document.getElementById("img01");
+
+                // 點擊圖片時，顯示彈出視窗並放大圖片
+                img.onclick = function () {
+                    modal.style.display = "flex";  // 使用 flex 布局使其垂直水平居中
+                    modalImg.src = this.src;  
+                    modalImg.style.maxHeight = "0"; 
+                    setTimeout(function () {
+                        modalImg.style.maxHeight = "60%";  
+                    }, 10);
+                };
+
+                // 獲取關閉按鈕元素
+                var span = document.getElementsByClassName("close")[0];
+
+                // 點擊關閉按鈕時，關閉彈出視窗
+                span.onclick = function () {
+                    closeImage();
+                };
+
+                // 點擊彈出視窗以外的區域時，也關閉它
+                window.onclick = function (event) {
+                    if (event.target === modal) {
+                        closeImage();
+                    }
+                };
+
+                // 關閉圖片和模態視窗的函數
+                function closeImage() {
+                    modalImg.style.maxHeight = "0";  
+                    setTimeout(function () {
+                        modal.style.display = "none";  
+                        modalImg.src = "";  
+                    }, 510);  // 延遲稍微超過 500ms 以確保過渡效果完成
+                }
+            });
+
+
+
+
             //post-ajax
             document.addEventListener("DOMContentLoaded", function () {
                 const updateMissionButton = document.getElementById("updateMissionButton");
 
-                updateMissionButton.addEventListener("click", function () {
-                    const missionId = document.querySelector("input[name='MissionId']").value;;
-                    const acceptMemberId = document.querySelector("input[name='AcceptMemberId']").value;
-                    const missionStatus = document.querySelector("input[name='MissionStatus']").value;
-                    const acceptTime = document.querySelector("input[name='AcceptTime']").value;
+                var tl = gsap.timeline({
+                    paused: true,
+                    onComplete: function () {
+                        const missionId = document.querySelector("input[name='MissionId']").value;
+                        const acceptMemberId = document.querySelector("input[name='AcceptMemberId']").value;
+                        const missionStatus = document.querySelector("input[name='MissionStatus']").value;
+                        const acceptTime = document.querySelector("input[name='AcceptTime']").value;
 
-                    $.ajax({
-                        url: '/HS_Get_Text/GetOrder_Buy',
-                        method: 'POST',
-                        data: {
-                            MissionId: missionId,
-                            AcceptMemberId: acceptMemberId,
-                            MissionStatus: missionStatus,
-                            AcceptTime: acceptTime
-                        },
-                        success: function (response) {
-                            if (response.success) {
-
-                                window.location.href = '/HS_Get_Text/Text_Buy/' + missionId;
-                            } else {
-                                alert('Failed to update mission');
+                        $.ajax({
+                            url: '/HS_Get_Text/GetOrder_Buy',
+                            method: 'POST',
+                            data: {
+                                MissionId: missionId,
+                                AcceptMemberId: acceptMemberId,
+                                MissionStatus: missionStatus,
+                                AcceptTime: acceptTime
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    window.location.href = '/HS_Get_Text/Text_Buy/' + missionId;
+                                } else {
+                                    alert('連結錯誤，找不到此任務');
+                                }
+                            },
+                            error: function (err) {
+                                alert('Error occurred');
                             }
-                        },
-                        error: function (err) {
-                            alert('Error occurred');
-                        }
-                    });
+                        });
+                    }
+                });
 
+                tl.to('.colins-submit svg text.textNode', { duration: 0.15, fillOpacity: 0 })
+                    .to('.colins-submit svg rect.btn-shape', {
+                        duration: 0.25,
+                        borderRadius: '50%',
+                        width: "70px",
+                        height: "70px",
+                        x: "0",
+                        y: "0"
+                    })
+                    .to('.colins-submit svg rect.btn-shape', {
+                        duration: 1.2,
+                        strokeDashoffset: 0,
+                        ease: "Quad.easeIn"
+                    })
+                    .to('.colins-submit svg rect.btn-shape', { duration: 0.3, fill: "#4B3DE7" })
+                    .to('.colins-submit svg text.checkNode', { duration: 0.3, fillOpacity: 1 });
+
+                updateMissionButton.addEventListener("click", function () {
+                    tl.restart();
                 });
             });
+
 
         </script>
 

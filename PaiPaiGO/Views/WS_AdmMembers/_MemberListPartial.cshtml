@@ -1,17 +1,23 @@
 ﻿@model IEnumerable<PaiPaiGO.Models.Member>
 
-<table class="table table-condensed table-striped">
+<style>
+    th, td {
+        text-align: center;
+    }
+</style>
+
+<table class="table table-condensed table-striped fs-3" >
     <!-- 標題 -->
     <thead>
         <tr>
-            <th></th>
-            <th>會員編號</th>
-            <th>會員姓名</th>
-            <th>會員帳號</th>
-            <th>連動帳號</th>
-            <th>帳號狀態</th>
-            <th>警告</th>
-            <th>停權</th>
+            <th style="width:5%; height:50px"></th>
+            <th style="width:10%;">會員編號</th>
+            <th style="width:15%;">會員姓名</th>
+            <th style="width:20%;">會員帳號</th>
+
+            <th style="width:10%;">帳號狀態</th>
+            <th style="width:10%;">警告</th>
+            <th style="width:5%;">停權</th>
         </tr>
     </thead>
     <!-- 內容 -->
@@ -22,21 +28,21 @@
                 <td>
                     <button class="btn btn-default btn-xs" data-bs-toggle="collapse"
                             data-bs-target=".test@(item.MemberId)">
-                        <i class="fa-solid fa-eye"></i>
+                        <i class="fa-solid fa-eye fs-5"></i>
                     </button>
                 </td>
-                <td>@Html.DisplayFor(modelItem => item.MemberId)</td>
-                <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
-                <td>@Html.DisplayFor(modelItem => item.MemberEmail)</td>
-                <td>無</td>
+                <td style="height:80px">@Html.DisplayFor(modelItem => item.MemberId)</td>
+                <td >@Html.DisplayFor(modelItem => item.MemberName)</td>
+                <td >@Html.DisplayFor(modelItem => item.MemberEmail)</td>
+
                 <td data-status="@item.MemberStatus">@Html.DisplayFor(modelItem => item.MemberStatus)</td>
-                <td>
+                <td >
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#myModal">
                         查閱
                     </button>
                 </td>
-                <td>
+                <td >
                     <!--停權的switch checkbox-->
                     <div class="form-check form-switch">
                         <input class="form-check-input member-checkbox" type="checkbox" @(item.MemberStatus == "正常" ? "checked" : "") data-member-id="@item.MemberId" data-initial-status="@item.MemberStatus" />
@@ -52,25 +58,19 @@
                             <!-- 內容展開-標題 -->
                             <thead>
                                 <tr class="info">
-                                    <th></th>
-                                    <th></th>
-                                    <th></th> <!-- 空列 -->
-                                    <th>通訊地</th>
-                                    <th>手機號碼</th>
+                                    <th style="text-align: left; width:40%; padding-left: 150px;">通訊地</th>
+                                    <th style="text-align: left; padding-left: 145px;">手機號碼</th>
                                 </tr>
                             </thead>
                             <!-- 內容展開-內文 -->
                             <tbody>
                                 <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
-                                    <td></td>
-                                    <td></td> <!-- 空列 -->
-                                    <th></th> <!-- 空列 -->
-                                    <td>
+                                    <td style="text-align: left; padding-left: 130px;   ">
                                         @Html.DisplayFor(modelItem => item.MemberCity)
                                         @Html.DisplayFor(modelItem => item.MemberTownship)
                                         @Html.DisplayFor(modelItem => item.MemberAddress)
                                     </td>
-                                    <td>@Html.DisplayFor(modelItem => item.MemberPhoneNumber)</td>
+                                    <td style=" text-align: left; padding-left: 120px; ">@Html.DisplayFor(modelItem => item.MemberPhoneNumber)</td>
                                 </tr>
                             </tbody>
                         </table>

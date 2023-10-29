@@ -32,12 +32,18 @@ public partial class Opinion
     public virtual Member ReportedMember { get; set; } = null!;
 }
 
-//瑋珊的
-public class OpinionStatusUpdate {
-    public string Ratingnumber { get; set; }
-    public string NewStatus { get; set; }
-    public string InitialStatus { get; set; }
+public class OpinionState {
+    public int Ratingnumber { get; set; }
+    public string State { get; set; }
+
 }
+
+public class YourModel {
+    public DateTime Date { get; set; }
+
+    public string FormattedDate => Date.ToString("yyyy/MM/dd");
+}
+
 
 //慧荃建的
 public partial class Opinion_Star {

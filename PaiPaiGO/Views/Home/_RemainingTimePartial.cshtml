@@ -1,9 +1,13 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<!-- _RemainingTimePartial.cshtml -->
-@model string
+﻿<!-- _RemainingTimePartial.cshtml -->
+@*@model string
 
-<p>@Model</p>
+<p>@Model</p>*@
+
+@model MissionViewModel
+
+<p>任務名稱:</br> @Model.MissionName</p>
+<p>任務剩餘時間:</br> @Model.RemainingTime</p>
+
+
+
+

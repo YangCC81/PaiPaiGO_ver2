@@ -26,19 +26,22 @@ namespace PaiPaiGO.Controllers {
 
 		public async Task<IActionResult> Yu_Calendar()
 		{
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
 			//要帶入登入會員的ID，待現在測試中，先設001
-			//var memberID = HttpContext.Session.GetString("MemberID");
-			var memberID = "001";
+			var memberID = HttpContext.Session.GetString("MemberID");
+			//var memberID = "001";
 
 
 			//行事曆
 			var OrderEventList = _context.Missions
-				.Where(mission => mission.OrderMemberId == memberID && mission.MissionStatus == "發布中")
+				.Where(mission => mission.OrderMemberId == memberID && (mission.MissionStatus == "發布中"|| mission.MissionStatus == "進行中"))
 				.Select(mission => new {
 					id = mission.MissionId,
 					title = mission.MissionName,
 					start = mission.OrderTime,
-					end = mission.DeadlineDate + mission.DeadlineTime,
+					end = mission.DeliveryDate + mission.DeliveryTime,
 					color = "#AFD9E4",
 					type = mission.Category
 				})
@@ -46,12 +49,12 @@ namespace PaiPaiGO.Controllers {
 
 
 			var AcceptEventList = _context.Missions
-			.Where(mission => mission.AcceptMemberId == memberID && mission.MissionStatus == "發布中")
+			.Where(mission => mission.AcceptMemberId == memberID && (mission.MissionStatus == "發布中" || mission.MissionStatus == "進行中"))
 			.Select(mission => new {
 				id = mission.MissionId,
 				title = mission.MissionName,
-				start = mission.OrderTime,
-				end = mission.DeadlineDate + mission.DeadlineTime,
+				start = mission.AcceptTime,
+				end = mission.DeliveryDate + mission.DeliveryTime,
 				color = "#ABD9C5",
 				type = mission.Category
 			})
@@ -63,7 +66,7 @@ namespace PaiPaiGO.Controllers {
 
 
 			//任務篩選下拉選單的內容
-			var MissionStatus_Droplist = (from p in _context.Missions
+			var MissionStatus_Droplist = (from p in _context.Missions										  
 										  select p.MissionStatus).Distinct();
 			ViewBag.MissionStatus_Droplist = MissionStatus_Droplist.ToList();
 
@@ -79,8 +82,8 @@ namespace PaiPaiGO.Controllers {
 		public ActionResult Filter_Order(string missionStatus)
 		{
 			//要帶入登入會員的ID，待現在測試中，先設001
-			//var memberID = HttpContext.Session.GetString("MemberID");
-			var memberID = "001";
+			var memberID = HttpContext.Session.GetString("MemberID");
+			//var memberID = "001";
 
 			var query = _context.Missions.Include(x => x.CategoryNavigation).AsQueryable();
 			query = query.Where(m => m.OrderMemberId == memberID);
@@ -88,8 +91,8 @@ namespace PaiPaiGO.Controllers {
 
 			if (!string.IsNullOrEmpty(missionStatus)) // 如果選擇了狀態，則進行篩選
 			{
-				if(missionStatus== "發布中") {
-query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "等待接案人完成任務" || m.MissionStatus == "等待發布人完成任務");
+				if(missionStatus== "待確認") {
+				query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "等待接案人完成任務" || m.MissionStatus == "等待發布人完成任務");
 				}
 				else { query = query.Where(m => m.MissionStatus == missionStatus); }
 				
@@ -105,8 +108,8 @@ query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "�
 		public ActionResult Filter_Accept(string missionStatus)
 		{
 			//要帶入登入會員的ID，待現在測試中，先設001
-			//var memberID = HttpContext.Session.GetString("MemberID");
-			var memberID = "001";
+			var memberID = HttpContext.Session.GetString("MemberID");
+			//var memberID = "001";
 
 			var query = _context.Missions.Include(x => x.CategoryNavigation).AsQueryable();
 			query = query.Where(m => m.AcceptMemberId == memberID);
@@ -114,8 +117,8 @@ query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "�
 
 			if (!string.IsNullOrEmpty(missionStatus)) // 如果選擇了狀態，則進行篩選
 			{
-				if (missionStatus == "發布中") {
-					query = query.Where(m => m.MissionStatus == missionStatus || m.MissionStatus == "等待接案人完成任務" || m.MissionStatus == "等待發布人完成任務");
+				if (missionStatus == "待確認") {
+					query = query.Where(m => m.MissionStatus == missionStatus || m.MissionStatus == "等待接案人完成任務" || m.MissionStatus == "等待發布人完成任務" );
 				}
 				else { query = query.Where(m => m.MissionStatus == missionStatus); }
 			}
@@ -171,11 +174,12 @@ query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "�
 				//確認有無任務
 				if (mission != null) {
 
- if ((mission.MissionStatus == "等待接案人完成任務"&& change.MemberId != mission.OrderMemberId) || (mission.MissionStatus == "等待發布人完成任務" && change.MemberId != mission.AcceptMemberId)) {
+ if ((mission.MissionStatus == "等待接案人完成任務"&& change.MemberId != mission.OrderMemberId) ||
+						(mission.MissionStatus == "等待發布人完成任務" && change.MemberId != mission.AcceptMemberId)) {
 						//如果任務狀態是這兩個，代表已經有人完成了任務，那就再把任務
 						mission.MissionStatus = change.NewStatus;
-					}else if (mission.MissionStatus == "發布中") {
-						//發布中代表還沒有人填，那就判斷是誰按下完成
+					}else if (mission.MissionStatus == "進行中") {
+						//進行中代表還沒有人填，那就判斷是誰按下完成
 
 						if (change.MemberId == mission.OrderMemberId) {
 							//按下完成的是發布人
@@ -205,6 +209,11 @@ query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "�
 		//評分星星的頁面
 		public ActionResult Yu_Star(int missionId, string memberId, string othersId)
 		{
+			//登入狀態顯示
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+
+
 			// 这里可以根据 missionId 和 memberId 从 A 资料表中获取相关数据
 			// 然后将数据传递给评分页面
 			ViewData["MissionId"] = missionId;
@@ -254,6 +263,9 @@ query = query.Where(m => m.MissionStatus == missionStatus|| m.MissionStatus== "�
 		//來做檢舉頁面，應該會和星星頁面差不多(只是把星星拿掉、選項換掉，還有登進資料庫時，要把類別設定為檢舉)
 		public ActionResult Yu_Report(int missionId, string memberId, string othersId)
 		{
+			//登入狀態顯示
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 			// 这里可以根据 missionId 和 memberId 从 A 资料表中获取相关数据
 			// 然后将数据传递给评分页面
 			ViewData["MissionId"] = missionId;

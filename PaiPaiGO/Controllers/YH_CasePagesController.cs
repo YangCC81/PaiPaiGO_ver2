@@ -11,37 +11,33 @@ using System.Reflection;
 
 namespace PaiPaiGo.Controllers
 {
+
     public class YH_CasePagesController : Controller
     {
-        private readonly PaiPaiGoContext _context;
 
-        public YH_CasePagesController(PaiPaiGoContext context)
+        private readonly PaiPaiGoContext _context;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public YH_CasePagesController(PaiPaiGoContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
-        }
-        public IActionResult SelectChange()
-        {
-            ViewData["County"] = new SelectList(_context.Counties, "CategoryId", "CategoryId");
-            return View();
+            _hostingEnvironment = hostingEnvironment;
         }
 
-        // GET: YH_CasePages
-        public async Task<IActionResult> YH_CasePage(string sortOrder, string currentFilter, string searchString, int? page)
-        {
-            if (_context.Counties == null)
-            {
-                return Problem("Entity set 'Counties'  is null.");
-            }
-            var counties = from c in _context.Counties
-                           select c;
-            if (!String.IsNullOrEmpty(currentFilter))
-            {
-                counties = counties.Where(s => s.City!.Contains(currentFilter));
-            }
 
+		// GET: YH_CasePages
+		public async Task<IActionResult> YH_CasePage(string sortOrder, string image, string searchString, int? page, string category)
+		{
 
-            //搜尋框
-            if (_context.Missions == null)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (!string.IsNullOrEmpty(category))
+			{
+				page = 1; // Reset page number if category is changed
+			}
+			//搜尋框
+			if (_context.Missions == null)
             {
                 return Problem("Entity set 'MIsson'  is null.");
             }
@@ -51,6 +47,15 @@ namespace PaiPaiGo.Controllers
             {
                 missions = missions.Where(s => s.MissionName!.Contains(searchString));
             }
+            //圖片
+            //byte[] Imgdata = null;
+            
+            //HttpContext.Session.TryGetValue(image, out Imgdata);
+            //if (Imgdata != null)
+            //{
+            //    string base64Image = Convert.ToBase64String(Imgdata);
+            //    ViewBag.mission64Image = "data:image/png;base64,"+base64Image; ;
+            //}
 
             //return View(await missions.ToListAsync());
             var paiPaiGoContext = _context.Missions.Include(m => m.CategoryNavigation);
@@ -59,12 +64,100 @@ namespace PaiPaiGo.Controllers
             var pageNumber = page ?? 1;
             return View(await missions.ToPagedListAsync(pageNumber, 8));
         }
-     
-
-        // GET: YH_CasePages/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        public async Task<IActionResult> GetMissionImage(int id)
         {
-            if (id == null || _context.Missions == null)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			var mission = await _context.Missions.FindAsync(id);
+
+            if (mission == null || mission.ImagePath == null || mission.ImagePath.Length == 0)
+            {
+                // Return default image
+                var defaultImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "Home1.png");
+                return PhysicalFile(defaultImagePath, "image/jpeg");
+            }
+
+            return File(mission.ImagePath, "image/jpeg"); // Assuming the image type is jpeg. Modify MIME type if different.
+        }
+
+        [HttpGet]
+
+        public IActionResult GetMissionsByCategory(string category)
+        {
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			var missions = _context.Missions
+                        .Where(m => m.MissionStatus == "發布中")
+                        .ToList();
+			
+			return PartialView("_MissionsPartial", missions);
+        }
+		[HttpPost]
+		public async Task<IActionResult> GetFilterData(int? selectedCategory, string selectedStatus, string selectedZipcode, int? page)
+		{
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			// 從資料庫中取得資料，預先加載相關的Category
+			var query = _context.Missions.Include(x => x.CategoryNavigation).AsQueryable();
+
+			// 過濾：根據Category
+			if (selectedCategory> 0)
+			{
+				query = query.Where(m => m.Category == selectedCategory);
+			}
+
+			// 過濾：根據Status
+			if (!string.IsNullOrEmpty(selectedStatus))
+			{
+				query = query.Where(m => m.MissionStatus == selectedStatus);
+			}
+
+			// 過濾：根據Zipcode
+			if (!string.IsNullOrEmpty(selectedZipcode))
+			{
+				query = query.Where(m => m.Postcode == selectedZipcode);
+			}
+
+			// 執行查詢和分頁
+			var filterData = await query.ToListAsync();
+			var pageNumber = page ?? 1;
+
+			// 返回PartialView結果
+			return PartialView("_MissionsPartial", await filterData.ToPagedListAsync(pageNumber, 8));
+		}
+
+
+		[HttpPost]
+		public IActionResult Map(string city, string district)
+		{
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			var orders = _context.Missions
+								 .Where(o => o.LocationCity == city && o.LocationDistrict == district)
+								 .Select(o => new { o.LocationCity, o.LocationDistrict, o.Address })
+								 .ToList();
+
+			return Json(new { orders = orders });
+		}
+
+
+		
+
+
+
+
+		// GET: YH_CasePages/Details/5
+		public async Task<IActionResult> Details(int? id)
+        {
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (id == null || _context.Missions == null)
             {
                 return NotFound();
             }
@@ -83,7 +176,10 @@ namespace PaiPaiGo.Controllers
         // GET: YH_CasePages/Create
         public IActionResult Create()
         {
-            ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
             return View();
         }
 
@@ -94,7 +190,10 @@ namespace PaiPaiGo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MissionId,Category,Tags,OrderMemberId,AcceptMemberId,MissionName,MissionAmount,Postcode,FormattedMissionAmount,LocationCity,LocationDistrict,Address,DeliveryDate,DeliveryTime,DeadlineDate,DeadlineTime,MissionDescription,DeliveryMethod,ExecutionLocation,MissionStatus,OrderTime,AcceptTime,ImagePath")] Mission mission)
         {
-            if (ModelState.IsValid)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (ModelState.IsValid)
             {
                 _context.Add(mission);
                 await _context.SaveChangesAsync();
@@ -107,7 +206,10 @@ namespace PaiPaiGo.Controllers
         // GET: YH_CasePages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Missions == null)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (id == null || _context.Missions == null)
             {
                 return NotFound();
             }
@@ -128,7 +230,10 @@ namespace PaiPaiGo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MissionId,Category,Tags,OrderMemberId,AcceptMemberId,MissionName,MissionAmount,Postcode,FormattedMissionAmount,LocationCity,LocationDistrict,Address,DeliveryDate,DeliveryTime,DeadlineDate,DeadlineTime,MissionDescription,DeliveryMethod,ExecutionLocation,MissionStatus,OrderTime,AcceptTime,ImagePath")] Mission mission)
         {
-            if (id != mission.MissionId)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (id != mission.MissionId)
             {
                 return NotFound();
             }
@@ -160,7 +265,10 @@ namespace PaiPaiGo.Controllers
         // GET: YH_CasePages/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Missions == null)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (id == null || _context.Missions == null)
             {
                 return NotFound();
             }
@@ -181,7 +289,10 @@ namespace PaiPaiGo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Missions == null)
+			//layout用
+			ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			if (_context.Missions == null)
             {
                 return Problem("Entity set 'PaiPaiGoContext.Missions'  is null.");
             }
@@ -201,3 +312,5 @@ namespace PaiPaiGo.Controllers
         }
     }
 }
+
+	

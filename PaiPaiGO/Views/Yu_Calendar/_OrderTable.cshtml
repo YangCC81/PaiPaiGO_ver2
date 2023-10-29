@@ -6,8 +6,8 @@
 		<tr>
 			<td style="width: 120px;">任務編號</td>
 			<td style="width: 100px;">接案人</td>
-			<td style="width: 300px">任務名稱</td>
-			<td style="width: 170px;">任務期限</td>
+			<td style="width: 350px">任務名稱</td>
+			<td style="width: 120px;">執行時間</td>
 			<td style="width: 120px;">任務金額</td>
 			<td style="width: 120px;">任務狀態</td>
 			<td style="width: 320px;">操作</td>
@@ -49,8 +49,7 @@
 					}
 
 				</td>
-
-				<td>@Html.DisplayFor(modelItem => item.DeliveryDate) @item.DeadlineTime</td>
+				<td>@(item.DeliveryDate.ToString("yyyy/M/d"))<br>@((item.DeliveryDate + item.DeliveryTime).ToString("tt hh:mm"))</td>
 				@*<td>$@item.MissionAmount</td>*@
 				<td>$@String.Format("{0:0}",item.MissionAmount)</td>
 
@@ -63,7 +62,7 @@
 						<b>請確認任務完成</b>
 					}
 					else {
-						if (item.MissionStatus == "發布中") {
+						if (item.MissionStatus == "發布中" || item.MissionStatus == "進行中") {
 							<b>@item.MissionStatus</b>
 						}
 						else {
@@ -74,14 +73,14 @@
 				</td>
 				<td>
 					<!--應該只有任務是有人接，且未點選過完成的狀態下，才可以點擊完成任務-->
-					@if ((@item.MissionStatus != "發布中" && @item.MissionStatus != "等待發布人完成任務") || item.AcceptMemberId == "") {
+					@if ((@item.MissionStatus != "進行中" && @item.MissionStatus != "等待發布人完成任務") || item.AcceptMemberId == "") {
 						<button disabled class=" btn btn-outline-dark btn-lg">完成任務</button>
 					}
 					else {
 						<a href="@Url.Action("Yu_Star", "Yu_Calendar", new { missionId = @item.MissionId, memberId =@item.OrderMemberId, othersId= @item.AcceptMemberId})" class=" btn btn-outline-dark btn-lg">完成任務</a>
 					}
 					<!--應該只有任務未點選過完成、也未下架的狀態下，才可以點擊取消任務-->
-					@if (@item.MissionStatus != "發布中") {
+					@if (@item.MissionStatus != "發布中" && @item.MissionStatus != "進行中") {
 						<button disabled class="btn btn-outline-dark btn-lg">取消任務</button>
 					}
 					else {
@@ -124,7 +123,7 @@
 			Swal.fire({
 				icon: 'question',
 				title: '要取消任務嗎？',
-				text: '取消任務後，您將無法直接重新上架（需要回到發布任務介面重新發布)，確定要取消嗎？？',
+				html: '取消任務後，您將無法直接重新上架<br>（需要回到發布任務介面重新發布)，確定要取消嗎？？',
 				showCancelButton: true,
 				confirmButtonText: "確定取消任務",
 				cancelButtonText: "保留任務"

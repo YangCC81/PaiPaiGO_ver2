@@ -116,7 +116,7 @@
 								<option class="dropdown-item" style="background-color:white; color:black" value="@item">@item</option>
 							}
 						}
-
+						<option value="待確認" style="background-color:white; color:black">待確認</option>
 
 					</select>
 				</div>
@@ -142,10 +142,11 @@
 					<select class="btn btn-secondary btn-lg dropdown-toggle" id="myDropdown_Accept" style="margin-right: 30px;">
 						<option disabled selected value="選擇全部" style="display:none">任務狀態</option>
 						@foreach (var item in ViewBag.MissionStatus_Droplist) {
-							if (@item != "等待接案人完成任務" && @item != "等待發布人完成任務") {
+							if (@item != "等待接案人完成任務" && @item != "等待發布人完成任務" && @item!="發布中") {
 								<option class="dropdown-item" style="background-color:white; color:black" value="@item">@item</option>
 							}
 						}
+						<option value="待確認" style="background-color:white; color:black">待確認</option>
 					</select>
 
 				</div>

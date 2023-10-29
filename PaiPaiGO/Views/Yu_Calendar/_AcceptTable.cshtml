@@ -6,8 +6,8 @@
 		<tr>
 			<td style="width: 120px;">任務編號</td>
 			<td style="width: 100px;">發布人</td>
-			<td style="width: 300px">任務名稱</td>
-			<td style="width: 170px;">任務期限</td>
+			<td style="width: 350px">任務名稱</td>
+			<td style="width: 120px;">執行時間</td>
 			<td style="width: 120px;">任務金額</td>
 			<td style="width: 120px;">任務狀態</td>
 			<td style="width: 320px;">操作</td>
@@ -39,7 +39,7 @@
 					}
 
 				</td>
-				<td>@Html.DisplayFor(modelItem => item.DeliveryDate) @item.DeadlineTime</td>
+				<td>@(item.DeliveryDate.ToString("yyyy/M/d"))<br>@((item.DeliveryDate + item.DeliveryTime).ToString("tt hh:mm"))</td>
 				@*<td>$@item.MissionAmount</td>*@
 				<td>$@String.Format("{0:0}",item.MissionAmount)</td>
 				<td>
@@ -51,7 +51,7 @@
 						<b>請確認任務完成</b>
 					}
 					else {
-						if (item.MissionStatus == "發布中") {
+						if (item.MissionStatus == "進行中") {
 							<b>@item.MissionStatus</b>
 						}
 						else {
@@ -70,7 +70,7 @@
 					@*<button type="button" class="btn btn-outline-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">任務回報</button>
 				*@
 
-					@if (@item.MissionStatus != "發布中" && @item.MissionStatus != "等待接案人完成任務") {
+					@if (@item.MissionStatus != "進行中" && @item.MissionStatus != "等待接案人完成任務") {
 						<button disabled class="btn btn-outline-dark btn-lg">完成任務</button>
 						<button disabled class="btn btn-outline-dark btn-lg">放棄任務</button>
 					}
@@ -89,7 +89,7 @@
 
 
 
-<!-- Bootstrap 模态对话框 -->
+@*<!-- Bootstrap 模态对话框 -->
 <div class="modal fade" id="customConfirmModal2" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true" data-bs-backdrop="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -107,7 +107,7 @@
 		</div>
 	</div>
 </div>
-
+*@
 <script>
 
 	$(document).ready(function () {
@@ -128,7 +128,7 @@
 			Swal.fire({
 				icon: 'question',
 				title: '要放棄任務嗎？',
-				text: '放棄任務後，您將無法直接重新上架（需要回到發布任務介面重新發布)，確定要放棄嗎？？',
+				html: '放棄任務後，您將無法直接重新上架<br>（需要回到發布任務介面重新發布)，確定要放棄嗎？？',
 				showCancelButton: true,
 				confirmButtonText: "確定放棄任務",
 				cancelButtonText: "保留任務"

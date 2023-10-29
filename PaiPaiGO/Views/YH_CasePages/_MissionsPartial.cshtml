@@ -1,0 +1,62 @@
+﻿        @model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
+        @using X.PagedList.Mvc.Core;
+        @using X.PagedList;
+        @using X.PagedList.Web.Common
+<style>
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px; /* 容器寬度 */
+    height: 300px; /* 容器高度 */
+    overflow: hidden; /* 隱藏超出的圖片部分 */
+}
+
+.centered-image {
+    max-width: 100%; /* 限制圖片最大寬度為容器寬度 */
+    max-height: 100%; /* 限制圖片最大高度為容器高度 */
+}
+</style>
+
+<div class="container-fluid gridcontainer" id="cardcontainer">
+    @foreach (var item in Model)
+    {
+        string link = "";
+
+        if (item.Category == 1)
+        {
+            link = Url.Action("GetOrder_Pai", "HS_Get_Text", new { id = item.MissionId });
+        }
+        else if (item.Category == 2)
+        {
+            link = Url.Action("GetOrder_Buy", "HS_Get_Text", new { id = item.MissionId });
+        }
+
+        <a href="@link">
+            <div class="card col-3" data-category="@item.Category" data-zipcode="@item.Postcode">
+                <div class="image-container">
+                    <img src="@Url.Action("GetMissionImage", "YH_CasePages", new { id = item.MissionId })" alt="Mission Image" class="centered-image">
+                </div>
+
+                <div class="card-body">
+                    <h3 class="card-title">任務名稱</h3>
+                    <p class="card-text bg-warning">@Html.DisplayFor(modelItem => item.MissionName)</p>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">地點：@Html.DisplayFor(modelItem => item.LocationCity)@Html.DisplayFor(modelItem => item.LocationDistrict)</li>
+                    <li class="list-group-item">結束時間：@Html.DisplayFor(modelItem => item.DeadlineDate)@Html.DisplayFor(modelItem => item.DeadlineTime)</li>
+                    <li class="list-group-item">報價：NT$@Html.DisplayFor(modelItem => item.MissionAmount)</li>
+                </ul>
+
+                <div class="card-body">
+                </div>
+            </div>
+        </a>
+    }
+</div>
+
+
+   
+

@@ -18,8 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-
+            @* 效果 *@
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* 新增的 CSS 樣式 */
@@ -40,9 +43,9 @@
         }
 
         /* 內容字體大小為20px */
-        span {
+       /*  span {
             font-size: 20px;
-        }
+        } */
     </style>
 </head>
 <body>
@@ -58,12 +61,24 @@
                     <div class="col-md-1"></div>
                     <!-- 左側內容 -->
                     <div class="col-md-4">
+                        @{
+                            DateTime QueueDate;
+                            DateTime Deadline;
+                            if (DateTime.TryParse(TempData["QueueDate"]?.ToString(), out QueueDate)) {
+                                string PDD = QueueDate.ToString("yyyy/M/d tt hh:mm");
+                                ViewBag.PDD = PDD;
+                            };
+                            if (DateTime.TryParse(TempData["Deadline"]?.ToString(), out Deadline)) {
+                                string PD = Deadline.ToString("yyyy/M/d tt hh:mm");
+                                ViewBag.PD = PD;
+                            }
+                        }
                         <p><strong>任務種類:</strong><span>排隊</span></p>
                         <p><strong>標籤：</strong><span>@ViewBag.QueueLabel</span></p>
                         <p><strong>名稱：</strong><span>@ViewBag.PaiName</span></p>
                         <p><strong>執行地區：</strong><span>@ViewBag.City @ViewBag.Location @ViewBag.Address</span></p>
-                        <p><strong>代排隊日期：</strong><span><br />@TempData["QueueDate"]</span></p>
-                        <p><strong>截止日期：</strong><span><br />@TempData["Deadline"]</span></p>
+                        <p><strong>代排隊日期：</strong><span><br />@ViewBag.PDD</span></p>
+                        <p><strong>截止日期：</strong><span><br />@ViewBag.PD</span></p>
                         <!-- 新增的圖片附件部分 -->
                         <p>
                             <strong>圖片附件：</strong><span id="imageAttachment">
@@ -88,21 +103,35 @@
                             <div class="col-md-7"></div>
                             <div class="col-md-5">
                                 <!-- 費用明細 -->
-                                <div id="costDetails" style="background-color: gainsboro;width: 200px;text-align: left;">
-                                    <p><strong>任務金額：</strong><span>$@ViewBag.Amount</span></p>
-                                   @*  <p><strong>接單收費：</strong><span>$35</span></p>
-                                    <p><strong>平台抽成：</strong><span>$15</span></p>
-                                    <p><strong>總金額：</strong><span>$@ViewBag.TotalAmount</span></p> *@
+                                <div class="card" style="background-color: #F0F0F0; font-size: 25px;" id="costDetails">
+                                    <div class="card-header text-center" style="background-color: #D3D3D3; color: black;">
+                                        費用明細
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: #E5E5E5; color: black;">
+                                            <div class="text-left">任務金額</div>
+                                            <span class="badge rounded-pill" style="background-color: #A8A8A8;">$@ViewBag.Amount</span>
+                                        </li>
+                                        <!-- 這裡可以添加更多項目 -->
+                                    </ul>
                                 </div>
+                                <br />
                             </div>
                         </div>
                         <div class="col-md-1"></div>
 
                         <!-- 修改和付款按鈕 -->
                         <div class="d-flex justify-content-end">
-                            <button type="button" id="changbtn" class="btn btn-primary" style="background-color: red; margin-right: 10px;">修改</button>
-                            <button type="button" id="postbtn" class="btn btn-success" style="background-color: #4B3DE7;">發布</button>
+                            <!-- 修改按鈕 -->
+                            <button type="button" id="changbtn" class="btn btn-danger me-2">
+                                修改
+                            </button>
+                            <!-- 發布按鈕 -->
+                            <button type="button" id="postbtn" class="btn btn-primary">
+                                發布
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -187,20 +216,17 @@
             </div>
             @{
                 DateTime DeadlineDate;
-                if (DateTime.TryParse(TempData["Deadline"]?.ToString(), out DeadlineDate))
-                {
+                if (DateTime.TryParse(TempData["Deadline"]?.ToString(), out DeadlineDate)) {
                     var apple = DeadlineDate.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ', 'T');
                     ViewBag.Apple = apple;
                 }
                 DateTime parsedDate;
-                if (DateTime.TryParse(TempData["QueueDate"]?.ToString(), out parsedDate))
-                {
+                if (DateTime.TryParse(TempData["QueueDate"]?.ToString(), out parsedDate)) {
                     var Bee = parsedDate.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ', 'T');
                     ViewBag.Bee = Bee;
                 }
                 DateTime nowdatetime;
-                if (DateTime.TryParse(DateTime.Now.ToString(), out nowdatetime))
-                {
+                if (DateTime.TryParse(DateTime.Now.ToString(), out nowdatetime)) {
                     var car = nowdatetime.ToString("yyyy-MM-dd HH:mm").Replace(' ', 'T');
                     ViewBag.car = car;
                 }
@@ -274,17 +300,22 @@
             window.location.href = "/HS_Pending/PendingOrder_Pai"; 
         });
         document.getElementById("postbtn").addEventListener("click", function (event) {
-            // 將按鈕的 type 設為 button 以阻止表單提交
-            this.type = "button";
+            event.preventDefault(); // 防止表單自動提交
 
-            // 清除 Local Storage 中的資料
-            localStorage.removeItem("myFormData");
+            Swal.fire({
+                title: '完成',
+                text: '任務已成功發布!',
+                icon: 'success',
+                showCancelButton: false // 只顯示確認按鈕
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 清除 Local Storage 中的資料
+                    localStorage.removeItem("myFormData");
 
-            // 將按鈕的 type 改回 submit
-            this.type = "submit";
-
-            // 程式碼方式觸發 click 事件以提交表單
-            this.click();
+                    // 提交表單
+                    document.querySelector("form[method='post']").submit();
+                }
+            });
         });
     </script>
 </body>

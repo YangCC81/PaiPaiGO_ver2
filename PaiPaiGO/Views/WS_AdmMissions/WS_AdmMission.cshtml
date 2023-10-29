@@ -49,7 +49,7 @@
 				</li>
 				<li class="nav-item">
 					<a asp-controller="WS_Opinions" asp-action="AdmOpinion" class="nav-link  py-3 border-bottom">
-						<i class="fa-solid fa-star" style="font-size: 30px;" title="評分 | 檢舉 管理"
+						<i class="fa-solid fa-star" style="font-size: 30px;" title="評論管理"
 						   data-bs-toggle="tooltip" data-bs-placement="right"></i>
 					</a>
 				</li>
@@ -66,7 +66,7 @@
 		<div class="col-10">
 			<!-- 上方選單-->
 
-			<div class="d-flex mt-1 ">
+			<div class="d-flex mt-1 mr-" style="justify-content: space-between">
 
 				@*選執行地*@
 				<lable class="fs-4 align-middle">執行地點：</lable>
@@ -85,23 +85,27 @@
 					{
 						var MissionCategoryViewModel = ViewData["MissionCatagoryViewModel"] as MissionCategoyViewModel;
 						<select id="selectMissionCategory" class="form-select menu" asp-items="MissionCategoryViewModel?.MissionCategory" v-model="obj.selectedStatus">
+							<option value="" style="display:none">請選擇</option>
 						</select>
 					}
 				</div>
 
-				<lable class="fs-4 align-middle">狀態：</lable>
-				<div style="width: 10%;">
+				<lable class="fs-4 align-middle" style="padding-left: 90px;">狀態：</lable>
+				<div style="width: 10%; " class="fs-5">
 					@*選取任務狀態*@
+					
 					@if (ViewData["MissionStatusViewModel"] != null)
 					{
 						var MissionStatusViewModel = ViewData["MissionStatusViewModel"] as MissionStatusViewModel;
+						
 						<select id="selectMissionStatus" class="form-select menu" asp-items="MissionStatusViewModel?.MissionStatus">
+							<option value="" style="display:none">請選擇</option>
 						</select>
 					}
 				</div>
 
 				<div class="col-3 ">
-					<form asp-controller="WS_AdmMissions" asp-action="WS_AdmMission" class="d-flex">
+					<form asp-controller="WS_AdmMissions" asp-action="WS_AdmMission" class="d-flex " style="padding-left: 100px;">
 						<input class="form-control " type="text" name="SearchString" placeholder="請輸入關鍵字">
 						<input type="submit" value="搜尋" />
 					</form>
@@ -182,7 +186,7 @@
 		$(".mission-checkbox").change(function () {
 			var missionId = $(this).data("mission-id");
 			var initialStatus = $(this).data("initial-status");
-			var newStatus = $(this).prop("checked") ? "發布中" : "已完成";
+			var newStatus = $(this).prop("checked") ? "發布中" : "已下架";
 
 			// 紀錄到changesQueue(本地)的list
 			changesQueue.push({ missionId: missionId, newStatus: newStatus, initialStatus: initialStatus });

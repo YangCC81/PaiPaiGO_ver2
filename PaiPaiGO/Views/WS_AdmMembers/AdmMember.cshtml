@@ -1,6 +1,8 @@
-﻿@using PaiPaiGo.Controllers
+﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Member>
 
-@model IEnumerable<PaiPaiGO.Models.Member>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common;
 
 
 <head>
@@ -8,6 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理員 會員</title>
 
+    <!-- js -->
+    <script src="script.js"></script>
     <!-- JQ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- FontAwesome -->
@@ -53,16 +57,10 @@
                     </li>
                     <li class="nav-item">
                         <a asp-controller="WS_Opinions" asp-action="AdmOpinion" class="nav-link  py-3 border-bottom">
-                            <i class="fa-solid fa-star" style="font-size: 30px;" title="評分 | 檢舉 管理"
+                            <i class="fa-solid fa-star" style="font-size: 30px;" title="評論管理"
                                data-bs-toggle="tooltip" data-bs-placement="right"></i>
                         </a>
                     </li>
-                    @*<li>
-                        <a href="#" class="nav-link py-3 border-bottom">
-                            <i class="fa-solid fa-gear" style="font-size: 30px;" title="設定" data-bs-toggle="tooltip"
-                               data-bs-placement="right"></i>
-                        </a>
-                    </li>*@
                 </ul>
             </div>
 
@@ -70,29 +68,31 @@
             <div class="container col-10">
                 <!-- 上方選單-->
                 <div class="mt-3 d-flex">
-                   
-                <select id="memberStatusFilter" class="form-control">
-                    <option value="">所有狀態</option>
-                    @foreach (var status in (SelectList)ViewBag.MemberStatusList)
-                    {
-                        <option value="@status.Value">@status.Text</option>
-                    }
-                </select>
-                   
-                <input type="text" class="form-control search-input" placeholder="關鍵字...">
-
+                    <lable class="fs-4">狀態：</lable>
+                    <select id="memberStatusFilter" class="form-control" style="width:10%">
+                        <option value="" style="display:none">所有狀態</option>
+                        @foreach (var status in (SelectList)ViewBag.MemberStatusList)
+                        {
+                            <option value="@status.Value">@status.Text</option>
+                        }
+                    </select>
+                    <form  class="d-flex " style="padding-left: 1025px;">
+                    <input type="text" class="form-control search-input fs-5" placeholder="請輸入關鍵字" style="width:250px">
+                    <input type="submit" value="搜尋" class="fs-5"/>
+                    </form>
                 </div>
-                <button type="button" class="btn btn-danger btn btn-primary" id="saveChangeButton">保存變更</button>
+                <button type="button" class="btn btn-danger btn btn-primary fs-5" id="saveChangesButton" style="float: right; margin-bottom: 30px;	margin-top: 20px">
+                    保存變更
+                </button>
                 <!--這裡放Partial-Member的Tbale -->
                 <div id="memberListPartial">
                     @Html.Partial("_MemberListPartial", Model)
                 </div>
 
-                <!-- 彈跳視窗 -->
+                <!-- 警告彈跳視窗 -->
                 <div class="modal fade" id="myModal">
                     <div class="modal-dialog">
                         <div class="modal-content">
-
                             <!-- Modal Header -->
                             <div class="modal-header">
                                 <h4 class="modal-title">警告紀錄</h4>
@@ -100,41 +100,36 @@
                             </div>
 
                             <!-- Modal body -->
-                            <div class="modal-body">
+                            <div class="modal-body fs-4" >
                                 @*@Html.Partial("_OpinionPartial")*@ <!-- 使用Partial View來呈現Opinion.cs的資料 -->
                                 <table>
                                     <tr>
                                         <th>任務編號</th>
-                                        <th>任務名稱</th>
-                                        <th>警告日期</th>
-                                        <th>警告內容</th>
+                                        <th style="width:40%">任務名稱</th>
+                                        <th style="width:40%">警告內容</th>
                                     </tr>
-                                @foreach (var item in Model){
                                     <tr>
-                                        <th>20230101001</th>
-                                        <td>OOXX名稱</td>
-                                        <td>20220101</td>
-                                        <td>選單內容</td>
-                                    </tr>
-                                }
+                                        <td>2023110215</td>
+                                            <td>小潘蛋糕代購</td>
+                                        <td>未準時送達</td>
+                                        </tr>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 換頁按鈕 -->
-                <div class="mt-3 d-flex justify-content-center">
-                    <button class="btn btn-primary">上一頁</button>
-                    <span>目前頁</span>
-                    <button class="btn btn-primary">下一頁</button>
+                <!--分頁跳轉-->
+                <div style="justify-content: center ; display:flex;">
+                    @Html.PagedListPager(Model, page => Url.Action("AdmMember",
+                    new { page}), new PagedListRenderOptions {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }})
                 </div>
             </div>
 
             <!-- 最右邊 -->
-            <div class="col-1">
-                <!-- 这里保留空位，不放任何内容 -->
-            </div>
+            <div class="col-1"><!-- 這裡保留空位，不放任何内容 --></div>
         </div>
 
     </div>
@@ -150,6 +145,7 @@
         })()
 
     </script>
+    
 
     <!--改停權狀況-->
     <script>
@@ -166,7 +162,7 @@
                 statusChanges.push({ memberId: memberId, newStatus: newStatus, initialStatus: initialStatus });
             });
 
-            $("#saveChangeButton").click(function () {
+            $("#saveChangesButton").click(function () {
                 // 發送更改到Server
                 $.ajax({
                     type: "POST",
@@ -207,49 +203,5 @@
             });
         });
     </script>
-
-  
-
-    @*以下是下拉選單---失敗
-    *@
-
-    @*<script>
-        $(document).ready(function () {
-            $("#memberStatusFilter").change(function () {
-                var selectedStatus = $(this).val();
-
-                // 隱藏所有行
-                $("table tbody tr").hide();
-
-                if (selectedStatus === "") {
-                    // 如果選擇了"所有狀態"，則顯示所有行
-                    $("table tbody tr").show();
-                } else {
-                    // 顯示與所選狀態匹配的行
-                    $("table tbody tr[data-status='" + selectedStatus + "']").show();
-                }
-            });
-        });
-    </script>*@
-
-    @* <script>
-    $(document).ready(function () {
-    $("#statusFilter").change(function () {
-    var selectedStatus = $(this).val();
-
-    // 隱藏所有行
-    $("table tbody tr").hide();
-
-    if (selectedStatus === "") {
-    // 如果選擇了"所有狀態"，則顯示所有行
-    $("table tbody tr").show();
-    } else {
-    // 顯示與所選狀態匹配的行
-    $("table tbody tr[data-status='" + selectedStatus + "']").show();
-    }
-    });
-    });
-    </script>*@
-
 
 </body>

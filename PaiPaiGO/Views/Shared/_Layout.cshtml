@@ -13,6 +13,8 @@
 	<script src="~/js/time.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+	<!-- FontAwesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 	<style>
 		.collapse-horizontal {
 			width: 0;
@@ -29,144 +31,127 @@
 	<!-- 導覽列 -->
 	<!-- navbar-expand-md 為隱藏成小按鈕 -->
 	<nav class="navbar navbar-expand-sm  navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 sticky-top">
-		@*<div class="container-fluid>
-		<div class="col-1 ">
+		<div class="container-fluid">
 
-		</div>
+			<!-- 未讀訊息設定 -->
+			<div id="unread-messages" class="unread-messages-badge"></div>
+			<!-- 導覽列小圖 -->
+			<a class="navbar-brand" href="@Url.Action("Index", "YU_Home")" style="margin-left:40px"><img src="~/img/Logo.png" style="width:13em" alt=""></a>
 
-		<div class="col-10 ">
-		<!-- 未讀訊息設定 -->
-		@*<div id="unread-messages" class="unread-messages-badge"></div>*@
-		<!-- 導覽列小圖 -->
-		<a class="navbar-brand" href="#" style="margin-left:40px"><img src="~/img/Logo.png" style="width:13em" alt=""></a>
-		@*@if (ViewBag.MemberData != null)
-		{
-			<p style="color:dodgerblue; flex:auto;font-size:26px;">歡迎，@ViewBag.MemberData.MemberName ☆</p>
-		}*@
-		<!-- 響應式導覽列整列變成小圖列 -->
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-				aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-			<ul class="navbar-nav">
-				@*管理員登入後才出現的導覽列*@
-				@if (ViewBag.YU_ID == "003")
-				{
-					<li><a class="nav-link" href="@Url.Action("AdmMember", "WS_AdmMembers")">管理員</a></li>
-				}
-				<li class="nav-item">
-					<a id="action" class="nav-link active" aria-current="page" href="@Url.Action("YH_CasePage", "YH_CasePages")">任務瀏覽</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" asp-controller="HS_Pending" asp-action="PendingOrder_Pai">任務刊登</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="@Url.Action("Index", "YU_Home")#section4">關於我們</a>
-				</li>
-				@*通知的小圖示*@
-			@* 	@if (ViewBag.YU_ID != null)
-				{
+			<!-- 響應式導覽列整列變成小圖列 -->
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+					aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					@*管理員登入後才出現的導覽列*@
+					@if (ViewBag.YU_ID == "000")
+					{
+						<li><a class="nav-link" href="@Url.Action("AdmMember", "WS_AdmMembers")">後臺管理</a></li>
+					}
+					<li class="nav-item">
+						<a id="action" class="nav-link active" aria-current="page" href="@Url.Action("YH_CasePage", "YH_CasePages")">任務瀏覽</a>
+					</li>
+					<li class="nav-item">
+						@if (ViewBag.YU_ID != null)
+						{
 
-					<div style="position: relative;">
-						<img src="~/img/bell.gif" alt="Toggle width collapse" id="toggleCollapseWidth" style="cursor: pointer;width: 55px; height: 55px;">
-					</div>
-					<div style="min-height: 80px;">
-						<div class="collapse collapse-horizontal" id="collapseWidthExample">
-							<div class="card card-body" style="width: 270px;">
-								<h3>訊息通知</h3>
-								<p style="font-size:20px">任務名稱:</p>
-								<br />
-								<p style="font-size:20px">任務狀態:</p>
-							</div>
-						</div>
-					</div>
+							<a class="nav-link" asp-controller="HS_Pending" asp-action="PendingOrder_Pai">任務刊登</a>
+						}
+						else
+						{
+							<a class="nav-link" href="@Url.Action("Login", "CC_Members")">任務刊登</a>
+						}
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="@Url.Action("Index", "YU_Home")#section4">關於我們</a>
+					</li>
+					
 
-				}
- *@
 
-				@*下拉選單*@
-				<div class="dropdown">
-				<li class="nav-item dropdown">
-
-					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-					   aria-expanded="false" style="margin-right:40px">
-						會員專區
-					</a>
-
-					<ul class="dropdown-menu">
+					@*下拉選單*@
+					<div class="dropdown">
+					<li class="nav-item dropdown">
 							@if (ViewBag.YU_ID != null)
 							{
+							<p style="color:dodgerblue; flex:auto; font-size:26px; margin-top: -6px; margin-bottom: -2rem; padding-left: 22px;">歡迎~@ViewBag.YU_Name</p>
+							}
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+						   aria-expanded="false" style="margin-right:40px;">
+							會員專區
+						</a>
 
-							<li><a class="dropdown-item" href="@Url.Action("Yu_Calendar", "Yu_Calendar")">訂單追蹤</a></li>
-							<li><a class="dropdown-item" href="@Url.Action("MemberProfile", "CC_Members")">會員資料</a></li>
-							<li><a class="dropdown-item" href="@Url.Action("Logout", "CC_Members")">登出</a></li>
-							}
-							else
-							{
-							<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">訂單追蹤</a></li>
-							<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">會員資料</a></li>
-							<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">登入</a></li>
-							}
-						
+						<ul class="dropdown-menu">
+								@if (ViewBag.YU_ID != null)
+								{
+								<li><a class="dropdown-item" href="@Url.Action("Yu_Calendar", "Yu_Calendar")">任務追蹤</a></li>
+								<li><a class="dropdown-item" href="@Url.Action("MemberProfile", "CC_Members")">會員資料</a></li>
+								<li><a class="dropdown-item" href="@Url.Action("Logout", "CC_Members")">登出</a></li>
+								}
+								else
+								{
+								<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">任務追蹤</a></li>
+								<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">會員資料</a></li>
+								<li><a class="dropdown-item" href="@Url.Action("Login", "CC_Members")">登入</a></li>
+								}
+
 						</ul>
-				</li>
+					</li>
+
+			</div>
 
 		</div>
-				@*</div>*@
-				@*</div>
-		<div class="col-1 ">
-		</div>*@
 	</nav>
 
-	@*通知小圖示*@
-	<script>
-		document.getElementById('toggleCollapseWidth').addEventListener('click', function () {
-			var collapseWidthExample = document.getElementById('collapseWidthExample');
-			collapseWidthExample.classList.toggle('show');
-			var isCollapsed = !collapseWidthExample.classList.contains('show');
-			collapseWidthExample.style.width = isCollapsed ? '0' : '300px';
-		});
-	</script>
+
 
 
 
 
 
 	<!-- 點一下按鈕產生時間 -->
-
-	
-
-	<div class="timee" id="countdown-icon" onclick="getYourData()">
-		<img src="~/img/time3.png" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
+	<div class="timee  btn-primary" onclick="getYourData()">
+		<img src="~/img/time3.png" id="liveToastBtn" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
 	</div>
-	<div class="chat-popups" id="myForms">
-		<form action="/action_page.php" class="form-container">
-
-			<h2>時間倒數</h2>
-			<div id="remainingTimeContainer" style="font-size:20px;"></div>
-			<button type="button" class="btn1 cancels" onclick="closeForms()">Close</button>
-		</form>
+	<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+		<div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<i class="fa-solid fa-triangle-exclamation fs-2" style="color:  #ffc800;"></i>
+				<b class="rounded me-auto fs-4">任務截止提醒</b>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div id="remainingTimeContainer" class="toast-body" style="font-size:25px;">
+				@*<p>任務名稱:</br> @Model.MissionName</p>
+				<p>任務剩餘時間:</br> @Model.RemainingTime</p>*@
+			</div>
+			<div style="font-size:20px;">&ensp;&ensp;當下時間 : 2023/12/1 下午 10:00</div>
+		</div>
 	</div>
 
-	@* 時間的彈跳視窗，點擊會出現，點Close會關閉*@
+
 	<script>
-		function openForms() {
-			document.getElementById("myForms").style.display = "block";
-		}
+		var liveToastBtn = document.getElementById('liveToastBtn');
+		var liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
 
-		function closeForms() {
-			document.getElementById("myForms").style.display = "none";
-		}
+		liveToastBtn.addEventListener('click', function () {
+			liveToast.show();
+		});
+
+		@* 時間的彈跳視窗，點擊會出現，點Close會關閉*@
+
+			function openForms() {
+				document.getElementById("myForms").style.display = "block";
+			}
 
 		@*後端帶入任務倒數*@
 
 			function updateRemainingTime(data) {
 				$('#remainingTimeContainer').html(data);
-
-				// 如果需要，您可以在这里添加其他根据 MissionStatus 的值执行的操作
+				
+				// 如果需要，您可以在這裡添加其他根據 MissionStatus 的值執行的操作
 			}
-
+		
 		function fetchAndUpdateRemainingTime() {
 			$.ajax({
 				url: '@Url.Action("RemainingTimePartial", "Home")',
@@ -175,6 +160,7 @@
 					if (data != null) {
 						updateRemainingTime(data);
 					} else {
+						updateRemainingTime(data);
 						alert('No data received.');
 					}
 				},
@@ -186,93 +172,129 @@
 
 		function getYourData() {
 			fetchAndUpdateRemainingTime();
-
 			setInterval(fetchAndUpdateRemainingTime, 1000);
 		}
 	</script>
 
+
+
 	<!-- 客服 -->
-	<div class="open-button">
-		<img src="~/img/chat2.png" style="width: 50px; height: 50px;" onclick="openForm()" alt="">
-	</div>
-	<div class="chat-popup" id="myForm">
-		<!-- 進入聊天畫面的標題 -->
-		<form action="/action_page.php" class="form-container">
-			<h1>客服服務</h1>
-			<!-- 對話框標題 -->
-			<label for="msg"><b>Message</b></label>
-			@*下拉選單，讓客戶選擇*@
-			<select id="optionsDropdown" onchange="updateTextarea()">
-				<option value="無">無</option>
-				<option value="任務接單者態度不佳">任務接單者態度不佳</option>
-				<option value="任務掛單者內容不完整">任務內容不完整</option>
-				<option value="排隊排錯時間">排隊排錯時間</option>
-				<option value="時間截止後未看到接單者">時間截止後未看到接單者</option>
+	@if (ViewBag.YU_ID != null)
+	{
 
-			</select>
-			<!-- 可以直接輸入訊息，互動程式寫入 -->
-			<textarea id="msgInput" placeholder="請問有什麼可以為您服務? 請選擇您想反應的事件。" name="msg" required></textarea>
+		<!-- 客服對話框 -->
+		<div class="open-button">
+			<img src="~/img/chat2.png" style="width: 50px; height: 50px;" onclick="fetchMemberMissions()" alt="">
+		</div>
+		<div class="chat-popup" id="myForm">
+			<!-- 進入聊天畫面的標題 -->
+			<form action="/action_page.php" class="form-container">
+				<h1>客服服務</h1>
+				<!-- 對話框標題 -->
+				<lable id="msg" style="font-size:25px;" onclick="msg()">Message</lable>
+				<br />
+				@*下拉選單資料從後端來，確認登入的會員接單MissionId中還在進行中的MissionId*@
+				<select id="missionIdDropdown" style="font-size:20px;" onchange="updateFeedbackMessage()">
+				</select>
+				@*下拉選單，讓客戶選擇*@
+				<select id="optionsDropdown" style="font-size:20px;" onchange="updateTextarea()">
+					<option value="回報類別">回報類別</option>
+					<option value="任務執行地不明確">任務執行地不明確</option>
+					<option value="任務內容不完整">任務內容不完整</option>
+					<option value="排隊任務排錯時間">排隊任務排錯時間</option>
+					<option value="時間截止後未看到接單者">時間截止後未看到接單者</option>
+				</select>
 
-			<!-- 處理選擇的按鈕 -->
-			<button type="button" class="btn1" onclick="sendSelectedOption()">Send</button>
-
-			<button type="button" class="btn1 cancel" onclick="closeForm()">Close</button>
-
-		</form>
-	</div>
-
-
-	@* //客服的JS*@
+				<!-- 可以直接輸入訊息，互動程式寫入 -->
+				<textarea id="msgInput" placeholder="請問有什麼可以為您服務? 請選擇您想回饋的訊息。" name="msg" required ></textarea>
+				<!-- 處理選擇的按鈕 -->
+				<button type="button" class="btn1" onclick="sendSelectedOption()">Send</button>
+				<button type="button" class="btn1 cancel" onclick="closeForm()">Close</button>
+			</form>
+		</div>
+	}
 	<script>
-
-		//前端與後端之間實現即時通訊，尚未使用
-		const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-		// 這段在寫連線的部分，待研究
-		connection.on("ReceiveResponse", function (response) {
-			const li = document.createElement("li");
-			li.textContent = response;
-			document.getElementById("messages").appendChild(li);
-
-			// 更新回應的區域
-			document.getElementById("responseArea").innerHTML = response;
-			// 將訊息顯示在 textarea 中
-			document.getElementById("msgInput").value = response;
-		});
-
-		//connection.start().catch(function (err) {
-		//    return console.error(err.toString());
-		//});
-
-		function updateTextarea() {
-			const dropdown = document.getElementById("optionsDropdown");
-			const selectedOption = dropdown.options[dropdown.selectedIndex].text;
-
-			// 更新 textarea
-			document.getElementById("msgInput").value = `我想反應：${selectedOption}`;
-		}
-		function sendSelectedOption() {
-			// 直接在前端顯示已收到的消息
-			const responseMessage = "您好，已收到訊息，謝謝您的選擇，將盡速為您解決。";
-			document.getElementById("msgInput").value = "您好，已收到訊息，謝謝您的選擇，將盡速為您解決。";
-
-
-			const message = `我想反應：${selectedOption}`;
-			connection.invoke("SendOption", message).catch(function (err) {
-				return console.error(err.toString());
-			});
-			function displayResponse(message) {
-				const responseArea = document.getElementById("responseArea");
-				responseArea.innerHTML = message;
-			}
+		//測試紐
+		function msg() {
+			document.getElementById('msgInput').value = "我想回饋：任務執行地不明確。與商家地址不同，無法執行。";
 		}
 	</script>
+	@*客服連接資料庫的JS*@
+	<script>
+		function fetchMemberMissions() {
+			openForm();
+			$.ajax({
+				url: '/YU_Message/GetMemberMissions', // 請將URL替換為實際的路由
+				method: 'GET',
+				success: function (data) {
+					const missionIdDropdown = document.getElementById("missionIdDropdown");
+					// 清空下拉選單的選項
+					missionIdDropdown.innerHTML = "";
+					// 先添加 "請選擇" 選項
+					var pleaseSelectOption = document.createElement("option");
+					pleaseSelectOption.value = "";
+					pleaseSelectOption.text = "任務編號";
+					missionIdDropdown.appendChild(pleaseSelectOption);
+					// 填充下拉選單選項
+					for (const missionId of data) {
+						const option = document.createElement("option");
+						option.value = missionId;
+						option.text = missionId;
+						missionIdDropdown.appendChild(option);
+					}
+					
+				},
+				error: function () {
+					alert("無法獲取MissionID列表");
+				}
+			});
+		}
+		//點擊內容後呈現
+		function updateTextarea() {
+			const dropdown = document.getElementById("optionsDropdown");
+			const selectedOption = dropdown.options[dropdown.selectedIndex].value;
+			document.getElementById("msgInput").value = `我想回饋：${selectedOption}。`;
+		}
+		
+		function sendSelectedOption() {
+			// 直接在前端顯示已收到的消息
+			//const responseMessage = "您好，已收到訊息，謝謝您的回饋。";
+			const message = document.getElementById("msgInput").value;
+			document.getElementById("msgInput").value = "您好，已收到訊息，謝謝您的回饋，將盡速為您處理。";
 
+			//document.location.href = '/YU_Message/Index';
 
+			const selectedOption = document.getElementById("optionsDropdown").value;
+			const reply = document.getElementById("msgInput").value;
+			var e = document.getElementById("missionIdDropdown");
+			var missionId = parseInt(e.options[e.selectedIndex].value);
+			const currentTime = new Date(); // 取得當下時間
+			console.log('getdata:', selectedOption, message, missionId, currentTime);
+			console.log('type:', typeof missionId);
+		
+
+			$.ajax({
+				url: '/YU_Message/SubmitChat',
+				method: "POST",
+				data: { yu: selectedOption, mi: message, reply, missionId: missionId, currentTime: currentTime },
+				success: function (data) {
+					if (data != "") {
+						console.log("OK", data);
+						form(message);
+					}
+				},
+				error: function(data){
+					alert("錯誤");
+				}
+			});
+		}
+
+	</script>
+					
 
 
 	<div>
 		@RenderBody()
-
 	</div>
 
 
@@ -305,7 +327,7 @@
 						<br>
 						<a href="#" class="card-text">任務刊登</a>
 						<br>
-						<a href="#" class="card-text">任務紀錄</a>
+						<a href="#" class="card-text">任務追蹤</a>
 					</div>
 				</div>
 				<div class="col">

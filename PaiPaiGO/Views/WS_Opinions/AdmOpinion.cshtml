@@ -1,4 +1,8 @@
-﻿@model IEnumerable<PaiPaiGO.Models.Opinion>
+﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Opinion>
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common;
 
 <head>
 	<meta charset="UTF-8">
@@ -24,16 +28,63 @@
 			/* 選單間距 */
 		}
 
-		/* 關鍵字寬度 */
-		.search-input {
-			width: 10em;
-		}
 		/*以下設定星星*/
 		.rating {
 			font-size: 24px; /* 根据需要调整星星的大小 */
 		}
 		.rating i.text-warning {
-			color: #f0ad4e; /* 选择的星星颜色，这里使用了黄色 */
+				color: #f0ad4e; /* 选择的星星颜色，这里使用了黄色 */
+		}
+
+		/*以下表格對齊*/
+		th, td {
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		#flexRadioDefault2:checked  {
+			color: white; /* 選中時文字顏色為白色 */
+			background-color: #DC3545; /* 選中時背景顏色為紅色 */
+			border-color: #f07883;
+		}
+
+		/* 自定義選項外框的樣式 */
+		.option {
+			display: inline-block; /* 設置為內聯塊元素，根據內容大小自動調整大小 */
+			border: 2px solid #ccc; /* 邊框樣式 */
+			padding: 10px; /* 內邊距 */
+			margin: 5px; /* 外邊距 */
+			cursor: pointer; /* 滑鼠游標 */
+			transition: background-color 0.3s; /* 滑鼠移入時的過渡效果 */
+			border-radius: 10px; /* 圓弧邊緣，調整數值以控制圓角的大小 */
+		}
+
+			.option:hover {
+				background-color: #f0f0f0; /* 滑鼠移入時的背景顏色 */
+			}
+
+		.dotted {
+			border-top: 3px dotted #000; /* 虛線，3px 粗 */
+		}
+
+		.styled-button {
+			background-color:  #BEBEBE; /* 浅灰色背景颜色 */
+			color: #000; /* 黑色文字颜色 */
+			border: none; /* 去掉边框 */
+			border-radius: 5px; /* 圆角边框 */
+			padding: 5px 10px; /* 按钮内边距 */
+			cursor: pointer; /* 鼠标样式 */
+			transition: background-color 0.3s, color 0.3s; /* 鼠标悬停时的过渡效果 */
+		}
+
+			.styled-button:hover {
+				background-color: #333; /* 深灰色背景颜色 */
+				color: #fff; /* 白色文字颜色 */
+			}
+
+			/*通知內文換行*/
+		.multiline-content {
+			white-space: pre-wrap;
 		}
 
 	</style>
@@ -60,11 +111,11 @@
 					</li>
 					<li class="nav-item">
 						<a asp-controller="WS_Opinions" asp-action="AdmOpinion" class="nav-link  py-3 border-bottom">
-							<i class="fa-solid fa-star" style="font-size: 30px;" title="評分 | 檢舉 管理"
+							<i class="fa-solid fa-star" style="font-size: 30px;" title="評論管理"
 							   data-bs-toggle="tooltip" data-bs-placement="right"></i>
 						</a>
 					</li>
-					
+
 				</ul>
 			</div>
 
@@ -72,36 +123,43 @@
 			<div class="container col-10">
 				<!-- 上方選單-->
 				<div class="mt-3 d-flex">
-					<select class="form-select menu">
-						<option>類型</option>
+					<lable class="fs-4">類型：</lable>
+					<select class="form-select menu" style="width:10%">
+						<option style="display:none">請選擇</option>
 						<option>意見</option>
 						<option>檢舉</option>
 					</select>
-					<select class="form-select menu">
-						<option>評分|回報 狀態</option>
+					<lable class="fs-4" style="padding-left: 90px;">處理狀態：</lable>
+					<select class="form-select menu" style="width:9%;">
+						<option style="display:none">請選擇</option>
 						<option>已處理</option>
 						<option>未處理</option>
 					</select>
 
-					<input type="text" class="form-control search-input" placeholder="關鍵字...">
-
+					<form class="d-flex " style="padding-left: 600px;">
+						<input type="text" class="form-control search-input fs-5" placeholder="請輸入關鍵字" style="width:250px">
+						<input type="submit" value="搜尋" class="fs-5" />
+					</form>
 				</div>
-				<button type="button" class="btn btn-danger btn btn-primary" id="saveChangeButton">保存變更</button>
+				<!--保存按鈕-->
+				<button type="button" class="btn btn-danger btn btn-primary fs-5" id="saveChangesButton" style="float: right;margin-top: 20px;	margin-right: 7px">
+					保存變更
+				</button>
 
-				<table class="table table-condensed table-striped">
+				<table class="table table-condensed table-striped fs-3">
 					<!-- 標題 -->
 					<thead>
 						<tr>
 							<th></th>
 							<th></th>
-							<th>填寫人</th>
-							<th>任務編號</th>
-							<th>填寫日期</th>
-							<th>被評分|檢舉對象</th>
-							<th>評分星等</th>
-							<th>下架任務</th>
-							<th>警告</th>
-							<th>意見處理狀態</th>
+							<th style="width:10%">填寫會員</th>
+							<th style="width:10%">任務編號</th>
+							<th style="width:15%">填寫日期</th>
+							<th style="vertical-align:middle; width:12%">受評論會員</th>
+							<th style="width:12%">評分星等</th>
+							<th style="width:8%">警告</th>
+							<th style="width:10%">聯繫</th>
+							<th style="width:10%">處理狀態</th>
 
 						</tr>
 					</thead>
@@ -114,14 +172,16 @@
 									<!--詳細內容的eye-->
 									<button class="btn btn-default btn-xs" data-bs-toggle="collapse"
 											data-bs-target=".test@(item.MissionId)">
-										<i class="fa-solid fa-eye"></i>
+										<i class="fa-solid fa-eye fs-5"></i>
 									</button>
 								</td>
 								<td>@Html.DisplayFor(modelItem => item.Type)</td>
 								<td>@Html.DisplayFor(modelItem => item.ReportMemberId)</td>
-								<td><a href="@Url.Action("Text_排", "HS_Get_Text",new {id = item.MissionId})">@item.MissionId</a></td>
+								<td><a  style="text-decoration:none;" href="@Url.Action("Text_Pai", "HS_Get_Text",new {id = item.MissionId})">@item.MissionId</a></td>
 								<td>@Html.DisplayFor(modelItem => item.Date)</td>
-								<td>@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+								<td class="reported-member-id">@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+
+
 								<td>
 									<!--評分用星星顯示-->
 									<div class="rating" id="ratingStars">
@@ -132,31 +192,29 @@
 												<i class="fas fa-star @(i <= item.Score ? "text-warning" : "text-secondary")" data-rating="@i"></i>
 											}
 										}
-											</div>
-								</td>
-								<td>
-									<!--上下架任務-->
-									<div class="form-check form-switch">
-										<input class="form-check-input mission-checkbox" type="checkbox" @(item.Mission.MissionStatus == "發布中" ? "checked" : "") data-mission-id="@item.MissionId" data-initial-status="@item.Mission.MissionStatus" />
 									</div>
 								</td>
 								<td>
-									<!--查閱警告-->
-									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" data-reportedmemberid="@item.ReportedMemberId">
-										查閱
-									</button>
+									<!--查閱、新增警告按鈕-->
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" data-reportedmemberid="@item.ReportedMemberId">查閱</button>
+									<br>
+									<button class="btn btn-danger add-button" data-mission-id="@item.MissionId">新增</button>
+								</td>
+								<td style="padding-left: 10px;">
+									<!--寄信-->
+									<button class="styled-button" onclick="openMailDialog(@item.ReportedMemberId)">寄信</button>
 								</td>
 								<td>
-									<!--管理員處理狀態-->
+									<!--管理員處理狀態 用2個radio-->
 									<div class="form-check">
-										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault @item.Ratingnumber" id="flexRadioDefault1" data-opinion-id="@item.Ratingnumber" value="已處理" @(item.State == "已處理" ? "checked" : "")>
-										<label class="form-check-label" for="flexRadioDefault1">
+										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault_ @item.Ratingnumber" id="flexRadioDefault1" data-opinion-id="@item.Ratingnumber" value="已處理" @(item.State == "已處理" ? "checked" : "")>
+										<label class="form-check-label" for="flexRadioDefault1_@item.Ratingnumber">
 											已處理
 										</label>
 									</div>
 									<div class="form-check">
-										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault @item.Ratingnumber" id="flexRadioDefault2" data-mission-id="@item.Ratingnumber" value="未處理" @(item.State == "未處理" ? "checked" : "")>
-										<label class="form-check-label" for="flexRadioDefault2">
+										<input class="form-check-input  status-radio" type="radio" name="flexRadioDefault_ @item.Ratingnumber" id="flexRadioDefault2" data-opinion-id="@item.Ratingnumber" value="未處理" @(item.State == "未處理" ? "checked" : "")>
+										<label class="form-check-label" for="flexRadioDefault2_@item.Ratingnumber">
 											未處理
 										</label>
 									</div>
@@ -170,69 +228,111 @@
 										<table class="table table-striped">
 											<!-- 內容展開-標題 -->
 											<thead>
-												<tr class="info">
-													<th></th>
-													<th></th>
-													<th>意見 | 檢舉 內容</th>
+												<tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+													<td data-toggle="collapse" class="accordion-toggle" data-target="#demo10" style="text-align:left; padding-left:200px;">
+														<b>意見 | 檢舉 內容：</b><br>@Html.DisplayFor(modelItem => item.Content)
+													</td>
 												</tr>
 											</thead>
-											<!-- 內容展開-內文 -->
-											<tbody>
-												<tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
-													<td></td>
-													<th></th> <!-- 空列 -->
-													<td>@Html.DisplayFor(modelItem => item.Content)</td>
-												</tr>
-											</tbody>
 										</table>
 									</div>
 								</td>
 							</tr>
 						</tbody>
+				
 					}
 				</table>
+				
+				<!--寄信-->
+				
+				<div id="mailDialog" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">會員通知郵件</h4>
+							</div>
+							@*內容版本2*@
+							<div class="modal-body">
+								<!-- 主旨-->
+								<i class="fa-solid fa-envelope fs-5" style="color: #1f60d1;"></i>
+								<label class="fs-5">信件主旨：</label>
+								<input id="subjectInput" type="text" class="form-control fs-5" placeholder="請輸入主旨">
+								<hr class="dotted" />
+								<!-- 內文 -->
+								<i class="fa-solid fa-comment fs-5" style="color: #1f60d1;"></i>
+								<label class="fs-5">通知內容：</label>
+								<textarea id="contentInput" class="form-control fs-5" rows="4" placeholder="請輸入通知內容"></textarea>
+								<!-- 選項 -->
+								<div class="option multiline-content" data-subject="PaiPaiGo任務問題回報" data-content="親愛的PaiPaiGo會員您好， 您有一筆任務：">任務問題回報</div>
+								<div class="option" data-subject="PaiPaiGo會員感謝通知" data-content="感謝您使用PaiPaiGo，">會員感謝通知</div>
+								<div class="option" data-subject="PaiPaiGo會員警告通知" data-content="感謝您使用PaiPaiGo，您有新增一則警告。警告原因：">會員警告通知</div>
+								<div class="option" data-subject="PaiPaiGo會員停權通知" data-content="您有一筆資料">會員停權通知</div>
+							</div>
+							@*內容版本1*@
+							@*<div class="modal-body">
+								<!-- 主旨-->
+								<i class="fa-solid fa-envelope fs-5" style="color: #1f60d1;"></i>
+								<label class="fs-5">信件主旨：</label>
+								<input id="subjectInput" type="text" class="form-control fs-5" placeholder="請輸入主旨">
+								<!-- 選項 -->
+								
+								<div class="option" data-target="subjectInput" data-content="任務問題回報">PaiPaiGo任務問題回報</div>
+								<div class="option" data-target="subjectInput" data-content="會員感謝通知">PaiPaiGo會員感謝通知</div>
+								<div class="option" data-target="subjectInput" data-content="會員警告通知">PaiPaiGo會員警告通知</div>
+								<div class="option" data-target="subjectInput" data-content="會員停權通知">PaiPaiGo會員停權通知</div>
+								<hr class="dotted" />
+								<!-- 內文 -->
+								<i class="fa-solid fa-comment fs-5" style="color: #1f60d1;"></i>
+								<label class="fs-5">通知內容：</label>
+								<textarea id="contentInput" class="form-control fs-5" rows="4" placeholder="請輸入通知內容"></textarea>
+								<!-- 選項 -->
+								<div class="option" data-target="contentInput" data-content="到底要不要這個?">到底要不要這個?</div>
+								<div class="option" data-target="contentInput" data-content="要填的內容範本">要填的內容範本</div>
+								
+							</div>*@
+							<div class="modal-footer">
+								<!-- 發送按鈕 -->
+								<button id="sendMailButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">發送</button>
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
 
 
-				<!-- 彈跳視窗 -->
+
+				<!-- 警告彈跳視窗 -->
 				<div class="modal fade" id="myModal">
 					<div class="modal-dialog">
 						<div class="modal-content">
 
 							<!-- Modal Header -->
 							<div class="modal-header">
-								<h4 class="modal-title">警告狀態</h4>
+								<h4 class="modal-title">警告紀錄</h4>
 								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 							</div>
 							<!-- Modal body -->
 							<div class="modal-body">
-								<table>
+								<table class=" fs-5">
 									<tr>
-										<th>類型</th>
 										<th>任務編號</th>
-										<th>任務名稱</th>
-										<th>警告日期</th>
-										<th>警告內容</th>
+										<th style="width:40%">警告原因</th>
 										<th hidden>ReportedMember</th>
 									</tr>
-									@foreach (var item in Model)
+									@*@foreach (var i in Model.Where(modelItem => modelItem.Warn == "警告"))*@
+									@foreach (var i in Model.Where(modelItem => modelItem.Warn == "警告" && modelItem.ReportedMemberId == "001"))
 									{
 										<tr>
-											<th>@Html.DisplayFor(modelItem => item.Type)</th>
-											<th>@Html.DisplayFor(modelItem => item.MissionId)</th>
-											<td>@Html.DisplayFor(modelItem => item.Mission.MissionName)</td>
-											<td>@Html.DisplayFor(modelItem => item.Date)</td>
-											<td>@Html.DisplayFor(modelItem => item.Content)</td>
-											<td hidden>@Html.DisplayFor(modelItem => item.ReportedMemberId)</td>
+											<th>@Html.DisplayFor(modelItem => i.MissionId)</th>	
+											<td>@Html.DisplayFor(modelItem => i.Content)</td>
+											<td hidden>@Html.DisplayFor(modelItem => i.Warn)</td>
+											<td hidden>@Html.DisplayFor(modelItem => i.ReportedMemberId)</td>
+											<td class="reported-member-id" hidden>@Html.DisplayFor(modelItem => i.ReportedMemberId)</td>
 										</tr>
 									}
+
 								</table>
 							</div>
-							<!--新增警告-->
-
-							<div class="modal-add">
-								<button id="addButton" class="btn btn-primary">ADD</button>
-							</div>
-
 							<!-- Modal footer -->
 							<div class="modal-footer">
 								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -242,11 +342,14 @@
 					</div>
 				</div>
 
-				<!-- 換頁按鈕 -->
-				<div class="mt-3 d-flex justify-content-center">
-					<button class="btn btn-primary">上一頁</button>
-					<span>目前頁</span>
-					<button class="btn btn-primary">下一頁</button>
+
+				<!--分頁跳轉-->
+				<div style="justify-content: center ; display:flex;">
+					@*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount*@
+					@Html.PagedListPager(Model, page => Url.Action("AdmOpinion",
+					new { page}), new PagedListRenderOptions {
+					LiElementClasses = new string[] { "page-item" },
+					PageClasses = new string[] { "page-link" }})
 				</div>
 			</div>
 
@@ -258,8 +361,126 @@
 
 	</div>
 
+	@*信件modal 選項填入對應input   內容版本1 --不用*@
 	<script>
-		/* global bootstrap: false */
+		//// 獲取選項元素
+		//var options = document.querySelectorAll('.option');
+
+		//options.forEach(function (option) {
+		//	option.addEventListener('click', function () {
+		//		var target = option.getAttribute('data-target');
+		//		var content = option.getAttribute('data-content');
+		//		// 根據 data-target 指定要填入的 input
+		//		var inputElement = document.getElementById(target);
+		//		if (inputElement) {
+		//			inputElement.value += ' ' + content;
+		//		}
+		//	});
+		//});
+	</script>
+	@*信件modal 選項填入對應input   內容版本2*@
+	<script>
+		// 獲取選項元素
+		var options = document.querySelectorAll('.option');
+
+		// 獲取主旨和通知內容的 input 元素
+		var subjectInput = document.getElementById('subjectInput');
+		var contentInput = document.getElementById('contentInput');
+
+		// 設定點擊選項時的事件處理程序
+		options.forEach(function (option) {
+			option.addEventListener('click', function () {
+				var subject = option.getAttribute('data-subject');
+				var content = option.getAttribute('data-content');
+				subjectInput.value = subject;
+				contentInput.value = content;
+			});
+		});
+	</script>
+	@*發信*@
+	<script>
+		function openMailDialog(reportedMemberId) {
+			// 清空之前輸入的內容
+			$('#subjectInput').val('');
+			$('#contentInput').val('');
+			// 設定 reportedMemberId 元素
+			$('#mailDialog').data('reportedMemberId', reportedMemberId);
+			// 打開modal對話框
+			$('#mailDialog').modal('show');
+		}
+
+		// 當"發送"按鈕被點擊時，執行以下操作
+		$('#sendMailButton').on('click', function () {
+			// 獲取主旨、內文和 reportedMemberId
+			var subject = $('#subjectInput').val();
+			var content = $('#contentInput').val();
+			var reportedMemberId = "007";
+			//var reportedMemberId = encodeURIComponent($('#mailDialog').data('reportedMemberId'));  // 測試失敗 先寫死  為什麼001=>1??
+			console.log(typeof reportedMemberId)
+			// 透過 AJAX 請求將資料傳送給後端
+			$.ajax({
+				url: '/WS_Opinions/SendMail',
+				type: 'POST',
+				data: {
+					reportedMemberId: reportedMemberId,
+					subject: subject,
+					content: content
+				},
+				success: function (data) {
+					// 處理成功的回應，例如關閉modal對話框
+					$('#mailDialog').modal('hide');
+					alert('郵件已發送');
+				},
+				error: function () {
+					// 處理錯誤的回應，例如顯示錯誤訊息
+					alert('郵件發送失敗');
+				}
+			});
+		});
+
+	</script>
+	
+	@*改已處理未處理*@
+	<script>
+		$(document).ready(function () {
+			var changesQueue = [];
+
+			$(".status-radio").change(function () {
+				var ratingnumber = $(this).data("opinion-id");
+				var newStatus = $(this).val();
+
+				changesQueue.push({ Ratingnumber: ratingnumber, State: newStatus });
+			});
+
+			$("#saveChangesButton").click(function () {
+				$.ajax({
+					type: "POST",
+					url: "/WS_Opinions/SaveOpinionStatusChanges", // 確保這個路徑正確對應到你的 OpinionController 控制器的操作方法
+					data: {changes: changesQueue}, // 使用JSON.stringify將changesQueue轉換為JSON
+					dataType: "json",
+					success: function (data) {
+						if (data.success) {
+							// 處理成功的回應
+							console.log('保存更改成功');
+						} else {
+							// 處理錯誤的回應
+							console.error('保存更改失敗');
+						}
+					},
+					error: function () {
+						// 處理錯誤的回應
+						console.error('發送請求失敗');
+					}
+				});
+			});
+		});
+
+
+	</script>`
+
+	@*左側選單*@
+	<script>
+		
 		(function () {
 			'use strict'
 			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -269,87 +490,124 @@
 		})
 	</script>
 
+	@*警告彈跳視窗*@
 	<script>
-	/*改停權 */
-		$(document).ready(function () {
-			var changedStatusList = [];
+		// 在modal顯示後，增加button click function
+		$('#myModal').on('show.bs.modal', function (e) {
+			var button = $(e.relatedTarget);
+			var selectedValue = button.data('reportedmemberid'); // 抓用戶選的值
 
-			// 监听单选按钮的更改事件
-			$('.status-radio').change(function () {
-				var opinionId = $(this).data('opinion-id');
-				var newStatus = $(this).val();
+			// 根據 selectedValue 動態篩選表格内容
+			$('#yourTableID tbody tr').each(function () {
+				var reportedMemberId = $(this).find("td:last").text(); // 抓當下的 ReportedMemberId
 
-				// 将更改的值添加到列表中
-				changedStatusList.push({ OpinionId: opinionId, NewStatus: newStatus });
+				if (reportedMemberId !== selectedValue) {
+					$(this).hide(); // 隱藏不匹配條件的行
+				} else {
+					$(this).show(); // 顯示匹配條件的行
+				}
 			});
+		});
 
-			// 当点击保存变更按钮时，将更改的值发送到后端
-			$('#saveChangeButton').click(function () {
-				// 发送更改的值到后端，例如使用Ajax
-				$.ajax({
-					type: 'POST',
-					url: '/WS_Opinions/UpdateOpinionStatus', // 后端处理更改状态的URL
-					data: { changedStatusList: changedStatusList }, // 发送更改的数据
-					success: function (response) {
-						// 处理后端的响应，可能需要更新页面或显示成功消息
+
+
+	</script>
+
+	@*新增警告*@
+	<script>
+		// 找到所有的 "新增" 按钮
+		var addButtonElements = document.querySelectorAll(".add-button");
+		// foreach "新增" 按鈕添加點擊事件處理程序
+		addButtonElements.forEach(function (button) {
+			button.addEventListener("click", function () {
+				// 抓對應的MissionId
+				var missionId = this.getAttribute("data-mission-id");
+
+				//觸發sweetalert
+				Swal.fire({
+					title: '是否新增警告?<br>(請確認是否違反服務條款)',
+					showDenyButton: true,
+					showCancelButton: false,
+					confirmButtonText: '新增',
+					denyButtonText: `取消`,
+				}).then((result) => {
+					if (result.isConfirmed) {
+						// 發送AJAX請求 觸發"新增"操作
+						$.ajax({
+							url: '/WS_Opinions/AddWarning',
+							type: 'POST',
+							data: { missionId: missionId },
+							success: function (data) {
+								// 成功:
+								Swal.fire('警告已添加!', '', 'success');
+							},
+							error: function (error) {
+								// 失敗:
+								Swal.fire('錯誤訊息', '錯誤：' + error.responseText, 'error');
+							}
+						});
+					} else if (result.isDenied) {
+						Swal.fire('取消警告', '', 'info');
 					}
 				});
 			});
 		});
 	</script>
 
+	@*改停權*@
 	<script>
-		<script>
-			$('#addButton').click(function () {
-				const swalWithBootstrapButtons = Swal.mixin({
-					customClass: {
-						confirmButton: 'btn btn-success',
-						cancelButton: 'btn btn-danger'
-					},
-					buttonsStyling: false
-				})
+		$(document).ready(function () {
+			var changedStatusList = [];
 
-				swalWithBootstrapButtons.fire({
-					title: '是否新增警告?',
-					text: "請確認是否違反使用者規範!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: '新增!',
-					cancelButtonText: '取消!',
-					reverseButtons: true
-				}).then((result) => {
-					if (result.isConfirmed) {
-						// 使用AJAX請求將資料新增到資料庫
-						$.ajax({
-							type: "POST",
-							url: "/WS_Opinions/AddOpinion", // 控制器路由
-							data: { warningMessage: "警告" }, // 傳遞警告消息
-							success: function (response) {
-								swalWithBootstrapButtons.fire(
-									'Added!',
-									'Your warning has been added to the database.',
-									'success'
-								)
-							},
-							error: function (error) {
-								swalWithBootstrapButtons.fire(
-									'Error',
-									'An error occurred while adding the warning.',
-									'error'
-								)
-							}
-						});
-					} else if (
-						result.dismiss === Swal.DismissReason.cancel
-					) {
-						swalWithBootstrapButtons.fire(
-							'Cancelled',
-							'Your imaginary file is safe :)',
-							'error'
-						)
-					}
-				})
+			// 監聽選單按钮的更改事件
+			$('.status-radio').change(function () {
+				var opinionId = $(this).data('opinion-id');
+				var newStatus = $(this).val();
+
+				// 將更改的值加入array
+				changedStatusList.push({ OpinionId: opinionId, NewStatus: newStatus });
 			});
+
+			// 點及保存按鈕，將更改的值發到後端
+			$('#saveChangeButton').click(function () {
+				// 發送更改的值到後端(用Ajax)
+				$.ajax({
+					type: 'POST',
+					url: '/WS_Opinions/UpdateOpinionStatus',
+					data: { changedStatusList: changedStatusList }, //發送更改的數據
+					success: function (response) {
+					}
+				});
+			});
+		});
 	</script>
 
+	@*新增警告-原版 (沒有sweetalert)*@
+	@*<script>
+		// 找到所有的 "新增"按鈕
+		var addButtonElements = document.querySelectorAll(".add-button");
+
+		// 每個"新增"按鈕添加點擊事件處理程序
+		addButtonElements.forEach(function (button) {
+			button.addEventListener("click", function () {
+				// 抓對應的MissionId
+				var missionId = this.getAttribute("data-mission-id");
+
+				// 發送AJAX請求 觸發"新增"操作
+				$.ajax({
+					url: '/WS_Opinions/AddWarning', // Controller的URL
+					type: 'POST',
+					data: { missionId: missionId },
+					success: function (data) {
+						// 成功:
+						alert(data); // 彈出訊息
+					},
+					error: function (error) {
+						// 失敗:
+						alert('錯誤訊息：' + error.responseText);
+					}
+				});
+			});
+		});
+	</script>*@
 </body>

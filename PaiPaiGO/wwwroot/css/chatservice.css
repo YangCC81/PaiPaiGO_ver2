@@ -2,9 +2,6 @@
 position: fixed;
 top: 100%;
 right: 20px;
-/* -webkit-transform: translateY(-50%);
--ms-transform: translateY(-50%);
-transform: translateY(-50%); */
 }
 
 /* 時間的基本設定 */
@@ -48,9 +45,9 @@ width: 80px;
 .chat-popup {
 display: none;
 position: fixed;
-max-width: 350px;
-bottom: 5em;
-right: 15px;
+width: 20%;
+bottom: 10em;
+right: 25px;
 border: 3px solid #f1f1f1;
 z-index: 9;
 font-family: Arial, Helvetica, sans-serif;
@@ -58,7 +55,7 @@ font-family: Arial, Helvetica, sans-serif;
 
 /* 將樣式加入容器中 */
 .form-container {
-max-width: 300px;
+max-width: 500px;
 padding: 10px;
 background-color: white;
 }
@@ -67,11 +64,12 @@ background-color: white;
 .form-container textarea {
 width: 100%;
 padding: 15px;
-margin: 5px 0 22px 0;
+margin: 19px 0 2px 0;
 border: none;
 background: #f1f1f1;
 resize: none;
-min-height: 200px;
+min-height: 250px;
+font-size: 25px;
 }
 
 /* 當文本區域獲得焦點時，執行某些操作 */
@@ -102,38 +100,6 @@ padding: 16px 20px;
 .form-container .btn1:hover, .open-button:hover {
 opacity: 1;
 }
-/*時間的對話*/
-.chat-popups {
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-border: 3px solid #f1f1f1;
-z-index: 9;
-}
-.btn1.cancels {
-background-color: brown;
-padding: 6px 10px;
-width: 40%;
-}
-
-
-#timePopup {
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-padding: 20px;
-background-color: red;
-color: whitesmoke;
-border-radius: 18px;
-border: 1px solid #ccc;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-z-index: 1000;
-}
-
 
 .notification-popup {
 display: none;
@@ -147,7 +113,7 @@ z-index: 1;
 }
 
 .notification-popup #notificationContent {
-font-size: 20px; /* 調整字體大小 */
+font-size: 30px; /* 調整字體大小 */
 margin: 0; /* 清除預設的 margin */
 }
 .notification-popup .close {
@@ -171,14 +137,6 @@ border: none;
 cursor: pointer;
 }
 
-/*.dropbtn:hover, .dropbtn:focus {
-background-color: #2980B9;
-}*/
-
-/*.dropdown {
-position: relative;
-display: inline-block;
-}*/
 
 .dropdown-content {
 display: none;
@@ -198,9 +156,6 @@ text-decoration: none;
 display: block;
 }
 
-/*.dropdown a:hover {
-background-color: #ddd;
-}*/
 
 .show {
 display: block;

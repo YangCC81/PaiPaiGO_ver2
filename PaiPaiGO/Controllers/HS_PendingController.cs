@@ -97,14 +97,7 @@ namespace PaiPaiGO.Controllers
             // ViewBag.Deadline = TempData["Deadline"];
             ViewBag.TaskContent = TempData["TaskContent"] as string;
             ViewBag.TotalAmount = TempData["TotalAmount"] as string;
-            //圖片轉化
-            //byte[] storedImageBytes;
-            //HttpContext.Session.TryGetValue("Image", out storedImageBytes);
-            //string base64String = null;
-            //if (storedImageBytes != null)
-            //{
-            //    base64String = Convert.ToBase64String(storedImageBytes);
-            //}
+          
             byte[] storedImageBytes;
             HttpContext.Session.TryGetValue("Image", out storedImageBytes);
             if (storedImageBytes != null)
@@ -123,12 +116,9 @@ namespace PaiPaiGO.Controllers
             ViewBag.MissionId = newMissionId;
 
             // 特殊處理：將 "排隊" 和 "購買" 轉換為 1 和 2
-            //int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
-            //ViewBag.Category = category;
-            //TempData["Category"] = category;
             int category = ViewBag.Orderclass == "排隊" ? 1 : (ViewBag.Orderclass == "購買" ? 2 : 0);
             ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", category);
-            TempData["Category"] = category; // 如果你還想在其他地方使用這個值
+            TempData["Category"] = category; 
             Console.WriteLine(TempData["Category"]);
 
             return View();
@@ -262,13 +252,6 @@ namespace PaiPaiGO.Controllers
                 ViewBag.Img = storedImageBytes;
             }
 
-            // 轉換和填充數據
-            //應急簡易任務ID
-            //int maxMissionId = _context.Missions.Max(m => m.MissionId);
-            //int newMissionId = maxMissionId + 1;
-            //ViewBag.MissionId = newMissionId;
-            //mission.MissionId = newMissionId;
-            //正式(yyyyMMddxx)
             // 獲取今天日期的字符串形式（yyyyMMdd）
             string dateStr = DateTime.Now.ToString("yyyyMMdd");
             // 從資料庫中獲取最大的任務ID
@@ -280,7 +263,7 @@ namespace PaiPaiGO.Controllers
             {
                 // 如果最大任務ID的日期與今天相同，取出數字部分，加1
                 newMissionDateStr = dateStr;
-                string numberPart = maxMissionIdStr.Substring(8);  // 從第9位開始是數字部分
+                string numberPart = maxMissionIdStr.Substring(8);  
                 newMissionNumber = int.Parse(numberPart) + 1;
             }
             else
@@ -290,7 +273,7 @@ namespace PaiPaiGO.Controllers
                 newMissionNumber = 1;
             }
             // 生成新的任務ID
-            int newMissionId = int.Parse(newMissionDateStr + newMissionNumber.ToString("D2")); // D3表示至少3位數字，不足則補0
+            int newMissionId = int.Parse(newMissionDateStr + newMissionNumber.ToString("D2")); 
             ViewBag.MissionId = newMissionId;
             mission.MissionId = newMissionId;
 
@@ -325,8 +308,6 @@ namespace PaiPaiGO.Controllers
                 _context.Add(mission);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("YH_CasePage", "YH_CasePages");
-                //return RedirectToAction("/YH_CasePages/YH_CasePage");
-                //return View("/YH_CasePages/YH_CasePage");
             }
 
             ViewData["Category"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", mission.Category);
