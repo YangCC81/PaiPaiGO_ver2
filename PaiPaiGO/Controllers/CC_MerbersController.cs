@@ -84,7 +84,6 @@ namespace paipaigo1005.Controllers {
 
             var user = _context.Members
             .FirstOrDefault(x => x.MemberEmail == email && x.MemberStatus == "正常");
-
             if (user == null) {
                 ViewBag.Status = "空的";
                 return View("ForgotPassword");
@@ -236,9 +235,9 @@ namespace paipaigo1005.Controllers {
                 numstring = "0" + numstring;
             }
             member.MemberId = numstring;
-            member.MemberEmail = "mi0103yeon@gmail.com";
+            //member.MemberEmail = "mi0103yeon@gmail.com";
 
-			if (ModelState.IsValid) {
+            if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
                 member.MemberPassword = hashedPassword; // 將哈希後的密碼儲存到資料庫
                 member.Salt = salt; // 儲存鹽值到資料庫
@@ -412,7 +411,7 @@ namespace paipaigo1005.Controllers {
         public ActionResult MemberProfile() {
             //layout用
             ViewBag.YU_ID = HttpContext.Session.GetString("MemberID");
-            ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
+			ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 
             var SessioID = HttpContext.Session.GetString("MemberID");
             if (TempData["Change"] != null) {
