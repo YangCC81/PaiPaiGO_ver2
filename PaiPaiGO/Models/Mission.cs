@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PaiPaiGO.Models;
 
@@ -30,7 +31,8 @@ public partial class Mission
 
     public string Address { get; set; } = null!;
 
-    public DateTime DeliveryDate { get; set; }
+	[DisplayFormat(DataFormatString = "{0:yyyy/M/d}", ApplyFormatInEditMode = true)]
+	public DateTime DeliveryDate { get; set; }
 
     public TimeSpan DeliveryTime { get; set; }
 
@@ -46,7 +48,8 @@ public partial class Mission
 
     public string MissionStatus { get; set; } = null!;
 
-    public DateTime? OrderTime { get; set; }
+	[DisplayFormat(DataFormatString = "{0:yyyy/M/d}", ApplyFormatInEditMode = true)]
+	public DateTime? OrderTime { get; set; }
 
     public string? AcceptTime { get; set; }
 
@@ -57,6 +60,14 @@ public partial class Mission
     public virtual Category CategoryNavigation { get; set; } = null!;
 
     public virtual ICollection<Opinion> Opinions { get; set; } = new List<Opinion>();
+    public string FormattedDeadline
+    {
+        get
+        {
+            DateTime combinedDateTime = DeadlineDate.Add(DeadlineTime);
+            return combinedDateTime.ToString("yyyy-MM-dd  tt HH:mm ");
+        }
+    }
 
 }
 //以下瑋珊的
@@ -78,16 +89,19 @@ public class MissionStatusChangeModel {
     public string InitialStatus { get; set; }
 }
 
+
 //以下敏靖
 //時間倒數的
-public class MissionViewModel {
+public class MissionViewModel
+{
     public string MissionName { get; set; }
     public string RemainingTime { get; set; }
 }
 
 
 //慧荃建的↓
-public class MissionFinishModel {
+public class MissionFinishModel
+{
     public int MissionId { get; set; }
     public string NewStatus { get; set; }
 

@@ -1,8 +1,10 @@
-﻿		@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
+﻿@model X.PagedList.IPagedList<PaiPaiGO.Models.Mission>
 
-		@using X.PagedList.Mvc.Core;
-		@using X.PagedList;
-		@using X.PagedList.Web.Common;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common;
+
+		
 
 		<head>
 			<title>Document</title>
@@ -31,16 +33,15 @@
 				margin-bottom: 30px;
 			}
 
-			.card {
-				height: 450px;
-				width: 325px;
-				margin: auto;
-				margin-top: 30px;
-				justify-content: space-around;
-				border-radius: 20px;
-				border: solid 3px;
-				border-color: darkgreen;
-			}
+	.card {
+		height: 450px;
+		width: 325px;
+		margin: 30px 0; /* 修改这里，将左右边距设为 30px，上下边距保持不变 */
+		justify-content: space-around;
+		border-radius: 20px;
+		border: solid 3px;
+		border-color: darkgreen;
+	}
 
 				.card:hover {
 					transform: scale(1.07,1.07);
@@ -97,54 +98,42 @@
 				</li>
 
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-							role="tab" aria-controls="profile" aria-selected="false" style="background-color:#99e1b1;"
-							data-category="2">
+					<button class="nav-link" id="purchase-tab" data-bs-toggle="tab" data-bs-target="#purchase" type="button"
+							role="tab" aria-controls="purchase" aria-selected="false" data-category="2" style="background-color:#99e1b1;">
 						代購
 					</button>
 				</li>
 
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
-							role="tab" aria-controls="contact" aria-selected="false" style="background-color: #79D699;"
-							data-category="1">
+					<button class="nav-link" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button"
+							role="tab" aria-controls="queue" aria-selected="false" data-category="1" style="background-color: #79D699;">
 						代排隊
 					</button>
 				</li>
+
 			</ul>
 
 			<!-- Address Selector and Search Bar -->
 
 			<div class="row">
+				<!-- ... 省略之前的代碼 ... -->
 				<!-- Address Selector -->
 				<div class="col-6" id="TWAddress" style="display:none;">
-					
-					@* <label or="City" class="form-label me-2"> 縣市:</label> *@
-
 					<div class="d-flex">
-						<div class="col-4" data-role="county" id="TWAddress1">
-						</div>
-						@* <label for="Location" class="form-label me-2">地區:</label><br /> *@
-						<div class="col-4" data-role="district" id="TWAddress2">
-						</div>
-						<div style="display:none" class="col-4 invalid-feedback" data-role="zipcode" id="TWAddress3">
-						</div>
+						<div class="col-4" data-role="county" id="TWAddress1"></div>
+						<div class="col-4" data-role="district" id="TWAddress2"></div>
+						<div style="display:none" class="col-4 invalid-feedback" data-role="zipcode" id="TWAddress3"></div>
 						<button onclick="moveToSelectedLocation()">前往</button>
 					</div>
 				</div>
 
-				<!-- Search Bar -->
+				<!-- Search Bar -->@* method="get" asp-controller="YH_CasePages" asp-action="YH_CasePage" *@
 				<div class="col-6 d-flex justify-content-end">
 					<form asp-controller="YH_CasePages" asp-action="YH_CasePage" class="d-flex">
-						<input class="form-control me-2" type="text" name="SearchString" placeholder="請輸入關鍵字">
-						<input type="submit" value="搜尋" />
+						<input  class="form-control me-2" type="text" name="searchString" placeholder="請輸入關鍵字">
+						<input id="searchButton" type="submit" value="搜尋" />
 					</form>
-				</div>
-			</div>
-
-			
-
-
+				</div> 
 			<div class="tab-content" id="myTabContent">
 
 				<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" style="background-color: #abd9c5;">
@@ -154,13 +143,13 @@
 					</div>
 				</div>
 
-				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" style="background-color:#99e1b1;" data-category="2">
+				<div class="tab-pane fade" id="purchase" role="tabpanel" aria-labelledby="purchase-tab" style="background-color:#99e1b1;" data-category="2">
 					<div id="profilePartialViewContainer">
 						@Html.Partial("_MissionsPartial")
 					</div>
 				</div>
 
-				<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab" style="background-color: #79D699;" data-category="1">
+				<div class="tab-pane fade" id="queue" role="tabpanel" aria-labelledby="queue-tab" style="background-color: #79D699;" data-category="1">
 					<div id="contactPartialViewContainer">
 						@Html.Partial("_MissionsPartial")
 					</div>
@@ -172,31 +161,15 @@
 	</div>
 </div>
 
-<div id="paginationControl">
-	Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-	@Html.PagedListPager(Model, page => Url.Action("YH_CasePage",
-	new { page}), new PagedListRenderOptions {
-	LiElementClasses = new string[] { "page-item" },
-	PageClasses = new string[] { "page-link" }
-	})
-</div>
-
-
-		
-
-
-
 
 
 <script>
 
-
-	//縣市選單
-	$("#TWAddress").twzipcode({
-		"css": ["city form-control", "town form-control", "zipcode form-control"],
-		"countyName": "City", // 指定城市name
-		"districtName": "Location",
-	});
+ $("#TWAddress").twzipcode({
+            "css": ["city form-control", "town form-control", "zipcode form-control"],
+            "countyName": "City", // 指定城市name
+            "districtName": "Location",
+        });
 
 	// 定位系統
 	var map;
@@ -324,9 +297,7 @@
 				console.log("Valid orders to pass for geocoding:", orders);
 				loadNearbyOrders(orders);
 			}
-		});
-		
-	
+		});	
 	}
 
 	// 載入附近訂單的函數
@@ -367,27 +338,6 @@
 	};
 
 
-
-
-
-	
-		
-	// 綁定標籤切換事件
-	function filterMissions() {
-		var selectedCategory = $('.nav-link.active').attr('data-category');
-
-		// This might be the missing part to define visibleCards
-		var visibleCards = $('.card[data-category="' + selectedCategory + '"]');
-
-		// 根據當前顯示的卡片數量顯示或隱藏分頁控件
-		if (visibleCards.length > 8) {
-			$('#paginationControl').show();
-		} else {
-			$('#paginationControl').hide();
-		}
-	}
-
-	// This event listener should be outside the filterMissions function
 	$("select[name='City'], select[name='Location']").on('change', function () {
 		var selectedZipcode = $("input[name='zipcode']").val();
 
@@ -406,38 +356,44 @@
 		});
 	});
 
-	// 當用戶點擊"代排隊"標籤時
-	$('#contact-tab').on('click', function () {
-		$('.card[data-category="2"]').parent('a').hide();
-		$('.card[data-category="1"]').parent('a').show();
-		// alert('代排隊' + $('.card').length);
 
-		// 隱藏所有任務卡片
+	$(document).ready(function () {
+		$('#purchase-tab').click(function () {
+			loadTasks(2); // 2 表示代購类别
+		});
 
-		// $('#contact-tab .card').show();
-		// // 畫面上有元素的id值是profile-tab裡面的有一個院訴的calss值是card  我要藏起來
-		// $('#profile-tab .card').hide();
+		$('#queue-tab').click(function () {
+			loadTasks(1); // 1 表示代排隊类别
+		});
 
-		// 只顯示Category為1的任務卡片
-		// $('.card[data-category="1"]').show();
-		// You may want to call filterMissions here if needed
+		// 初始化显示所有任务
+		loadTasks(0); // 0 表示显示所有任务
 	});
 
-	// 當用戶點擊"代購"標籤時
-	$('#profile-tab').on('click', function () {
-		$('.card[data-category="1"]').parent('a').hide();
-		$('.card[data-category="2"]').parent('a').show();
-		// alert('代購');
-		// $('.card[data-category="1"]').hide();
-		// $('.card[data-category="2"]').show();
-		// // 隱藏所有任務卡片
-		// $('.card').hide();
-		// // 只顯示Category為2的任務卡片
-		// $('.card[data-category="2"]').show();
-		// // You may want to call filterMissions here if needed
-	});
+	// 使用Ajax加载任务数据
+	function loadTasks(category) {
+		$.ajax({
+			url: '/YH_CasePages/GetMissionsByCategory',
+			type: 'GET',
+			data: { category: category },
+			success: function (data) {
+				// 根据返回的数据更新相应的任务列表
+				if (category === 2) {
+					$('#purchase').html(data);
+				} else if (category === 1) {
+					$('#queue').html(data);
+				} else {
+					// 更新所有任务列表
+					$('#purchase').html(data);
+					$('#queue').html(data);
+				}
+			},
+			error: function () {
+				alert('加载任务数据时出错。');
+			}
+		});
+	}	
 
-
-
-
+	$('#searchButton').click(function(){})
 </script>
+	

@@ -69,7 +69,7 @@ namespace PaiPaiGO.Controllers
             
 
 			//(mission != null && member != null)
-			if (mission != null)
+			if (mission != null && memberId != null)
             {
 				
 				// 將我資料的日期與時間一起帶入
@@ -89,10 +89,9 @@ namespace PaiPaiGO.Controllers
 				return PartialView("_RemainingTimePartial", viewModel);
 			}
 
-		        //如果 mission 或 member 為 null，表示沒有相應的數據
-		        return PartialView("_RemainingTimePartial", "");
+		        //如果 mission 或 member 為 null，表示沒有相應的數據 沒有會員登入一樣的意思
+		        return Ok("當前沒有接單任務");
             
-			
         }
 
 

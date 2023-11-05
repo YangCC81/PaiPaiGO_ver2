@@ -235,7 +235,7 @@ namespace paipaigo1005.Controllers {
                 numstring = "0" + numstring;
             }
             member.MemberId = numstring;
-            //member.MemberEmail = "mi0103yeon@gmail.com";
+            member.MemberEmail = "mi0103yeon@gmail.com";
 
             if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);

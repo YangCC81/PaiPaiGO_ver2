@@ -9,9 +9,10 @@ public partial class Abandoned
 
     public string MemberId { get; set; } = null!;
 
-    public string Date { get; set; } = null!;
+	public DateTime Date { get; set; }
+	public string? Chat { get; set; }
 
-    public virtual Member Member { get; set; } = null!;
+	public virtual Member Member { get; set; } = null!;
 
     public virtual Mission Mission { get; set; } = null!;
 }

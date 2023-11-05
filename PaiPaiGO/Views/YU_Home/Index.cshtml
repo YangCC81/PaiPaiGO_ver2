@@ -250,8 +250,7 @@
 
 
     </script>
-
-
+   
 
 </head>
 
@@ -287,7 +286,7 @@
                 <img src="~/img/Home1-1.gif" style="width: 100px; height: 150px; display: block; margin-bottom: -150px;" alt="">
                 <h1>你 我<br>都能幫忙!</h1>
                 <p style="color: #0A5812; font-size: 35px;">原來大家都在這裡， <br> 關於代購、代排隊的互助基地。</p>
-                <form action="@Url.Action("YH_CasePage", "YH_CasePages")">
+                <form  action="@Url.Action("YH_CasePage", "YH_CasePages")">
                     <input type="submit" value="任務瀏覽" style="background-color: #085654; color: white; border-radius: 8px; padding: 15px 26px; font-size: 26px;">
                 </form>
             </div>
@@ -297,6 +296,14 @@
 
         </div>
     </div>
+    @*<script>
+        //藉由onclick事件可以讓input點擊後改變顏色
+        onclick = "changeColor()"
+        function changeColor(){
+            var button = document.querySelector("input[type=submit]");
+            button.style.backgroundColor = "blue";
+        }
+    </script>*@
     <!-- 第二頁 -->
     <div class="content">
         <div class="main" id="section2" style="text-align: center;">

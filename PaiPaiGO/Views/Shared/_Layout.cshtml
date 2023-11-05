@@ -104,12 +104,6 @@
 		</div>
 	</nav>
 
-
-
-
-
-
-
 	<!-- 點一下按鈕產生時間 -->
 	<div class="timee  btn-primary" onclick="getYourData()">
 		<img src="~/img/time3.png" id="liveToastBtn" style="width: 50px; height: 50px;" alt="倒數計時" onclick="openForms()">
@@ -125,7 +119,7 @@
 				@*<p>任務名稱:</br> @Model.MissionName</p>
 				<p>任務剩餘時間:</br> @Model.RemainingTime</p>*@
 			</div>
-			<div style="font-size:20px;">&ensp;&ensp;當下時間 : 2023/12/1 下午 10:00</div>
+			@*<div style="font-size:20px;">&ensp;&ensp;當下時間 : 2023/12/1 下午 10:00</div>*@
 		</div>
 	</div>
 
@@ -194,7 +188,8 @@
 				<lable id="msg" style="font-size:25px;" onclick="msg()">Message</lable>
 				<br />
 				@*下拉選單資料從後端來，確認登入的會員接單MissionId中還在進行中的MissionId*@
-				<select id="missionIdDropdown" style="font-size:20px;" onchange="updateFeedbackMessage()">
+				@*onchange="updateFeedbackMessage()*@
+				<select id="missionIdDropdown" style="font-size:20px;">
 				</select>
 				@*下拉選單，讓客戶選擇*@
 				<select id="optionsDropdown" style="font-size:20px;" onchange="updateTextarea()">
@@ -222,6 +217,7 @@
 	@*客服連接資料庫的JS*@
 	<script>
 		function fetchMemberMissions() {
+			//點客服按鈕才能打開
 			openForm();
 			$.ajax({
 				url: '/YU_Message/GetMemberMissions', // 請將URL替換為實際的路由
@@ -280,7 +276,7 @@
 				success: function (data) {
 					if (data != "") {
 						console.log("OK", data);
-						form(message);
+						//form(message);
 					}
 				},
 				error: function(data){

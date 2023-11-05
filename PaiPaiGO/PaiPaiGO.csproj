@@ -37,6 +37,7 @@
     <None Include="Views\WS_Opinions\AdmOpinion.cshtml" />
     <None Include="Views\WS_Opinions\_OpinionWarn.cshtml" />
     <None Include="Views\YH_CasePages\YH_CasePage.cshtml" />
+    <None Include="Views\YH_CasePages\_MissionsPartial.cshtml" />
     <None Include="Views\Yu_Calendar\Index.cshtml" />
     <None Include="Views\Yu_Calendar\Yu_Calendar.cshtml" />
     <None Include="Views\Yu_Calendar\Yu_Report.cshtml" />
