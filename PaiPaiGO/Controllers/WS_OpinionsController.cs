@@ -74,7 +74,7 @@ namespace PaiPaiGo.Controllers
 				SmtpClient client = new SmtpClient(SmtpServer, SmtpPort);
 				client.EnableSsl = true;
 				client.Credentials = new NetworkCredential(GoogleID, TempPwd);//寄信帳密 
-				client.Send(mms); //寄出信件
+                await client.SendMailAsync(mms); //寄出信件
 			}
 		}
 

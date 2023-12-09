@@ -124,7 +124,7 @@ namespace paipaigo1005.Controllers {
             ViewBag.YU_Name = HttpContext.Session.GetString("MemberName");
 
             //搜尋緩存中有沒有token
-            if (_memoryCache.TryGetValue("Setpass", out string Setpass)) {
+            if (_memoryCache.TryGetValue("Setpass", out string? Setpass)) {
                 //緩存移除token
                 _memoryCache.Remove("Setpass");
                 var query = _context.Members
@@ -235,7 +235,7 @@ namespace paipaigo1005.Controllers {
                 numstring = "0" + numstring;
             }
             member.MemberId = numstring;
-            member.MemberEmail = "mi0103yeon@gmail.com";
+            //member.MemberEmail = "mi0103yeon@gmail.com";
 
             if (ModelState.IsValid) {
                 (string hashedPassword, string salt) = PasswordHasher.HashPassword(member.MemberPassword);
@@ -287,7 +287,7 @@ namespace paipaigo1005.Controllers {
         private async Task<bool> ConfirmEmailAsync(Member member, string token) {
             var tokenIsValid = false;
             //搜尋緩存中有沒有token
-            if (_memoryCache.TryGetValue(token, out string userId)) {
+            if (_memoryCache.TryGetValue(token, out string? userId)) {
                 //緩存移除token
                 _memoryCache.Remove(token);
                 // 更新用户信息
@@ -328,7 +328,7 @@ namespace paipaigo1005.Controllers {
                 SmtpClient client = new SmtpClient(SmtpServer, SmtpPort);
                 client.EnableSsl = true;
                 client.Credentials = new NetworkCredential(GoogleID, TempPwd);//寄信帳密 
-                client.Send(mms); //寄出信件
+                await client.SendMailAsync(mms); //寄出信件
             }
         }
 
@@ -380,7 +380,7 @@ namespace paipaigo1005.Controllers {
                 return RedirectToAction("MemberProfile"); // 導向登入成功
             }
             else {
-                if (Member != null) {
+                if (Member == null) {
                     ViewBag.Status = "空的";
                 }
                 else {
@@ -481,6 +481,7 @@ namespace paipaigo1005.Controllers {
                     }
                 }
                 else {
+                    if (existingMember != null) {
 					//更新除了密碼外現有實體對象
 					existingMember.MemberName = member.MemberName;
 					existingMember.MemberCity = member.MemberCity;
@@ -490,6 +491,8 @@ namespace paipaigo1005.Controllers {
 					await _context.SaveChangesAsync();
 					TempData["Change"] = "修改成功";
 					return RedirectToAction("MemberProfile");
+                    }
+
 				}
                 
             }
